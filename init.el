@@ -17,6 +17,7 @@
 (setq show-paren-delay 0)
 (tool-bar-mode -1)
 (savehist-mode 1)
+(scroll-bar-mode -1)                    ;
 (setq column-number-mode t)
 (global-unset-key (kbd "<f11>"))
 (set-face-attribute 'default nil :height 120)
@@ -44,13 +45,13 @@
 
 ; *** MELPA ***
 (require 'package)
-;(add-to-list 'package-archives
-;             '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
 ;;;; my-Packages
 (setq my-packages
-      '(package cl-lib color color-theme evil evil-numbers evil-tabs scala-mode2 js2-mode))
+      '(package cl-lib color color-theme evil evil-numbers evil-tabs scala-mode2 js2-mode fiplr))
 
 ;;;; Install my-packages as necessary
 (defun filter (condp lst)
@@ -67,7 +68,7 @@
 (require 'color-theme)
 (setq color-theme-is-global t)
 (color-theme-initialize)
-(color-theme-clarity)
+(color-theme-standard)
 
 (undo-tree-mode 1)
 
@@ -119,6 +120,7 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
 (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
+(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file-newtab)
 
 ;;; esc quits
 (defun minibuffer-keyboard-quit ()
@@ -139,7 +141,6 @@ otherwise, close current tab (elscreen)."
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
-;(powerline-evil-vim-color-theme)
 ;(display-time-mode t)
 
 (require 'scala-mode2)
@@ -261,4 +262,13 @@ otherwise, close current tab (elscreen)."
 ;; EVIL MODE, should remain at the end
 (require 'evil)
 (require 'evil-tabs)
+(require 'fiplr)
+
+(defun fiplr-find-file-newtab ()
+  (interactive)
+  (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs
+      #'evil-tabs-tabedit))
 (evil-mode 1)
+
+(add-to-list 'load-path "~/.emacs.d/emacs-powerline")
+(require 'powerline)
