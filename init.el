@@ -17,7 +17,7 @@
 (setq show-paren-delay 0)
 (tool-bar-mode -1)
 (savehist-mode 1)
-(scroll-bar-mode -1)                    ;
+(scroll-bar-mode -1)
 (setq column-number-mode t)
 (global-unset-key (kbd "<f11>"))
 (set-face-attribute 'default nil :height 120)
@@ -169,8 +169,7 @@ otherwise, close current tab (elscreen)."
                  slime-trace-dialog
                  slime-xref-browser))
   (setq inferior-lisp-program "/usr/bin/sbcl")
-  (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/")
-  )
+  (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/"))
 
 (defun arno-all-lisps-mode ()
   (require 'rainbow-delimiters)
@@ -191,6 +190,27 @@ otherwise, close current tab (elscreen)."
 
 (add-hook 'lisp-mode-hook 'arno-lisp-mode)
 (add-hook 'emacs-lisp-mode-hook 'arno-lisp-mode)
+  
+;; Syntax highlighting in Slime REPL
+(defvar slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
+(defun slime-repl-font-lock-setup ()
+  (setq font-lock-defaults
+        '(slime-repl-font-lock-keywords
+         ;; From lisp-mode.el
+         nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
+         (font-lock-syntactic-face-function
+         . lisp-font-lock-syntactic-face-function))))
+
+(add-hook 'slime-repl-mode-hook 'slime-repl-font-lock-setup)
+
+(defadvice slime-repl-insert-prompt (after font-lock-face activate)
+  (let ((inhibit-read-only t))
+    (add-text-properties
+     slime-repl-prompt-start-mark (point)
+     '(font-lock-face
+      slime-repl-prompt-face
+      rear-nonsticky
+      (slime-repl-prompt read-only font-lock-face intangible)))))
 
 ;;----- BEGIN Vim like buffer switching
 
@@ -220,44 +240,41 @@ otherwise, close current tab (elscreen)."
 
 ;;----- BEGIN slime switcher code 
 (defun get-slime-buffer (&optional buflist)
-  (when (null buflist) (setf buflist (buffer-list)))
-  (if (equal 0 (length buflist)) nil
+  (if (equal 0 (length buflist))
+    nil
     (if (and (> (length (buffer-name (car buflist))) 10)
-	     (string= "*slime-repl" (substring (buffer-name (car buflist)) 0 11 )))
-	(car buflist)
+             (string= "*slime-repl" (substring (buffer-name (car buflist)) 0 11 )))
+      (car buflist)
       (get-slime-buffer (cdr buflist)))))
 
 (defvar *buffer-bookmark* nil)
 
 (defun switch-buffers ()
   (progn
-	(setf *temp-bookmark* (current-buffer))
-    (switch-to-buffer (or *buffer-bookmark* (get-slime-buffer)))
+    (setf *temp-bookmark* (current-buffer))
+    (switch-to-buffer (or *buffer-bookmark* (get-slime-buffer (buffer-list))))
     (setf *buffer-bookmark* *temp-bookmark*)
-	(message (format "switching from %s to %s"
-	(buffer-name *temp-bookmark*) 
-	(buffer-name (current-buffer))))))
+    (message (format "switching from %s to %s"
+                     (buffer-name *temp-bookmark*) 
+                     (buffer-name (current-buffer))))))
 
 (defun switch-slime-buffer () (interactive)
  (let ((cur-buf (current-buffer))
-       (slime-buf (get-slime-buffer)))
+       (slime-buf (get-slime-buffer (buffer-list))))
     (if (equal cur-buf slime-buf)
         (if (equal *buffer-bookmark* nil)
-            (message "Don't know which buffer to switch to!")
-            (switch-buffers))
+          (message "Don't know which buffer to switch to!")
+          (switch-buffers))
         (if (equal slime-buf nil)
-	    (progn
-		(message "Can't find REPL buffer, starting slime !")
-		(slime)
-		(sleep-for 2)
-	        (switch-buffers))
-            (switch-buffers)))))
+          (progn
+            (message "Can't find REPL buffer, starting slime !")
+            (slime))
+          (switch-buffers)))))
 
 ;;----- END slime switcher code
 
 ;(add-hook 'js-mode-hook 'js2-minor-mode)
 ;(add-hook 'js2-mode-hook 'ac-js2-mode)
-
 
 ;; EVIL MODE, should remain at the end
 (require 'evil)
