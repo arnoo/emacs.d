@@ -10,6 +10,9 @@
 ; Make background semi-transparent
 (set-frame-parameter (selected-frame) 'alpha '(85 50))
 
+; Don't warn when loading files smaller than 200M
+(setq large-file-warning-threshold 200000000)
+
 (setf indent-tabs-mode nil) 
 (setq make-backup-files nil)
 (setq initial-scratch-message nil)
@@ -145,6 +148,20 @@ otherwise, close current tab (elscreen)."
 
 (require 'scala-mode2)
 
+(defun my-put-file-name-on-clipboard ()
+  "Put the current file name on the clipboard"
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
+
+(define-key evil-normal-state-map [C-f] 'my-put-file-name-on-clipboard)
+
 
 ; *** LISP MODE ***
 
@@ -155,6 +172,7 @@ otherwise, close current tab (elscreen)."
   (evil-define-key 'normal lisp-mode-map (kbd "<C-]>") 'slime-edit-definition)
   (evil-define-key 'normal lisp-mode-map (kbd "K") 'slime-documentation-lookup)
   (evil-define-key 'normal lisp-mode-map (kbd "<f11>") 'slime-compile-defun)
+  (evil-define-key 'normal lisp-mode-map (kbd "<C-l>") 'slime-repl-clear-buffer)
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
   (slime-setup '(slime-asdf
                  slime-autodoc
@@ -183,8 +201,9 @@ otherwise, close current tab (elscreen)."
      (let ((face (intern (format "rainbow-delimiters-depth-%d-face" index))))
        (cl-callf color-saturate-name (face-foreground face) 30)))
   (prettify-symbols-mode)
-  (prettify-symbols-mode)
   ;(add-to-list 'pretty-symbol-categories 'relational)
+  (mapcar (lambda (x) (modify-syntax-entry x "w"))
+          (list ?- ?/ ?* ?+))
   (set-tab-width 2)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
@@ -252,6 +271,7 @@ otherwise, close current tab (elscreen)."
 (defun switch-buffers ()
   (progn
     (setf *temp-bookmark* (current-buffer))
+    ;TODO: (elscreen-toggle-display-tab) + disable gT/gt ?
     (switch-to-buffer (or *buffer-bookmark* (get-slime-buffer (buffer-list))))
     (setf *buffer-bookmark* *temp-bookmark*)
     (message (format "switching from %s to %s"
@@ -273,6 +293,9 @@ otherwise, close current tab (elscreen)."
 
 ;;----- END slime switcher code
 
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+
 ;(add-hook 'js-mode-hook 'js2-minor-mode)
 ;(add-hook 'js2-mode-hook 'ac-js2-mode)
 
@@ -286,6 +309,14 @@ otherwise, close current tab (elscreen)."
   (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs
       #'evil-tabs-tabedit))
 (evil-mode 1)
+
+;Redefine tabedit to be in the right dir
+(evil-define-command evil-tabs-tabedit (file)
+  (interactive "<f>")
+  (let ((dir default-directory))
+    (elscreen-create)
+    (cd dir))
+  (find-file file))
 
 (add-to-list 'load-path "~/.emacs.d/emacs-powerline")
 (require 'powerline)
