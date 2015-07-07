@@ -8,7 +8,7 @@
                      kill-buffer-query-functions))
 
 ; Make background semi-transparent
-(set-frame-parameter (selected-frame) 'alpha '(85 50))
+(set-frame-parameter (selected-frame) 'alpha '(85 85))
 
 ; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
@@ -40,7 +40,7 @@
   (setq tab-width x)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
-(set-tab-width 3)
+(set-tab-width 2)
 
 ;;; Make underscore a word character
 (add-hook 'after-change-major-mode-hook
@@ -100,6 +100,7 @@ otherwise, close current tab (elscreen)."
       nil)
 					; if there are multiple elscreens (tabs), close the current elscreen
      ((not one-elscreen)
+      (kill-buffer)
       (elscreen-kill)
       nil)
 					; if there is only one elscreen, just try to quit (calling elscreen-kill
@@ -146,6 +147,7 @@ otherwise, close current tab (elscreen)."
 
 ;(display-time-mode t)
 
+(require 'php-mode)
 (require 'scala-mode2)
 
 (defun my-put-file-name-on-clipboard ()
@@ -205,6 +207,7 @@ otherwise, close current tab (elscreen)."
   (mapcar (lambda (x) (modify-syntax-entry x "w"))
           (list ?- ?/ ?* ?+))
   (set-tab-width 2)
+  (setq evil-shift-width tab-width)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
 (add-hook 'lisp-mode-hook 'arno-lisp-mode)
@@ -296,8 +299,10 @@ otherwise, close current tab (elscreen)."
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 
-;(add-hook 'js-mode-hook 'js2-minor-mode)
-;(add-hook 'js2-mode-hook 'ac-js2-mode)
+(add-hook 'js-mode-hook
+   (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
+         (push '("return" . ?\u2192) prettify-symbols-alist)
+         (prettify-symbols-mode)))
 
 ;; EVIL MODE, should remain at the end
 (require 'evil)
@@ -320,3 +325,47 @@ otherwise, close current tab (elscreen)."
 
 (add-to-list 'load-path "~/.emacs.d/emacs-powerline")
 (require 'powerline)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values
+   (quote
+    ((fiplr-ignored-globs
+      (directories
+       (".git" "doc" ".tmp" "dist" "node_modules"))
+      (files
+       ("*.jpg" "*.png" "*.xlsx")))
+     (fiplr-ignored-globs
+      (directories
+       (".git" "doc" ".tmp" "dist" "node_modules"))
+      (files
+       ("*.jpg" "*.png")))
+     (fiplr-ignored-globs
+      (directories
+       (".git" "docs" ".tmp" "dist" "node_modules"))
+      (files
+       ("*.jpg" "*.png")))
+     (fiplr-ignored-globs
+      (directories
+       (".git" "docs" "webapp/dist" "node_modules" "webapp/.tmp"))
+      (files
+       ("*.jpg" "*.png")))
+     (fiplr-ignored-globs
+      (directories
+       (".git" "./docs" "webapp/dist" "node_modules" "./webapp/.tmp"))
+      (files
+       ("*.jpg" "*.png")))
+     (fiplr-ignored-globs
+      (directories
+       (".git" "docs" "webapp/dist" "node_modules")
+       "webapp/node_modules")
+      (files
+       ("*.jpg" "*.png")))))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
