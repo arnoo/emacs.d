@@ -10,6 +10,24 @@
 ; Make background semi-transparent
 (set-frame-parameter (selected-frame) 'alpha '(85 85))
 
+;(defvar min-timer)
+;(defun schedule-minimize ()
+;  (when (eq (frame-parameter (selected-frame) 'fullscreen)
+;            'maximized)
+;    (setq min-timer (run-at-time "1 sec" nil 'minimize-other-windows))))
+;
+;(defun minimize-other-windows ()
+;  (shell-command (concat "bash -c 'xdotool search --desktop `xdotool get_desktop` --name \".*\" | grep -v " (frame-parameter (selected-frame) 'outer-window-id) " | xargs -r -n 1 xdotool windowminimize'")))
+;
+;; xfwm sends a focus-in event just prior to switching to another workspace, which ruins everything...
+;(defun prevent-minimize ()
+;  (when (and (boundp 'min-timer) min-timer)
+;     (cancel-timer min-timer)
+;     (setq min-timer nil)))
+;
+;(add-hook 'focus-in-hook 'schedule-minimize)
+;(add-hook 'focus-out-hook 'prevent-minimize)
+
 ; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
 
@@ -56,7 +74,7 @@
 (setq my-packages
       '(package cl-lib color color-theme evil evil-numbers evil-tabs scala-mode2 js2-mode fiplr))
 
-;;;; Install my-packages as necessary
+; Install my-packages as necessary
 (defun filter (condp lst)
   "Filter a list of elements with a given predicate"
   (delq nil
@@ -147,6 +165,10 @@ otherwise, close current tab (elscreen)."
 
 ;(display-time-mode t)
 
+(add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
+(require 'yaml-mode)
+(add-hook 'yaml-mode-hook (lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
 (require 'php-mode)
 (require 'scala-mode2)
 
@@ -179,6 +201,7 @@ otherwise, close current tab (elscreen)."
   (slime-setup '(slime-asdf
                  slime-autodoc
                  slime-editing-commands
+                 slime-fancy
                  slime-fancy-inspector
                  slime-fancy-trace
                  slime-fontifying-fu
@@ -188,6 +211,11 @@ otherwise, close current tab (elscreen)."
                  slime-repl
                  slime-trace-dialog
                  slime-xref-browser))
+  ;(setq inferior-lisp-program "/usr/bin/ecl")
+  (modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
+  (modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
+  (modify-syntax-entry ?\{ "(}" lisp-mode-syntax-table)
+  (modify-syntax-entry ?\} "){" lisp-mode-syntax-table)
   (setq inferior-lisp-program "/usr/bin/sbcl")
   (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/"))
 
@@ -197,11 +225,11 @@ otherwise, close current tab (elscreen)."
   (require 'color)
   
   (rainbow-delimiters-mode)
-  (cl-loop
-     for index from 1 to rainbow-delimiters-max-face-count
-     do
-     (let ((face (intern (format "rainbow-delimiters-depth-%d-face" index))))
-       (cl-callf color-saturate-name (face-foreground face) 30)))
+  ;(cl-loop
+  ;   for index from 1 to rainbow-delimiters-max-face-count
+  ;   do
+  ;   (let ((face (intern (format "rainbow-delimiters-depth-%d-face" index))))
+  ;     (cl-callf color-saturate-name (face-foreground face) 30)))
   (prettify-symbols-mode)
   ;(add-to-list 'pretty-symbol-categories 'relational)
   (mapcar (lambda (x) (modify-syntax-entry x "w"))
@@ -234,31 +262,6 @@ otherwise, close current tab (elscreen)."
       rear-nonsticky
       (slime-repl-prompt read-only font-lock-face intangible)))))
 
-;;----- BEGIN Vim like buffer switching
-
-(defun useful-buffer-p (buffer)
-  (string-match (regexp-quote "*") buffer))
-
-(defun next-useful-buffer ()
-  (next-buffer)
-  (when (not (useful-buffer-p (current-buffer)))
-    (next-useful-buffer)))
-
-(defun previous-useful-buffer ()
-  (previous-buffer)
-  (when (not (useful-buffer-p (current-buffer)))
-    (previous-useful-buffer)))
-
-(global-unset-key (kbd "ESC :"))
-;(global-unset-key (kbd "ESC ESC"))
-(global-unset-key (kbd "<C-tab>"))
-(global-unset-key (kbd "<C-S-tab>"))
-(global-set-key (kbd "<C-tab>") 'next-useful-buffer)
-(global-set-key (kbd "<C-S-tab>") 'previous-useful-buffer)
-
-(global-unset-key (kbd "<M-:>"))
-
-;;----- END Vim like buffer switching
 
 ;;----- BEGIN slime switcher code 
 (defun get-slime-buffer (&optional buflist)
@@ -281,6 +284,12 @@ otherwise, close current tab (elscreen)."
                      (buffer-name *temp-bookmark*) 
                      (buffer-name (current-buffer))))))
 
+(defun my-slime () (interactive)
+  (let ((wnd (current-window-configuration)))
+    (call-interactively 'slime)
+    (sit-for 1)
+    (set-window-configuration wnd)))
+
 (defun switch-slime-buffer () (interactive)
  (let ((cur-buf (current-buffer))
        (slime-buf (get-slime-buffer (buffer-list))))
@@ -291,29 +300,39 @@ otherwise, close current tab (elscreen)."
         (if (equal slime-buf nil)
           (progn
             (message "Can't find REPL buffer, starting slime !")
-            (slime))
+            (my-slime))
           (switch-buffers)))))
+
 
 ;;----- END slime switcher code
 
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
+(global-unset-key (kbd "ESC :"))
+(global-unset-key (kbd "<M-:>"))
 
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
          (prettify-symbols-mode)))
 
-;; EVIL MODE, should remain at the end
-(require 'evil)
-(require 'evil-tabs)
+;----- FIPLR
 (require 'fiplr)
-
 (defun fiplr-find-file-newtab ()
   (interactive)
-  (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs
-      #'evil-tabs-tabedit))
+  ;(unless (= (fiplr-root "/home/arno"))
+    (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs
+        #'evil-tabs-tabedit))
 (evil-mode 1)
+
+(setq fiplr-ignored-globs '((directories (".git" ".svn"))
+                            (files ("*.jpg" "*.png" "*.zip" "*~"))))
+
+(setq fiplr-ignored-globs
+      '((directories
+         (".git" "doc" ".tmp" "dist" "node_modules"))
+        (files
+         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
@@ -323,49 +342,158 @@ otherwise, close current tab (elscreen)."
     (cd dir))
   (find-file file))
 
+;----- POWERLINE
 (add-to-list 'load-path "~/.emacs.d/emacs-powerline")
 (require 'powerline)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(safe-local-variable-values
-   (quote
-    ((fiplr-ignored-globs
-      (directories
-       (".git" "doc" ".tmp" "dist" "node_modules"))
-      (files
-       ("*.jpg" "*.png" "*.xlsx")))
-     (fiplr-ignored-globs
-      (directories
-       (".git" "doc" ".tmp" "dist" "node_modules"))
-      (files
-       ("*.jpg" "*.png")))
-     (fiplr-ignored-globs
-      (directories
-       (".git" "docs" ".tmp" "dist" "node_modules"))
-      (files
-       ("*.jpg" "*.png")))
-     (fiplr-ignored-globs
-      (directories
-       (".git" "docs" "webapp/dist" "node_modules" "webapp/.tmp"))
-      (files
-       ("*.jpg" "*.png")))
-     (fiplr-ignored-globs
-      (directories
-       (".git" "./docs" "webapp/dist" "node_modules" "./webapp/.tmp"))
-      (files
-       ("*.jpg" "*.png")))
-     (fiplr-ignored-globs
-      (directories
-       (".git" "docs" "webapp/dist" "node_modules")
-       "webapp/node_modules")
-      (files
-       ("*.jpg" "*.png")))))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+;----- ORG-MODE STUFF
+(require 'org-install)
+(setq org-log-done t)
+(setq org-return-follows-link t)
+(setq org-startup-with-inline-images 'inlineimages)
+(setq org-startup-folded 'show-everything)
+(setq org-image-actual-width 300)
+(setq org-startup-truncated nil) ; wrap lines
+
+;(defun org-display-inline-images (&optional include-linked refresh beg end)
+;   "Display inline images.
+; 
+; An inline image is a link which follows either of these
+; conventions:
+; 
+;   1. Its path is a file with an extension matching return value
+;      from `image-file-name-regexp' and it has no contents.
+; 
+;   2. Its description consists in a single link of the previous
+;      type.
+; 
+; When optional argument INCLUDE-LINKED is non-nil, also links with
+; a text description part will be inlined.  This can be nice for
+; a quick look at those images, but it does not reflect what
+; exported files will look like.
+; 
+; When optional argument REFRESH is non-nil, refresh existing
+; images between BEG and END.  This will create new image displays
+; only if necessary.  BEG and END default to the buffer
+; boundaries."
+;   (interactive "P")
+;   (when (display-graphic-p)
+;     (unless refresh
+;       (org-remove-inline-images)
+;       (when (fboundp 'clear-image-cache) (clear-image-cache)))
+;     (org-with-wide-buffer
+;      (goto-char (or beg (point-min)))
+;      (let ((case-fold-search t)
+;            (file-extension-re (org-image-file-name-regexp)))
+;        (while (re-search-forward "[][]\\[\\(?:file\\|[./~]\\)" end t)
+;          (let ((link (save-match-data (org-element-context))))
+;            ;; Check if we're at an inline image.
+;            (when (and (equal (org-element-property :type link) "file")
+;                       (or include-linked
+;                           (not (org-element-property :contents-begin link)))
+;                       (let ((parent (org-element-property :parent link)))
+;                         (or (not (eq (org-element-type parent) 'link))
+;                             (not (cdr (org-element-contents parent)))))
+;                       (org-string-match-p file-extension-re
+;                                           (org-element-property :path link)))
+;              (let ((file (expand-file-name
+;                           (org-link-unescape
+;                            (org-element-property :path link)))))
+;                (when (file-exists-p file)
+;                  (let ((width
+;                         ;; Apply `org-image-actual-width' specifications.
+;                         (cond
+;                          ((not (image-type-available-p 'imagemagick)) nil)
+;                          ((eq org-image-actual-width t) nil)
+;                          ((listp org-image-actual-width)
+;                           (or
+;                            ;; First try to find a width among
+;                            ;; attributes associated to the paragraph
+;                            ;; containing link.
+;                            (let ((paragraph
+;                                   (let ((e link))
+;                                     (while (and (setq e (org-element-property
+;                                                          :parent e))
+;                                                 (not (eq (org-element-type e)
+;                                                          'paragraph))))
+;                                     e)))
+;                              (when paragraph
+;                                (save-excursion
+;                                  (goto-char (org-element-property :begin paragraph))
+;                                  (when
+;                                      (re-search-forward
+;                                       "^[ \t]*#\\+attr_.*?: +.*?:width +\\(\\S-+\\)"
+;                                       (org-element-property
+;                                        :post-affiliated paragraph)
+;                                       t)
+;                                    (string-to-number (match-string 1))))))
+;                            ;; Otherwise, fall-back to provided number.
+;                            (car org-image-actual-width)))
+;                          ((numberp org-image-actual-width)
+;                           org-image-actual-width)))
+;                        (old (get-char-property-and-overlay
+;                              (org-element-property :begin link)
+;                              'org-image-overlay)))
+;                    (if (and (car-safe old) refresh)
+;                        (image-refresh (overlay-get (cdr old) 'display))
+;                      (let ((image (create-image file
+;                                                 (and width 'imagemagick)
+;                                                 nil
+;                                                 :width width)))
+;                        (when image
+;                          (let* ((link
+;                                  ;; If inline image is the description
+;                                  ;; of another link, be sure to
+;                                  ;; consider the latter as the one to
+;                                  ;; apply the overlay on.
+;                                  (let ((parent
+;                                         (org-element-property :parent link)))
+;                                    (if (eq (org-element-type parent) 'link)
+;                                        parent
+;                                      link)))
+;                                 (ov (make-overlay
+;                                      (org-element-property :begin link)
+;                                      (progn
+;                                        (goto-char
+;                                         (org-element-property :end link))
+;                                        (skip-chars-backward " \t")
+;                                        (point)))))
+;                            (overlay-put ov 'display image)
+;                            (overlay-put ov 'face 'default)
+;                            (overlay-put ov 'org-image-overlay t)
+;                            (overlay-put
+;                             ov 'modification-hooks
+;                             (list 'org-display-inline-remove-overlay))
+;                            (push ov org-inline-image-overlays)))))))))))))))
+
+(defun htmlorg-clipboard ()
+  "Convert clipboard contents from HTML to Org and then paste (yank)."
+  (interactive)
+  (kill-new (shell-command-to-string "xclip -selection clipboard -o | pandoc -f html -t json | pandoc -f json -t org"))
+  ; | perl -ne 'print chr foreach unpack(\"C*\",pack(\"H*\",substr($_,11,-3)))' 
+  (yank))
+
+(require 'ox-publish)
+(setq org-publish-project-alist
+  '(
+     ("org-notes"
+        :base-directory "~/wiki/"
+        :base-extension "org"
+        :publishing-directory "~/wiki/html/"
+        :recursive t
+        :publishing-function org-html-publish-to-html
+        :headline-levels 6
+        :auto-preamble t
+      )
+     ("org-static"
+        :base-directory "~/wiki/media/"
+        :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+        :publishing-directory "~/wiki/html/"
+        :recursive t
+        :publishing-function org-publish-attachment
+      )))
+(setq org-export-htmlize-output-type 'css)
+
+;;---- EVIL MODE, should remain at the end
+(require 'evil)
+(require 'evil-tabs)

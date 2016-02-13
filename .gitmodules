@@ -1,0 +1,3 @@
+[submodule "plugins/yaml-mode"]
+	path = plugins/yaml-mode
+	url = https://github.com/yoshiki/yaml-mode.git
