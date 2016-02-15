@@ -1,5 +1,5 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/")
-(set-face-attribute ‘default nil :stipple "/home/arno/wallpapers/arch-linux_system_desktop_background_wallpaper_1920x1080.jpg")
+(set-face-attribute 'default nil :stipple "/home/arno/wallpapers/arch-linux_system_desktop_background_wallpaper_1920x1080.jpg")
 
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message t)
