@@ -356,8 +356,8 @@ otherwise, close current tab (elscreen)."
 (setq org-startup-truncated nil) ; wrap lines
 
 (setq org-link-abbrev-alist
-      '(("mail" . "https://mail.google.com/a/mydomain.at/#mbox/%s")
-        ("omail" . "https://mail.google.com/a/mydomain.at/#mbox/%s")
+      '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s")
+        ("omail" . "https://mail.google.com/a/octo.com/#mbox/%s")
         ))
 
 ;(defun org-display-inline-images (&optional include-linked refresh beg end)
