@@ -356,7 +356,7 @@ otherwise, close current tab (elscreen)."
 (setq org-startup-truncated nil) ; wrap lines
 
 (setq org-link-abbrev-alist
-      '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s")
+      '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
         ("omail" . "https://mail.google.com/a/octo.com/#mbox/%s")
         ))
 
