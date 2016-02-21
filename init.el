@@ -1,5 +1,4 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/")
-(set-face-attribute 'default nil :stipple "/home/arno/wallpapers/arch-linux_system_desktop_background_wallpaper_1920x1080.jpg")
 
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message t)
@@ -355,6 +354,11 @@ otherwise, close current tab (elscreen)."
 (setq org-startup-folded 'show-everything)
 (setq org-image-actual-width 300)
 (setq org-startup-truncated nil) ; wrap lines
+
+(setq org-link-abbrev-alist
+      '(("mail" . "https://mail.google.com/a/mydomain.at/#mbox/%s")
+        ("omail" . "https://mail.google.com/a/mydomain.at/#mbox/%s")
+        ))
 
 ;(defun org-display-inline-images (&optional include-linked refresh beg end)
 ;   "Display inline images.
