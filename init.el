@@ -1,6 +1,6 @@
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
-(setq frame-title-format '("Emacs - %b" ))
+(setq frame-title-format '("%b - Emacs"))
 
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message t)
