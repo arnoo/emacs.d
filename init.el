@@ -174,6 +174,9 @@ otherwise, close current tab (elscreen)."
 (require 'php-mode)
 (require 'scala-mode2)
 
+;=== Modes based on extension
+(add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
+
 (defun my-put-file-name-on-clipboard ()
   "Put the current file name on the clipboard"
   (interactive)
