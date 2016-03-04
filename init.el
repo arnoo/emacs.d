@@ -512,3 +512,5 @@ otherwise, close current tab (elscreen)."
 ;;---- EVIL MODE, should remain at the end
 (require 'evil)
 (require 'evil-tabs)
+
+(server-start)
