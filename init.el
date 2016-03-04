@@ -12,6 +12,11 @@
 ; Make background semi-transparent
 ;(set-frame-parameter (selected-frame) 'alpha '(85 85))
 
+(defun set-maximized ()
+  (interactive)
+  (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
+(add-hook 'window-setup-hook 'set-maximized t)
+
 ;(defvar min-timer)
 ;(defun schedule-minimize ()
 ;  (when (eq (frame-parameter (selected-frame) 'fullscreen)
