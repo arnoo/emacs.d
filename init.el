@@ -71,6 +71,7 @@
 (add-hook 'after-change-major-mode-hook
           '(lambda () (modify-syntax-entry ?_ "w")))
 
+(require 'uniquify)
 ; *** MELPA ***
 (require 'package)
 (add-to-list 'package-archives
