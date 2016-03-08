@@ -198,6 +198,13 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map [C-f] 'my-put-file-name-on-clipboard)
 
 
+; *** LATEX ***
+
+(global-set-key (kbd "C-c M-p")
+        (lambda ()
+          (interactive)
+          (shell-command (concat "pdflatex " buffer-file-name))))
+
 ; *** LISP MODE ***
 
 (defun arno-lisp-mode ()
