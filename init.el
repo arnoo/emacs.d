@@ -200,13 +200,13 @@ otherwise, close current tab (elscreen)."
 
 ; *** LATEX ***
 
-(add-hook 'latex-mode-hook 'arno-latex-mode)
-
 (defun arno-latex-mode ()
   (global-set-key (kbd "<f12>")
           (lambda ()
             (interactive)
             (shell-command (concat "pdflatex " buffer-file-name)))))
+
+(add-hook 'latex-mode-hook 'arno-latex-mode)
 
 ; *** LISP MODE ***
 
