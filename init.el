@@ -197,6 +197,11 @@ otherwise, close current tab (elscreen)."
 
 (define-key evil-normal-state-map [C-f] 'my-put-file-name-on-clipboard)
 
+; *** SPELL CHECKING ***
+
+(when (executable-find "hunspell")
+  (setq-default ispell-program-name "hunspell")
+  (setq ispell-really-hunspell t))
 
 ; *** LATEX ***
 
