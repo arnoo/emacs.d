@@ -206,6 +206,14 @@ otherwise, close current tab (elscreen)."
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
 
+(define-key evil-normal-state-map "]q"  'next-error)
+(define-key evil-normal-state-map "[q"  'previous-error)
+(define-key evil-normal-state-map "]l"  'flycheck-next-error)
+(define-key evil-normal-state-map "[l"  'flycheck-previous-error)
+(define-key evil-normal-state-map "]s"  'flyspell-goto-next-error)
+(define-key evil-normal-state-map "z="  'ispell-word)
+(define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
+
 ; *** LATEX ***
 
 (defun arno-latex-mode ()
