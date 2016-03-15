@@ -221,7 +221,6 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map "]s"  'flyspell-goto-next-error)
 (define-key evil-normal-state-map "z="  'ispell-word)
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
-    
 (global-set-key (kbd "<f8>") 'fd-switch-dictionary)
 
 ; *** LATEX ***
