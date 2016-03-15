@@ -212,6 +212,7 @@ otherwise, close current tab (elscreen)."
   (global-set-key (kbd "<f12>")
           (lambda ()
             (interactive)
+            (flyspell-mode 1)
             (shell-command (concat "pdflatex " buffer-file-name)))))
 
 (add-hook 'latex-mode-hook 'arno-latex-mode)
