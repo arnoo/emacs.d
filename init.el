@@ -206,6 +206,14 @@ otherwise, close current tab (elscreen)."
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
 
+(defun fd-switch-dictionary()
+   (interactive)
+   (let* ((dic ispell-current-dictionary)
+ 	 (change (if (string= dic "deutsch8") "english" "deutsch8")))
+     (ispell-change-dictionary change)
+     (message "Dictionary switched from %s to %s" dic change)
+     ))
+
 (define-key evil-normal-state-map "]q"  'next-error)
 (define-key evil-normal-state-map "[q"  'previous-error)
 (define-key evil-normal-state-map "]l"  'flycheck-next-error)
@@ -213,6 +221,8 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map "]s"  'flyspell-goto-next-error)
 (define-key evil-normal-state-map "z="  'ispell-word)
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
+    
+(global-set-key (kbd "<f8>") 'fd-switch-dictionary)
 
 ; *** LATEX ***
 
