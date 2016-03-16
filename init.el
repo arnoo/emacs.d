@@ -263,7 +263,7 @@ otherwise, close current tab (elscreen)."
   (modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
   (modify-syntax-entry ?\{ "(}" lisp-mode-syntax-table)
   (modify-syntax-entry ?\} "){" lisp-mode-syntax-table)
-  (setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq inferior-lisp-program "/usr/bin/ecl")
   (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/"))
 
 (defun arno-all-lisps-mode ()
