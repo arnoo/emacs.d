@@ -258,12 +258,11 @@ otherwise, close current tab (elscreen)."
                  slime-repl
                  slime-trace-dialog
                  slime-xref-browser))
-  ;(setq inferior-lisp-program "/usr/bin/ecl")
   (modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
   (modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
   (modify-syntax-entry ?\{ "(}" lisp-mode-syntax-table)
   (modify-syntax-entry ?\} "){" lisp-mode-syntax-table)
-  (setq inferior-lisp-program "/usr/bin/ecl")
+  (setq inferior-lisp-program "/usr/bin/sbcl")
   (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/"))
 
 (defun arno-all-lisps-mode ()
