@@ -223,12 +223,6 @@ otherwise, close current tab (elscreen)."
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
 (global-set-key (kbd "<f8>") 'fd-switch-dictionary)
 
-; *** MARKDOWN ***
-(autoload 'markdown-mode "markdown-mode"
-   "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
 ; *** LATEX ***
 
 (defun arno-latex-mode ()
@@ -357,6 +351,12 @@ otherwise, close current tab (elscreen)."
 
 
 ;;----- END slime switcher code
+
+; *** MARKDOWN ***
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
