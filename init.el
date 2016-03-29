@@ -180,7 +180,7 @@ otherwise, close current tab (elscreen)."
 (require 'php-mode)
 (require 'scala-mode2)
 
-;=== Modes based on extension
+
 (add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
 
 (defun my-put-file-name-on-clipboard ()
@@ -222,6 +222,12 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map "z="  'ispell-word)
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
 (global-set-key (kbd "<f8>") 'fd-switch-dictionary)
+
+; *** MARKDOWN ***
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ; *** LATEX ***
 
