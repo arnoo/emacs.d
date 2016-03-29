@@ -223,6 +223,13 @@ otherwise, close current tab (elscreen)."
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
 (global-set-key (kbd "<f8>") 'fd-switch-dictionary)
 
+; *** JAVASCRIPT ***
+
+(add-hook 'js-mode-hook
+   (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
+         (push '("return" . ?\u2192) prettify-symbols-alist)
+         (prettify-symbols-mode)))
+
 ; *** LATEX ***
 
 (defun arno-latex-mode ()
@@ -362,11 +369,6 @@ otherwise, close current tab (elscreen)."
 (global-set-key (kbd "C--") 'text-scale-decrease)
 (global-unset-key (kbd "ESC :"))
 (global-unset-key (kbd "<M-:>"))
-
-(add-hook 'js-mode-hook
-   (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
-         (push '("return" . ?\u2192) prettify-symbols-alist)
-         (prettify-symbols-mode)))
 
 ;----- FIPLR
 (require 'fiplr)
