@@ -94,13 +94,6 @@
     (package-refresh-contents)
     (mapc 'package-install uninstalled-packages)))
 
-;;;; Highlight Searches
-(require 'evil-search-highlight-persist)
-(global-evil-search-highlight-persist t)
-
-; To only display string whose length is greater than or equal to 3
-;(setq evil-search-highlight-string-min-len 3)
-
 ;;;; Colors
 (require 'color-theme)
 (setq color-theme-is-global t)
@@ -566,3 +559,11 @@ otherwise, close current tab (elscreen)."
 (require 'evil-tabs)
 
 (server-start)
+
+
+;;;; Highlight Searches
+(require 'evil-search-highlight-persist)
+(global-evil-search-highlight-persist t)
+
+; To only display string whose length is greater than or equal to 3
+;(setq evil-search-highlight-string-min-len 3)
