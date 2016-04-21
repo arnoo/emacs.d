@@ -101,6 +101,11 @@
 ; To only display string whose length is greater than or equal to 3
 (setq evil-search-highlight-string-min-len 3)
 
+;;;; Quickscope
+(require 'evil-quickscope)
+(global-evil-quickscope-always-mode 1)
+
+;;;; Colors
 (require 'color-theme)
 (setq color-theme-is-global t)
 (color-theme-initialize)
