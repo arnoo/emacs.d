@@ -106,8 +106,7 @@
 (global-evil-tabs-mode t)
 
 ;(require 'hippie-expand)
-(global-set-key (kbd "C-x C-f") 'my-expand-file-name-at-point)
-(define-key evil-insert-state-map (kbd "C-x C-f") 'evil-complete-next-line)
+(define-key evil-insert-state-map (kbd "C-x C-f") 'my-expand-file-name-at-point)
 (defun my-expand-file-name-at-point ()
   "Use hippie-expand to expand the filename"
   (interactive)
