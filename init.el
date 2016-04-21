@@ -80,7 +80,7 @@
 
 ;;;; my-Packages
 (setq my-packages
-      '(package cl-lib color color-theme evil evil-numbers evil-tabs scala-mode2 js2-mode fiplr markdown-mode))
+      '(package cl-lib color color-theme evil evil-numbers evil-tabs scala-mode2 js2-mode fiplr markdown-mode evil-search-highlight-persist evil-quickscope))
 
 ; Install my-packages as necessary
 (defun filter (condp lst)
