@@ -99,7 +99,7 @@
 (global-evil-search-highlight-persist t)
 
 ; To only display string whose length is greater than or equal to 3
-(setq evil-search-highlight-string-min-len 3)
+;(setq evil-search-highlight-string-min-len 3)
 
 ;;;; Colors
 (require 'color-theme)
