@@ -224,6 +224,8 @@ otherwise, close current tab (elscreen)."
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
 (global-set-key (kbd "<f8>") 'fd-switch-dictionary)
 
+(define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
+
 ; *** JAVASCRIPT ***
 
 (add-hook 'js-mode-hook
