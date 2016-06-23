@@ -556,6 +556,11 @@ otherwise, close current tab (elscreen)."
       )))
 (setq org-export-htmlize-output-type 'css)
 
+
+; set up Emacs for transparent encryption and decryption
+(require 'epa-file)
+(epa-file-enable)
+
 ;;---- EVIL MODE, should remain at the end
 (require 'evil)
 (require 'evil-tabs)
