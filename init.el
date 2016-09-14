@@ -236,12 +236,11 @@ otherwise, close current tab (elscreen)."
          (autoload 'tern-mode "tern.el" nil t)
          (tern-mode t)
          (setq tern-command (cons (executable-find "tern") '()))
+         (evil-define-key 'normal tern-mode-keymap (kbd "<C-]>") 'tern-find-definition)
          (eval-after-load 'tern
              '(progn
                (require 'tern-auto-complete)
-               (tern-ac-setup)))
-        (global-unset-key (kbd "<C-]>"))
-        (evil-define-key 'normal tern-mode-keymap (kbd "<C-]>") 'tern-find-definition)))
+               (tern-ac-setup)))))
 
 ; *** LATEX ***
 
