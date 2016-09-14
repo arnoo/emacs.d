@@ -240,8 +240,7 @@ otherwise, close current tab (elscreen)."
              '(progn
                (require 'tern-auto-complete)
                (tern-ac-setup)))
-        (define-key tern-mode-keymap [(meta ?.)] 'tern-find-definition)
-        ))
+        (define-key tern-mode-keymap [(meta ?.)] 'tern-find-definition)))
 
 ; *** LATEX ***
 
