@@ -228,9 +228,6 @@ otherwise, close current tab (elscreen)."
 
 ; *** JAVASCRIPT ***
 
-(defun ome-tern-setup ()
-  )
-
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
