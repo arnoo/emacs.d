@@ -231,10 +231,10 @@ otherwise, close current tab (elscreen)."
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
-         (tern-mode t)
          (prettify-symbols-mode)
          (add-to-list 'load-path "/usr/lib/node_modules/tern/emacs/")
          (autoload 'tern-mode "tern.el" nil t)
+         (tern-mode t)
          (setq tern-command (cons (executable-find "tern") '()))
          (eval-after-load 'tern
              '(progn
