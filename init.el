@@ -233,6 +233,8 @@ otherwise, close current tab (elscreen)."
          (push '("return" . ?\u2192) prettify-symbols-alist)
          (tern-mode t)
          (prettify-symbols-mode)
+         (add-to-list 'load-path "/usr/lib/node_modules/tern/emacs/")
+          (autoload 'tern-mode "tern.el" nil t)
          (setq tern-command (cons (executable-find "tern") '()))
          (eval-after-load 'tern
              '(progn
