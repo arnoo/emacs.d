@@ -229,10 +229,7 @@ otherwise, close current tab (elscreen)."
 ; *** JAVASCRIPT ***
 
 (defun ome-tern-setup ()
-  (eval-after-load 'tern
-    '(progn
-      (require 'tern-auto-complete)
-      (tern-ac-setup))))
+  )
 
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
@@ -240,6 +237,10 @@ otherwise, close current tab (elscreen)."
          (tern-mode t)
          (prettify-symbols-mode)
          (setq tern-command (cons (executable-find "tern") '()))
+         (eval-after-load 'tern
+             '(progn
+               (require 'tern-auto-complete)
+               (tern-ac-setup)))
          (ome-install 'tern)))
 
 ; *** LATEX ***
