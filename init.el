@@ -233,7 +233,6 @@ otherwise, close current tab (elscreen)."
     (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
   (when (el-get-package-installed-p 'js3-mode)
     (add-hook 'js3-mode-hook (lambda () (tern-mode t))))
-  (setq tern-command (cons (executable-find "tern") '()))
   (eval-after-load 'tern
     '(progn
       (require 'tern-auto-complete)
@@ -242,7 +241,9 @@ otherwise, close current tab (elscreen)."
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
+         (tern-mode t)
          (prettify-symbols-mode)
+         (setq tern-command (cons (executable-find "tern") '()))
          (ome-install 'tern)))
 
 ; *** LATEX ***
