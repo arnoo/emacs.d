@@ -229,10 +229,6 @@ otherwise, close current tab (elscreen)."
 ; *** JAVASCRIPT ***
 
 (defun ome-tern-setup ()
-  (when (el-get-package-installed-p 'js2-mode)
-    (add-hook 'js2-mode-hook (lambda () (tern-mode t))))
-  (when (el-get-package-installed-p 'js3-mode)
-    (add-hook 'js3-mode-hook (lambda () (tern-mode t))))
   (eval-after-load 'tern
     '(progn
       (require 'tern-auto-complete)
