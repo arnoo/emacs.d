@@ -230,15 +230,18 @@ otherwise, close current tab (elscreen)."
 
 ; *** JAVASCRIPT ***
 
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" nil))
+
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
          (prettify-symbols-mode)
          (add-to-list 'load-path "/usr/lib/node_modules/tern/emacs/")
+         (add-to-list 'company-backends 'company-tern)
          (autoload 'tern-mode "tern.el" nil t)
          (tern-mode t)
          (setq tern-command (cons (executable-find "tern") '()))
-         (evil-define-key 'normal tern-mode-keymap (kbd "<C-]>") 'tern-find-definition)
+         (evil-define-key 'normal tern-mode-keymap "\C-]" 'tern-find-definition)
          (eval-after-load 'tern
              '(progn
                (require 'tern-auto-complete)
@@ -261,7 +264,7 @@ otherwise, close current tab (elscreen)."
   (arno-all-lisps-mode)
   (require 'slime)
   (global-set-key (kbd "<f12>") 'switch-slime-buffer)
-  (evil-define-key 'normal lisp-mode-map (kbd "<C-]>") 'slime-edit-definition)
+  (evil-define-key 'normal lisp-mode-map "\C-]" 'slime-edit-definition)
   (evil-define-key 'normal lisp-mode-map (kbd "K") 'slime-documentation-lookup)
   (evil-define-key 'normal lisp-mode-map (kbd "<f11>") 'slime-compile-defun)
   (evil-define-key 'normal lisp-mode-map (kbd "<C-l>") 'slime-repl-clear-buffer)
