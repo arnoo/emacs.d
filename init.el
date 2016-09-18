@@ -94,6 +94,8 @@
     (package-refresh-contents)
     (mapc 'package-install uninstalled-packages)))
 
+(add-hook 'after-init-hook 'global-company-mode)
+
 ;;;; Colors
 (require 'color-theme)
 (setq color-theme-is-global t)
