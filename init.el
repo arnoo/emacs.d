@@ -410,7 +410,11 @@ otherwise, close current tab (elscreen)."
 (setq 'orig-fiplr-find-root 'fiplr-find-root)
 
 (defun fiplr-find-root (path root-markers)
-  (if ((orig-fiplr-find-root path root-markers)
+  (let ((orig-root (orig-fiplr-find-root path root-markers)))
+    (cond ((< (length (s-split "/" orig-root)) 4)
+           "/home/arno/dev/kp")
+          (= orig-root "/home/arno/workspace/fc/"
+          (t orig-root))))
 
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
