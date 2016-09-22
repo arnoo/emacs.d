@@ -1,3 +1,5 @@
+(require 's)
+
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
 (setq frame-title-format '("%b - Emacs"))
@@ -406,7 +408,9 @@ otherwise, close current tab (elscreen)."
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
 (setq 'orig-fiplr-find-root 'fiplr-find-root)
+
 (defun fiplr-find-root (path root-markers)
+  (if ((orig-fiplr-find-root path root-markers)
 
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
