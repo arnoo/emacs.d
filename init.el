@@ -405,6 +405,9 @@ otherwise, close current tab (elscreen)."
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
+(setq 'orig-fiplr-find-root 'fiplr-find-root)
+(defun fiplr-find-root (path root-markers)
+
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
   (interactive "<f>")
