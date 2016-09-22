@@ -413,7 +413,8 @@ otherwise, close current tab (elscreen)."
   (let ((orig-root (orig-fiplr-find-root path root-markers)))
     (cond ((< (length (s-split "/" orig-root)) 4)
            "/home/arno/dev/kp")
-          (= orig-root "/home/arno/workspace/fc/"
+          ((s-starts-with? "/home/arno/workspace/fc/" orig-root)
+            "/home/arno/workspace/fc/")
           (t orig-root))))
 
 ;Redefine tabedit to be in the right dir
