@@ -113,6 +113,7 @@
 (setq ag-highlight-search t)
 (defun ag-search-at-point ()
   (ag-project (thing-at-point 'symbol)))
+(define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
 
 ;(require 'hippie-expand)
