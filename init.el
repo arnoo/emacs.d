@@ -111,6 +111,8 @@
 ;;;; AG
 (require 'ag)
 (setq ag-highlight-search t)
+(defun ag-search-at-point ()
+  (ag-project (thing-at-point 'symbol)))
 
 
 ;(require 'hippie-expand)
