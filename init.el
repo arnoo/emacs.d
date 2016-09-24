@@ -110,6 +110,7 @@
 
 ;;;; AG
 (require 'ag)
+(setq ag-highlight-search t)
 
 
 ;(require 'hippie-expand)
