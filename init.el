@@ -1,5 +1,3 @@
-(require 's)
-
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
 (setq frame-title-format '("%b - Emacs"))
@@ -82,7 +80,7 @@
 
 ;;;; my-Packages
 (setq my-packages
-      '(package cl-lib color color-theme evil evil-numbers evil-tabs scala-mode2 js2-mode fiplr markdown-mode evil-search-highlight-persist company company-tern s.el))
+      '(package cl-lib color color-theme evil evil-numbers evil-tabs scala-mode2 js2-mode fiplr markdown-mode evil-search-highlight-persist company company-tern ag))
 
 ; Install my-packages as necessary
 (defun filter (condp lst)
@@ -407,13 +405,13 @@ otherwise, close current tab (elscreen)."
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
-(setq 'orig-fiplr-find-root 'fiplr-find-root)
+(setq orig-fiplr-find-root (symbol-function 'fiplr-find-root))
 
 (defun fiplr-find-root (path root-markers)
-  (let ((orig-root (orig-fiplr-find-root path root-markers)))
-    (cond ((< (length (s-split "/" orig-root)) 4)
+  (let ((orig-root (funcall 'orig-fiplr-find-root path root-markers)))
+    (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kp")
-          ((s-starts-with? "/home/arno/workspace/fc/" orig-root)
+          ((= (substring orig-root 0 25) "/home/arno/workspace/fc/")
             "/home/arno/workspace/fc/")
           (t orig-root))))
 
