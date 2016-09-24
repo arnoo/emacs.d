@@ -107,6 +107,11 @@
 
 (global-evil-tabs-mode t)
 
+
+;;;; AG
+(require 'ag)
+
+
 ;(require 'hippie-expand)
 (define-key evil-insert-state-map (kbd "C-x C-f") 'my-expand-file-name-at-point)
 (defun my-expand-file-name-at-point ()
