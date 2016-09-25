@@ -117,6 +117,10 @@
 (define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
 
+;;;; ELSCREEN
+(require 'elscreen-outof-limit-mode)
+(elscreen-outof-limit-mode t)
+
 ;(require 'hippie-expand)
 (define-key evil-insert-state-map (kbd "C-x C-f") 'my-expand-file-name-at-point)
 (defun my-expand-file-name-at-point ()
