@@ -204,7 +204,6 @@ otherwise, close current tab (elscreen)."
 (require 'php-mode)
 (require 'scala-mode2)
 
-
 (add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
 
 (defun my-put-file-name-on-clipboard ()
