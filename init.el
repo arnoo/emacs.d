@@ -117,7 +117,7 @@
 (define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
 
-;;;; ELSCREEN
+;;;; Make Evil more Vim Like
 (require 'elscreen-outof-limit-mode)
 (elscreen-outof-limit-mode t)
 
