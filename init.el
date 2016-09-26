@@ -155,8 +155,7 @@ otherwise, close current tab (elscreen)."
 					; elscreen)
      (one-elscreen
       (evil-quit)
-      nil)
-     )))
+      nil))))
 
 (defun vimlike-write-quit ()
   "Vimlike ':wq' behavior: write then close..."
