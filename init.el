@@ -171,6 +171,7 @@ otherwise, close current tab (elscreen)."
 (require 'evil-numbers)
 (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
 (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
+
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
 (define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file-newtab)
 
