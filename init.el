@@ -196,6 +196,7 @@ otherwise, close current tab (elscreen)."
 ;(display-time-mode t)
 
 ;;;; YAML mode
+
 (add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
 (require 'yaml-mode)
 (add-hook 'yaml-mode-hook (lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
