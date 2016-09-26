@@ -138,7 +138,7 @@
 otherwise, close current tab (elscreen)."
   (interactive)
   (let ((one-elscreen (elscreen-one-screen-p))
-	(one-window (one-window-p)))
+	      (one-window (one-window-p)))
     (cond
 					; if current tab has split windows in it, close the current live window
      ((not one-window)
