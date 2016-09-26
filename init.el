@@ -174,7 +174,7 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
 (define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file-newtab)
 
-;;; esc quits !
+;;; esc quits
 (defun minibuffer-keyboard-quit ()
   "Abort recursive edit.
     In Delete Selection mode, if the mark is active, just deactivate it;
