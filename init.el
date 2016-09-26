@@ -118,9 +118,12 @@
 
 
 ;;;; Make Evil more Vim Like
+
+;;; No limit to number of tabs
 (require 'elscreen-outof-limit-mode)
 (elscreen-outof-limit-mode t)
 
+;;; Filename expansion
 ;(require 'hippie-expand)
 (define-key evil-insert-state-map (kbd "C-x C-f") 'my-expand-file-name-at-point)
 (defun my-expand-file-name-at-point ()
@@ -129,6 +132,7 @@
   (let ((hippie-expand-try-functions-list '(try-complete-file-name-partially try-complete-file-name)))
     (call-interactively 'hippie-expand)))
 
+;;; :q
 (defun vimlike-quit ()
   "Vimlike ':q' behavior: close current window if there are split windows;
 otherwise, close current tab (elscreen)."
@@ -163,6 +167,7 @@ otherwise, close current tab (elscreen)."
 (evil-ex-define-cmd "q" 'vimlike-quit)
 (evil-ex-define-cmd "wq" 'vimlike-write-quit)
 
+;;; numbers
 (require 'evil-numbers)
 (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
 (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
