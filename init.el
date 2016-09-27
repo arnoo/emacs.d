@@ -424,9 +424,18 @@ otherwise, close current tab (elscreen)."
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
-(setq orig-fiplr-find-root (symbol-function 'fiplr-find-root))
+(defun his-tracing-function (orig-fun &rest args)
+       (message "display-buffer called with args %S" args)
+       (let ((res (apply orig-fun args)))
+         (message "display-buffer returned %S" res)
+         res))
 
-(defun fiplr-find-root (path root-markers)
+     (advice-add 'display-buffer :around #'his-tracing-function)
+
+(setq orig-fiplr-find-root (symbol-function 'fiplr-find-root))
+(defadvice 
+
+(defun my-fiplr-find-root (orig-fun path root-markers)
   (let ((orig-root (funcall 'orig-fiplr-find-root path root-markers)))
     (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kp")
