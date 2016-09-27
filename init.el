@@ -428,7 +428,7 @@ otherwise, close current tab (elscreen)."
   (let ((orig-root (funcall 'orig-fiplr-find-root path root-markers)))
     (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kp")
-          ((= (substring orig-root 0 25) "/home/arno/workspace/fc/")
+          ((= (substring orig-root 0 24) "/home/arno/workspace/fc/")
             "/home/arno/workspace/fc/")
           (t orig-root))))
 
