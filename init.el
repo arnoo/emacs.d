@@ -415,12 +415,9 @@ otherwise, close current tab (elscreen)."
         #'evil-tabs-tabedit))
 (evil-mode 1)
 
-(setq fiplr-ignored-globs '((directories (".git" ".svn" "node_modules"))
-                            (files ("*.jpg" "*.png" "*.zip" "*~"))))
-
 (setq fiplr-ignored-globs
       '((directories
-         (".git" "doc" ".tmp" "dist" "node_modules"))
+         (".git" "doc" ".svn" ".tmp" "dist" "node_modules"))
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
