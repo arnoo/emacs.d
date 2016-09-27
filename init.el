@@ -424,11 +424,6 @@ otherwise, close current tab (elscreen)."
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
-       (message "display-buffer called with args %S" args)
-       (let ((res (apply orig-fun args)))
-         (message "display-buffer returned %S" res)
-         res))
-
 (defun my-fiplr-find-root (orig-fiplr-find-root path root-markers)
   (let ((orig-root (funcall 'orig-fiplr-find-root path root-markers)))
     (cond ((< (length (split-string orig-root "/")) 4)
