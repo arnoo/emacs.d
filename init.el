@@ -429,8 +429,6 @@ otherwise, close current tab (elscreen)."
          (message "display-buffer returned %S" res)
          res))
 
-     (advice-add 'display-buffer :around #'his-tracing-function)
-
 (defun my-fiplr-find-root (orig-fiplr-find-root path root-markers)
   (let ((orig-root (funcall 'orig-fiplr-find-root path root-markers)))
     (cond ((< (length (split-string orig-root "/")) 4)
