@@ -432,7 +432,7 @@ otherwise, close current tab (elscreen)."
             "/home/arno/workspace/fc/")
           (t orig-root))))
 
-(advice-add 'my-fiplr-find-root :around #'fiplr-find-root)
+(advice-add #'fiplr-find-root :around 'my-fiplr-find-root)
 
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
