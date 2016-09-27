@@ -426,7 +426,7 @@ otherwise, close current tab (elscreen)."
 
 (defun my-fiplr-find-root (orig-fiplr-find-root path root-markers)
   (let ((orig-root (funcall orig-fiplr-find-root path root-markers)))
-    (cond ((< (length (split-string orig-root "/")) 4)
+    (cond ((or (not orig-root) (< (length (split-string orig-root "/")) 4))
            "/home/arno/dev/kp")
           ((and (> (length orig-root) 24) (string= (substring orig-root 0 24) "/home/arno/workspace/fc/"))
             "/home/arno/workspace/fc/")
