@@ -424,7 +424,6 @@ otherwise, close current tab (elscreen)."
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
-(defun his-tracing-function (orig-fun &rest args)
        (message "display-buffer called with args %S" args)
        (let ((res (apply orig-fun args)))
          (message "display-buffer returned %S" res)
@@ -432,16 +431,15 @@ otherwise, close current tab (elscreen)."
 
      (advice-add 'display-buffer :around #'his-tracing-function)
 
-(setq orig-fiplr-find-root (symbol-function 'fiplr-find-root))
-(defadvice 
-
-(defun my-fiplr-find-root (orig-fun path root-markers)
+(defun my-fiplr-find-root (orig-fiplr-find-root path root-markers)
   (let ((orig-root (funcall 'orig-fiplr-find-root path root-markers)))
     (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kp")
           ((= (substring orig-root 0 25) "/home/arno/workspace/fc/")
             "/home/arno/workspace/fc/")
           (t orig-root))))
+
+(advice-add 'my-fiplr-find-root :around #'fiplr-find-root)
 
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
