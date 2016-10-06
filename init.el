@@ -120,6 +120,7 @@
 ;;;; Speedbar
 
 (require 'sr-speedbar)
+(sr-speedbar-open)
 
 ;;;; Make Evil more Vim Like
 
