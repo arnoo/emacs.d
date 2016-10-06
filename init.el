@@ -117,10 +117,16 @@
 (define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
 
-;;;; Speedbar
+;;;; file tree
 
-(require 'sr-speedbar)
-(sr-speedbar-open)
+;(require 'sr-speedbar)
+;(sr-speedbar-open)
+  (add-hook 'neotree-mode-hook
+            (lambda ()
+              (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+              (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
+              (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+              (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
 
 ;;;; Make Evil more Vim Like
 
