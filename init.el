@@ -117,6 +117,10 @@
 (define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
 
+;;;; Speedbar
+
+(require 'sr-speedbar)
+
 ;;;; Make Evil more Vim Like
 
 ;;; No limit to number of tabs
