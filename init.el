@@ -84,6 +84,7 @@
         cl-lib
         color
         color-theme
+        dumb-jump
         evil
         evil-numbers
         evil-tabs
