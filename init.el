@@ -276,7 +276,7 @@ otherwise, close current tab (elscreen)."
 
 ; *** JAVASCRIPT ***
 
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" nil))
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go-other-window))
 
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
@@ -288,6 +288,7 @@ otherwise, close current tab (elscreen)."
          (tern-mode t)
          (setq tern-command (cons (executable-find "tern") '()))
          (evil-define-key 'normal tern-mode-keymap "\C-]" 'tern-find-definition)
+         
          (eval-after-load 'tern
              '(progn
                (require 'tern-auto-complete)
