@@ -38,6 +38,7 @@
 ; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
 
+(define-key global-map (kbd "RET") 'newline-and-indent)
 (setf indent-tabs-mode nil) 
 (setq make-backup-files nil)
 (setq initial-scratch-message nil)
@@ -226,7 +227,6 @@ otherwise, close current tab (elscreen)."
 
 (add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
 (require 'yaml-mode)
-(define-key global-map (kbd "RET") 'newline-and-indent)
 
 (require 'php-mode)
 (require 'scala-mode2)
