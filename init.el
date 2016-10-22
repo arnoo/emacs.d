@@ -226,7 +226,7 @@ otherwise, close current tab (elscreen)."
 
 (add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
 (require 'yaml-mode)
-(add-hook 'yaml-mode-hook (lambda () (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+(define-key global-map (kbd "RET") 'newline-and-indent)
 
 (require 'php-mode)
 (require 'scala-mode2)
@@ -276,7 +276,7 @@ otherwise, close current tab (elscreen)."
 
 ; *** JAVASCRIPT ***
 
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go-other-window))
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
