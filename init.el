@@ -209,6 +209,7 @@ otherwise, close current tab (elscreen)."
     (interactive)
     (break)
     (evil-repeat count nil))
+(define-key evil-normal-state-map "." 'my-repeat)
 
 ;;; esc quits
 (defun minibuffer-keyboard-quit ()
