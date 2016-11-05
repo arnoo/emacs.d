@@ -207,7 +207,6 @@ otherwise, close current tab (elscreen)."
 (evil-define-command my-repeat (&optional count)
     :repeat ignore
     (interactive)
-    (edebug)
     (evil-repeat count nil))
 (define-key evil-normal-state-map "." 'my-repeat)
 
