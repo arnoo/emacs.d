@@ -207,7 +207,7 @@ otherwise, close current tab (elscreen)."
 (evil-define-command my-repeat (&optional count)
     :repeat ignore
     (interactive)
-    (evil-repeat count t))
+    (evil-repeat count nil))
 
 ;;; esc quits
 (defun minibuffer-keyboard-quit ()
