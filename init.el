@@ -449,7 +449,7 @@
 ;  ;(unless (= (fiplr-root "/home/arno"))
 ;    (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs
 ;        #'evil-tabs-tabedit))
-;(evil-mode 1)
+(evil-mode 1)
 ;
 ;(setq fiplr-ignored-globs
 ;      '((directories
