@@ -202,6 +202,13 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
 (define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file-newtab)
 
+;;; by default, repeat should include the count of the original command !
+
+(evil-define-command my-repeat (&optional count)
+    :repeat ignore
+    (interactive)
+(evil-repeat count t))
+
 ;;; esc quits
 (defun minibuffer-keyboard-quit ()
   "Abort recursive edit.
