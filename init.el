@@ -207,6 +207,7 @@ otherwise, close current tab (elscreen)."
 (evil-define-command my-repeat (&optional count)
     :repeat ignore
     (interactive)
+    (break)
     (evil-repeat count nil))
 
 ;;; esc quits
