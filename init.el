@@ -50,7 +50,7 @@
     (concat " " (propertize
 		 "%b"
 		 'face face)))
-face pad))
+  face pad))
 
 ; *** MELPA ***
 (require 'package)
