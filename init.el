@@ -487,6 +487,7 @@ otherwise, close current tab (elscreen)."
 (require 'powerline)
 
 (defun powerline-root ()
+  buffer-file-name
   )
 
 (defpowerline buffer-id   (propertize (car (propertized-buffer-identification (concat (powerline-root) "%b")))
