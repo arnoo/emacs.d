@@ -493,7 +493,6 @@ otherwise, close current tab (elscreen)."
                 '("%e"
                   (:eval
                    (let* ((active (powerline-selected-window-active))
-                          (powerline-raw " ")
                           (mode-line (if active 'mode-line 'mode-line-inactive))
                           (face1 (if active 'powerline-active1 'powerline-inactive1))
                           (face2 (if active 'powerline-active2 'powerline-inactive2))
