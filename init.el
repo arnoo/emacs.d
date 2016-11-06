@@ -451,9 +451,7 @@ otherwise, close current tab (elscreen)."
 (require 'fiplr)
 (defun fiplr-find-file-newtab ()
   (interactive)
-  ;(unless (= (fiplr-root "/home/arno"))
-    (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs
-        #'evil-tabs-tabedit))
+  (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs #'evil-tabs-tabedit))
 
 (setq fiplr-ignored-globs
       '((directories
