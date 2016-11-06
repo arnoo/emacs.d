@@ -483,10 +483,10 @@ otherwise, close current tab (elscreen)."
 (add-to-list 'load-path "~/.emacs.d/emacs-powerline")
 (require 'powerline)
 
-(defun powerline-root ()
+(defun powerline-buffer-name ()
   (replace-regexp-in-string (fiplr-root) "" buffer-file-name))
 
-(defpowerline buffer-id   (propertize (car (propertized-buffer-identification (powerline-root)))
+(defpowerline buffer-id   (propertize (car (propertized-buffer-identification (powerline-buffer-name)))
                                       'face (powerline-make-face color1)))
 
 ;----- ORG-MODE STUFF
