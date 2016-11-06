@@ -51,6 +51,7 @@
 		 "toto"
 		 'face face)))
   face pad))
+(advice-add #'powerline-buffer-id :around 'my-powerline-buffer-id)
 
 ; *** MELPA ***
 (require 'package)
