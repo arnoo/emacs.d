@@ -463,7 +463,6 @@ otherwise, close current tab (elscreen)."
 
 (defun my-fiplr-root (orig-fiplr-root)
   (let ((orig-root (funcall orig-fiplr-root)))
-    (message "orig-root %S" orig-root)
     (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kravpass/")
           ((or (and (>= (length orig-root) 24)
