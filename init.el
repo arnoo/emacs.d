@@ -147,7 +147,7 @@
 (elscreen-outof-limit-mode t)
 
 ;;; Filename expansion
-;(require 'hippie-expand)
+(require 'hippie-expand)
 (define-key evil-insert-state-map (kbd "C-x C-f") 'my-expand-file-name-at-point)
 (defun my-expand-file-name-at-point ()
   "Use hippie-expand to expand the filename"
