@@ -47,7 +47,7 @@
 (defun my-powerline-buffer-id (&optional face pad)
   (powerline-raw
    (format-mode-line
-    (concat " " (propertize
+    (concat "kjhkljhl " (propertize
 		 "toto"
 		 'face face)))
   face pad))
