@@ -487,10 +487,7 @@ otherwise, close current tab (elscreen)."
 (require 'powerline)
 
 (defun powerline-root ()
-  (let ((root (fiplr-root)))
-  (when (fiplr-root)
-  buffer-file-name
-  )
+  (replace-regexp-in-string (fiplr-root) "" buffer-file-name))
 
 (defpowerline buffer-id   (propertize (car (propertized-buffer-identification (concat (powerline-root) "%b")))
                                       'face (powerline-make-face color1)))
