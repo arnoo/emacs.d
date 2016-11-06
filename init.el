@@ -62,6 +62,7 @@
         evil-numbers
         evil-tabs
         scala-mode2
+        hippie-expand
         js2-mode
         fiplr
         markdown-mode
