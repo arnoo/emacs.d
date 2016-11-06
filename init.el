@@ -486,6 +486,9 @@ otherwise, close current tab (elscreen)."
 (add-to-list 'load-path "~/.emacs.d/emacs-powerline")
 (require 'powerline)
 
+(defun powerline-root ()
+  )
+
 (defpowerline buffer-id   (propertize (car (propertized-buffer-identification (concat (powerline-root) "%b")))
                                       'face (powerline-make-face color1)))
 
