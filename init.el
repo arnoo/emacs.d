@@ -38,41 +38,20 @@
 ; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
 
-(define-key global-map (kbd "RET") 'newline-and-indent)
-(setf indent-tabs-mode nil) 
-(setq make-backup-files nil)
-(setq initial-scratch-message nil)
-(show-paren-mode 1)
-(setq show-paren-delay 0)
-(tool-bar-mode -1)
-(savehist-mode 1)
-(scroll-bar-mode -1)
-(setq column-number-mode t)
-(global-unset-key (kbd "<f11>"))
-(set-face-attribute 'default nil :height 120)
-(defalias 'yes-or-no-p 'y-or-n-p)
-
-;;; Indentation ...
-(electric-indent-local-mode -1)
-(add-hook 'after-change-major-mode-hook
-          '(lambda () (electric-indent-mode -1)))
-(setq-default indent-tabs-mode nil)
-(global-set-key (kbd "TAB") 'tab-to-tab-stop)
-
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
-
-(defun set-tab-width (x)
-  (setq tab-width x)
-  (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
-
-(set-tab-width 2)
-
 ;;; Make underscore a word character
 (add-hook 'after-change-major-mode-hook
           '(lambda () (modify-syntax-entry ?_ "w")))
 
 (require 'uniquify)
+
+(defun my-powerline-buffer-id (&optional face pad)
+  (powerline-raw
+   (format-mode-line
+    (concat " " (propertize
+		 "%b"
+		 'face face)))
+face pad))
+
 ; *** MELPA ***
 (require 'package)
 (add-to-list 'package-archives
@@ -86,6 +65,7 @@
         color
         color-theme
         dumb-jump
+        dtrt-indent
         evil
         evil-numbers
         evil-tabs
@@ -112,6 +92,39 @@
     (mapc 'package-install uninstalled-packages)))
 
 (add-hook 'after-init-hook 'global-company-mode)
+
+
+;;; Indentation ...
+(define-key global-map (kbd "RET") 'newline-and-indent)
+(dtrt-indent-mode 1)
+(setf indent-tabs-mode nil) 
+(setq make-backup-files nil)
+(setq initial-scratch-message nil)
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+(tool-bar-mode -1)
+(savehist-mode 1)
+(scroll-bar-mode -1)
+(setq column-number-mode t)
+(global-unset-key (kbd "<f11>"))
+(set-face-attribute 'default nil :height 120)
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+(electric-indent-local-mode -1)
+(add-hook 'after-change-major-mode-hook
+          '(lambda () (electric-indent-mode -1)))
+(setq-default indent-tabs-mode nil)
+(global-set-key (kbd "TAB") 'tab-to-tab-stop)
+
+(defvaralias 'c-basic-offset 'tab-width)
+(defvaralias 'cperl-indent-level 'tab-width)
+
+(defun set-tab-width (x)
+  (setq tab-width x)
+  (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
+
+(set-tab-width 2)
+
 
 ;;;; Colors
 (require 'color-theme)
@@ -296,7 +309,7 @@ otherwise, close current tab (elscreen)."
          (autoload 'tern-mode "tern.el" nil t)
          (tern-mode t)
          (setq tern-command (cons (executable-find "tern") '()))
-         ;(evil-define-key 'normal tern-mode-keymap "\C-]" 'tern-find-definition)
+         (evil-define-key 'normal tern-mode-keymap "\C-]" 'tern-find-definition)
          (eval-after-load 'tern
              '(progn
                (require 'tern-auto-complete)
@@ -456,15 +469,18 @@ otherwise, close current tab (elscreen)."
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
-(defun my-fiplr-find-root (orig-fiplr-find-root path root-markers)
-  (let ((orig-root (funcall orig-fiplr-find-root path root-markers)))
-    (cond ((or (not orig-root) (< (length (split-string orig-root "/")) 4))
+(defun my-fiplr-root (orig-fiplr-root)
+  (let ((orig-root (funcall orig-fiplr-root)))
+    (message "orig-root %S" orig-root)
+    (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kravpass/")
-          ((and (> (length orig-root) 24) (string= (substring orig-root 0 24) "/home/arno/workspace/fc/"))
+          ((or (and (>= (length orig-root) 24)
+                    (string= (substring orig-root 0 24) "/home/arno/workspace/fc/"))
+               (string= orig-root "/home/arno/workspace/fc/"))
             "/home/arno/workspace/fc/")
           (t orig-root))))
 
-(advice-add #'fiplr-find-root :around 'my-fiplr-find-root)
+(advice-add #'fiplr-root :around 'my-fiplr-root)
 
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
@@ -631,6 +647,11 @@ otherwise, close current tab (elscreen)."
       )))
 (setq org-export-htmlize-output-type 'css)
 
+
+; Don't blink cursor in image mode
+
+(add-hook 'image-minor-mode-hook
+  (setq blink-cursor-mode nil))
 
 ; set up Emacs for transparent encryption and decryption
 (require 'epa-file)
