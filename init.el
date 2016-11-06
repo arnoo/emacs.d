@@ -44,16 +44,6 @@
 
 (require 'uniquify)
 
-;(defun my-powerline-buffer-id (&optional face pad)
-;  (powerline-raw
-;   (format-mode-line
-;    (concat "kjhkljhl " (propertize
-;		 "toto"
-;		 'face face)))
-;  face pad))
-;
-;(advice-add #'powerline-buffer-id :around 'my-powerline-buffer-id)
-
 ; *** MELPA ***
 (require 'package)
 (add-to-list 'package-archives
