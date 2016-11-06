@@ -489,7 +489,6 @@ otherwise, close current tab (elscreen)."
 (defpowerline buffer-id   (propertize (car (propertized-buffer-identification (powerline-root)))
                                       'face (powerline-make-face color1)))
 
-
 ;----- ORG-MODE STUFF
 (require 'org-install)
 (setq org-log-done t)
