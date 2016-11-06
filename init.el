@@ -17,23 +17,23 @@
   (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
 (add-hook 'window-setup-hook 'set-maximized t)
 
-;(defvar min-timer)
-;(defun schedule-minimize ()
-;  (when (eq (frame-parameter (selected-frame) 'fullscreen)
-;            'maximized)
-;    (setq min-timer (run-at-time "1 sec" nil 'minimize-other-windows))))
-;
-;(defun minimize-other-windows ()
-;  (shell-command (concat "bash -c 'xdotool search --desktop `xdotool get_desktop` --name \".*\" | grep -v " (frame-parameter (selected-frame) 'outer-window-id) " | xargs -r -n 1 xdotool windowminimize'")))
-;
-;; xfwm sends a focus-in event just prior to switching to another workspace, which ruins everything...
-;(defun prevent-minimize ()
-;  (when (and (boundp 'min-timer) min-timer)
-;     (cancel-timer min-timer)
-;     (setq min-timer nil)))
-;
-;(add-hook 'focus-in-hook 'schedule-minimize)
-;(add-hook 'focus-out-hook 'prevent-minimize)
+(defvar min-timer)
+(defun schedule-minimize ()
+  (when (eq (frame-parameter (selected-frame) 'fullscreen)
+            'maximized)
+    (setq min-timer (run-at-time "1 sec" nil 'minimize-other-windows))))
+
+(defun minimize-other-windows ()
+  (shell-command (concat "bash -c 'xdotool search --desktop `xdotool get_desktop` --name \".*\" | grep -v " (frame-parameter (selected-frame) 'outer-window-id) " | xargs -r -n 1 xdotool windowminimize'")))
+
+; xfwm sends a focus-in event just prior to switching to another workspace, which ruins everything...
+(defun prevent-minimize ()
+  (when (and (boundp 'min-timer) min-timer)
+     (cancel-timer min-timer)
+     (setq min-timer nil)))
+
+(add-hook 'focus-in-hook 'schedule-minimize)
+(add-hook 'focus-out-hook 'prevent-minimize)
 
 ; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
