@@ -138,6 +138,7 @@
   (ag-project (thing-at-point 'symbol)))
 (define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 
 ;;;; file tree
 
@@ -289,8 +290,6 @@ otherwise, close current tab (elscreen)."
 (define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
 
 ; *** JAVASCRIPT ***
-
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 
 (add-hook 'js-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
