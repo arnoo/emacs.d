@@ -42,7 +42,7 @@
 (add-hook 'after-change-major-mode-hook
           '(lambda () (modify-syntax-entry ?_ "w")))
 
-;(require 'uniquify)
+(require 'uniquify)
 
 ; *** MELPA ***
 (require 'package)
