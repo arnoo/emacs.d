@@ -540,6 +540,8 @@ otherwise, close current tab (elscreen)."
 			     (powerline-fill face2 (powerline-width rhs))
 (powerline-render rhs)))))))
 
+(powerline-arno-theme)
+
 ;----- ORG-MODE STUFF
 (require 'org-install)
 (setq org-log-done t)
