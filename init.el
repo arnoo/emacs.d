@@ -487,6 +487,7 @@ otherwise, close current tab (elscreen)."
 (require 'powerline)
 
 (defun powerline-root ()
+  (let ((root (fiplr-root)))
   (when (fiplr-root)
   buffer-file-name
   )
