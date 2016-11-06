@@ -52,7 +52,7 @@
 		 'face face)))
   face pad))
 
-(advice-add #'powerline-buffer-id :override 'my-powerline-buffer-id)
+(advice-add #'powerline-buffer-id :around 'my-powerline-buffer-id)
 
 ; *** MELPA ***
 (require 'package)
