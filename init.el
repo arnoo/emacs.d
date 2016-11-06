@@ -48,7 +48,7 @@
   (powerline-raw
    (format-mode-line
     (concat " " (propertize
-		 "%b"
+		 "toto"
 		 'face face)))
   face pad))
 
