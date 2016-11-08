@@ -62,7 +62,6 @@
         evil-numbers
         evil-tabs
         scala-mode2
-        hippie-expand
         js2-mode
         fiplr
         markdown-mode
@@ -148,13 +147,7 @@
 (elscreen-outof-limit-mode t)
 
 ;;; Filename expansion
-(require 'hippie-expand)
-(define-key evil-insert-state-map (kbd "C-x C-f") 'my-expand-file-name-at-point)
-(defun my-expand-file-name-at-point ()
-  "Use hippie-expand to expand the filename"
-  (interactive)
-  (let ((hippie-expand-try-functions-list '(try-complete-file-name-partially try-complete-file-name)))
-    (call-interactively 'hippie-expand)))
+(define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
 
 ;;; :q
 (defun vimlike-quit ()
@@ -171,7 +164,7 @@ otherwise, close current tab (elscreen)."
       nil)
 					; if there are multiple elscreens (tabs), close the current elscreen
      ((not one-elscreen)
-      (kill-buffer)
+      ;(kill-buffer)
       (elscreen-kill)
       nil)
 					; if there is only one elscreen, just try to quit (calling elscreen-kill
