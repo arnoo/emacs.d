@@ -435,6 +435,8 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs #'evil-tabs-tabedit))
 
+(setq *grizzl-read-max-results* 20)
+
 (setq fiplr-ignored-globs
       '((directories
          (".git" "doc" ".svn" ".tmp" "dist" "node_modules"))
