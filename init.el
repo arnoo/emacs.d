@@ -294,7 +294,6 @@ otherwise, close current tab (elscreen)."
     (when (and bfn (string-match "/node_modules/" bvn))
       (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
         (read-only-mode)))))
-            
 
 ; *** LATEX ***
 
