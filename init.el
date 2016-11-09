@@ -289,6 +289,13 @@ otherwise, close current tab (elscreen)."
                (require 'tern-auto-complete)
                (tern-ac-setup)))))
 
+(add-hook 'find-file-hook
+  (let ((bfn (buffer-file-name)))
+    (when (and bfn (string-match "/node_modules/" bvn))
+      (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
+        (read-only-mode)))))
+            
+
 ; *** LATEX ***
 
 (defun arno-latex-mode ()
