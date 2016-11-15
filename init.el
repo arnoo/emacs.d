@@ -450,7 +450,7 @@ otherwise, close current tab (elscreen)."
 
 (setq fiplr-ignored-globs
       '((directories
-         (".git" "doc" ".svn" ".tmp" "dist" "node_modules"))
+         (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises"))
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
 
