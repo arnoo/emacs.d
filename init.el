@@ -290,10 +290,15 @@ otherwise, close current tab (elscreen)."
                (tern-ac-setup)))))
 
 (add-hook 'find-file-hook
-  (let ((bfn buffer-file-name))
-    (when (and bfn (string-match "/node_modules/" bvn))
-      (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
-        (read-only-mode)))))
+  (lambda ()
+    (let ((bfn buffer-file-name))
+      (when (and bfn (string-match "/node_modules/" bfn))
+        (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
+          (read-only-mode)))
+      (when (and bfn (string-match "/france-entreprises/" bfn))
+        (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
+          (read-only-mode)))
+      )))
 
 ; *** LATEX ***
 
