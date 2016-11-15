@@ -296,7 +296,7 @@ otherwise, close current tab (elscreen)."
         (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
           (read-only-mode)))
       (when (and bfn (string-match "/france-entreprises/" bfn))
-        (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
+        (unless (y-or-n-p "WARNING: are you sure you want to edit a file from france-entreprises (n will set read-only mode) ?")
           (read-only-mode)))
       )))
 
