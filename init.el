@@ -231,7 +231,7 @@ otherwise, close current tab (elscreen)."
 
 (add-hook 'php-mode-hook
    (lambda ()
-      (evil-define-key 'normal lisp-mode-map (kbd "K") 'my-php-symbol-lookup)))
+      (evil-define-key 'normal php-mode-map (kbd "K") 'my-php-symbol-lookup)))
 
 (defun my-php-symbol-lookup ()
   (interactive)
