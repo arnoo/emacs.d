@@ -226,7 +226,21 @@ otherwise, close current tab (elscreen)."
 (add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
 (require 'yaml-mode)
 
+;;;; PHP mode
 (require 'php-mode)
+
+(add-hook 'php-mode-hook
+   (lambda ()
+      (evil-define-key 'normal lisp-mode-map (kbd "K") 'my-php-symbol-lookup)))
+
+(defun my-php-symbol-lookup ()
+  (interactive)
+  (let ((symbol (symbol-at-point)))
+    (if (not symbol)
+        (message "No symbol at point.")
+        (browse-url (concat "http://php.net/manual-lookup.php?pattern="
+                            (symbol-name symbol))))))
+
 (require 'scala-mode2)
 
 (add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
