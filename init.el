@@ -97,6 +97,7 @@
 (tool-bar-mode -1)
 (savehist-mode 1)
 (scroll-bar-mode -1)
+(setq require-final-newline nil)
 (setq column-number-mode t)
 (global-unset-key (kbd "<f11>"))
 (set-face-attribute 'default nil :height 120)
