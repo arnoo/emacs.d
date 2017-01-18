@@ -140,6 +140,7 @@
 (define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
+(setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
 ;;;; Make Evil more Vim Like
 
