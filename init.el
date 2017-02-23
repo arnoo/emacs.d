@@ -86,6 +86,8 @@
 (add-hook 'after-init-hook 'global-company-mode)
 
 
+(define-key global-map (kbd "<C-next>") 'elscreen-next)
+(define-key global-map (kbd "<C-prior>") 'elscreen-previous)
 ;;; Indentation ...
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (dtrt-indent-mode 1)
