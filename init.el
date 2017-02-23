@@ -145,6 +145,7 @@
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
 (defun my-next-error (orig-next-error)
+  (interactive)
   (elscreen-create)
   (orig-next-error))
 
