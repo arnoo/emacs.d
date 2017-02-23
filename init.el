@@ -144,13 +144,6 @@
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
-(defun my-next-error (orig-next-error)
-  (interactive)
-  (elscreen-create)
-  (orig-next-error))
-
-(advice-add #'next-error :around 'my-next-error)
-
 ;;;; Make Evil more Vim Like
 
 ;;; No limit to number of tabs
