@@ -148,7 +148,7 @@
   (elscreen-create)
   (orig-next-error))
 
-(advice-add #'fiplr-root :around 'my-fiplr-root)
+(advice-add #'next-error :around 'my-next-error)
 
 ;;;; Make Evil more Vim Like
 
