@@ -69,7 +69,8 @@
         company
         company-tern
         ag
-        neotree))
+        neotree
+        web-mode))
 
 ; Install my-packages as necessary
 (defun filter (condp lst)
