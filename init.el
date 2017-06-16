@@ -70,6 +70,7 @@
         company-tern
         ag
         neotree
+        wanderlust
         web-mode))
 
 ; Install my-packages as necessary
@@ -85,6 +86,8 @@
     (mapc 'package-install uninstalled-packages)))
 
 (add-hook 'after-init-hook 'global-company-mode)
+
+(autoload 'wl "wl" "Wanderlust" t)
 
 
 (define-key global-map (kbd "<C-next>") 'elscreen-next)
@@ -144,6 +147,18 @@
 
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
+
+;;;; WEB-MODE
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.ejs\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
 ;;;; Make Evil more Vim Like
 
@@ -317,6 +332,8 @@ otherwise, close current tab (elscreen)."
       (when (and bfn (string-match "/france-entreprises/" bfn))
         (unless (y-or-n-p "WARNING: are you sure you want to edit a file from france-entreprises (n will set read-only mode) ?")
           (read-only-mode)))
+      (when (and bfn (string-match "public/images/logos-04V.svg" bfn))
+          (fiplr-find-file-newtab))
       )))
 
 ; *** LATEX ***
@@ -469,18 +486,18 @@ otherwise, close current tab (elscreen)."
 
 (setq fiplr-ignored-globs
       '((directories
-         (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises"))
+         (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node"))
         (files
-         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o"))))
+         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks"))))
 
 (defun my-fiplr-root (orig-fiplr-root)
   (let ((orig-root (funcall orig-fiplr-root)))
     (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kravpass/")
-          ((or (and (>= (length orig-root) 24)
-                    (string= (substring orig-root 0 24) "/home/arno/workspace/fc/"))
-               (string= orig-root "/home/arno/workspace/fc/"))
-            "/home/arno/workspace/fc/")
+          ;((or (and (>= (length orig-root) 24)
+          ;          (string= (substring orig-root 0 24) "/home/arno/workspace/fc/"))
+          ;     (string= orig-root "/home/arno/workspace/fc/"))
+          ;  "/home/arno/workspace/fc/")
           (t orig-root))))
 
 (advice-add #'fiplr-root :around 'my-fiplr-root)
