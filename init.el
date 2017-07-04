@@ -87,8 +87,6 @@
 
 (add-hook 'after-init-hook 'global-company-mode)
 
-(autoload 'wl "wl" "Wanderlust" t)
-
 
 (define-key global-map (kbd "<C-next>") 'elscreen-next)
 (define-key global-map (kbd "<C-prior>") 'elscreen-previous)
