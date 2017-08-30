@@ -54,7 +54,6 @@
 (setq my-packages
       '(package
         cl-lib
-        wdired
         color
         color-theme
         dumb-jump
@@ -72,6 +71,7 @@
         ag
         neotree
         wanderlust
+        wdired
         web-mode))
 
 ; Install my-packages as necessary
