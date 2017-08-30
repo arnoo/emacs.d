@@ -70,7 +70,7 @@
         company-tern
         ag
         neotree
-        wanderlust
+        ;wanderlust
         wdired
         web-mode))
 
