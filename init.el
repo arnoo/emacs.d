@@ -54,6 +54,7 @@
 (setq my-packages
       '(package
         cl-lib
+        wdired
         color
         color-theme
         dumb-jump
