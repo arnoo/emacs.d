@@ -69,7 +69,7 @@
         company
         company-tern
         ag
-        neotree
+        ;neotree
         ;wanderlust
         wdired
         web-mode))
