@@ -285,7 +285,7 @@ otherwise, close current tab (elscreen)."
   (setq ispell-really-hunspell t))
 
 (dolist (hook '(text-mode-hook org-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
+  (add-hook hook (lambda () (turn-on-flyspell))))
 
 (defun fd-switch-dictionary()
    (interactive)
