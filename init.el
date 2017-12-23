@@ -68,6 +68,7 @@
         evil-search-highlight-persist
         company
         company-tern
+        ob-iptyhon
         ag
         ;neotree
         ;wanderlust
