@@ -534,6 +534,12 @@ otherwise, close current tab (elscreen)."
         ("omail" . "https://mail.google.com/a/octo.com/#mbox/%s")
         ))
 
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((ipython . t)
+   ;; other languages..
+   ))
+
 ;(defun org-display-inline-images (&optional include-linked refresh beg end)
 ;   "Display inline images.
 ; 
