@@ -528,7 +528,20 @@ otherwise, close current tab (elscreen)."
 (setq org-image-actual-width 300)
 (setq org-startup-truncated nil) ; wrap lines
 (setq org-hide-leading-stars t)
+(setq org-src-fontify-natively t)
 (global-set-key (kbd "<f7>") 'toggle-truncate-lines)
+
+(custom-set-faces
+  '(org-level-1 ((t (:inherit outline-1 :height 1.5))))
+  '(org-level-2 ((t (:inherit outline-2 :height 1.4))))
+  '(org-level-3 ((t (:inherit outline-3 :height 1.3))))
+  '(org-level-4 ((t (:inherit outline-4 :height 1.2))))
+  '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
+
+(add-hook 'js-mode-hook
+   (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
+         (push '("return" . ?\u2192) prettify-symbols-alist)
+         (prettify-symbols-mode)
 
 (setq org-link-abbrev-alist
       '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
@@ -541,7 +554,7 @@ otherwise, close current tab (elscreen)."
  'org-babel-load-languages
  '((lisp . t)
    (python . t)
-   ;; other languages..
+   (sh . t)
    ))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
