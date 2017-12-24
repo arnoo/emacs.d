@@ -128,7 +128,7 @@
 (require 'color-theme)
 (setq color-theme-is-global t)
 (color-theme-initialize)
-(color-theme-standard)
+(color-theme-leuven)
 
 (undo-tree-mode 1)
 
