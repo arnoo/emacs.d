@@ -68,7 +68,6 @@
         evil-search-highlight-persist
         company
         company-tern
-        ob-ipython
         ag
         ;neotree
         ;wanderlust
@@ -528,17 +527,24 @@ otherwise, close current tab (elscreen)."
 (setq org-startup-folded 'show-everything)
 (setq org-image-actual-width 300)
 (setq org-startup-truncated nil) ; wrap lines
+(setq org-hide-leading-stars t)
+(global-set-key (kbd "<f7>") 'toggle-truncate-lines)
 
 (setq org-link-abbrev-alist
       '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
         ("omail" . "https://mail.google.com/a/octo.com/#mbox/%s")
         ))
 
+(setq org-confirm-babel-evaluate nil)
+
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((ipython . t)
+ '((lisp . t)
+   (python . t)
    ;; other languages..
    ))
+
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
 ;(defun org-display-inline-images (&optional include-linked refresh beg end)
 ;   "Display inline images.
