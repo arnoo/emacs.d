@@ -538,10 +538,15 @@ otherwise, close current tab (elscreen)."
   '(org-level-4 ((t (:inherit outline-4 :height 1.2))))
   '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
 
-(add-hook 'org-mode-hook
-   (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
-         (push '("return" . ?\u2192) prettify-symbols-alist)
-         (prettify-symbols-mode)))
+(add-hook 'org-mode-hook 'org-indent-mode)
+;(add-hook 'org-mode-hook
+;   (lambda ()
+;     (push '("|" . ?│) prettify-symbols-alist)
+;     (push '("-" . ?─) prettify-symbols-alist)
+;     (push '("+" . ?┼) prettify-symbols-alist)
+;     (prettify-symbols-mode)
+;     (org-indent-mode)))
+(require 'org-pretty-table)
 
 (setq org-link-abbrev-alist
       '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
