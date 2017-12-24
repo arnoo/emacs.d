@@ -541,7 +541,7 @@ otherwise, close current tab (elscreen)."
 (add-hook 'org-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
-         (prettify-symbols-mode)
+         (prettify-symbols-mode)))
 
 (setq org-link-abbrev-alist
       '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
