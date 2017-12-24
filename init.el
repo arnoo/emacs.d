@@ -547,6 +547,7 @@ otherwise, close current tab (elscreen)."
 ;     (prettify-symbols-mode)
 ;     (org-indent-mode)))
 (require 'org-pretty-table)
+(org-pretty-table-mode 1)
 
 (setq org-link-abbrev-alist
       '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
