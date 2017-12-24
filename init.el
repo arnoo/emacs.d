@@ -538,7 +538,7 @@ otherwise, close current tab (elscreen)."
   '(org-level-4 ((t (:inherit outline-4 :height 1.2))))
   '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
 
-(add-hook 'js-mode-hook
+(add-hook 'org-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
          (prettify-symbols-mode)
