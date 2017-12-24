@@ -539,6 +539,7 @@ otherwise, close current tab (elscreen)."
   '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
 
 (add-hook 'org-mode-hook 'org-indent-mode)
+(add-hook 'org-mode-hook 'org-pretty-table-mode)
 ;(add-hook 'org-mode-hook
 ;   (lambda ()
 ;     (push '("|" . ?│) prettify-symbols-alist)
@@ -547,7 +548,6 @@ otherwise, close current tab (elscreen)."
 ;     (prettify-symbols-mode)
 ;     (org-indent-mode)))
 (require 'org-pretty-table)
-(org-pretty-table-mode 1)
 
 (setq org-link-abbrev-alist
       '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
