@@ -308,6 +308,8 @@ otherwise, close current tab (elscreen)."
 
 (define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
 
+(setq flyspell-issue-message-flag nil)
+
 ; *** JAVASCRIPT ***
 
 (add-hook 'js-mode-hook
