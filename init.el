@@ -571,6 +571,7 @@ otherwise, close current tab (elscreen)."
  '((emacs-lisp . t)
    (js         . t)
    (lisp       . t)
+   (perl       . t)
    (python     . t)
    (sh         . t)
    ))
