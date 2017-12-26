@@ -284,10 +284,14 @@ otherwise, close current tab (elscreen)."
   (setq-default ispell-program-name "hunspell")
   (setq ispell-really-hunspell t))
 
+(defun flyspell-buffer-unless-large ()
+   (unless (> (buffer-size) (* 70 1024))
+     (flyspell-buffer)))
+
 (dolist (hook '(text-mode-hook org-mode-hook))
   (add-hook hook (lambda ()
                    (turn-on-flyspell)
-                   (flyspell-buffer))))
+                   (flyspell-buffer-unless-large))))
 
 (defun fd-switch-dictionary()
    (interactive)
@@ -295,7 +299,7 @@ otherwise, close current tab (elscreen)."
      (change (if (string= dic "francais") "english" "francais")))
      (ispell-change-dictionary change)
      (message "Dictionary switched from %s to %s" dic change)
-     (flyspell-buffer)))
+     (flyspell-buffer-unless-large)))
 
 (define-key evil-normal-state-map "]q"  'next-error)
 (define-key evil-normal-state-map "[q"  'previous-error)
