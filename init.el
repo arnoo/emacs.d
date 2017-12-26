@@ -292,7 +292,8 @@ otherwise, close current tab (elscreen)."
    (let* ((dic ispell-current-dictionary)
      (change (if (string= dic "francais") "english" "francais")))
      (ispell-change-dictionary change)
-     (message "Dictionary switched from %s to %s" dic change)))
+     (message "Dictionary switched from %s to %s" dic change)
+     (flyspell-buffer)))
 
 (define-key evil-normal-state-map "]q"  'next-error)
 (define-key evil-normal-state-map "[q"  'previous-error)
