@@ -308,7 +308,7 @@ otherwise, close current tab (elscreen)."
 
 (define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
 
-(setq flyspell-issue-message-flag nil)
+(setq flyspell-issue-message-flag nil) ;printing messages for every word (when checking the entire buffer) causes an enormous slowdown
 
 ; *** JAVASCRIPT ***
 
