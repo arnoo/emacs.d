@@ -533,7 +533,7 @@ otherwise, close current tab (elscreen)."
 (require 'org-install)
 (setq org-log-done t)
 (setq org-return-follows-link t)
-(setq org-startup-with-inline-images 'inlineimages)
+(setq org-startup-with-inline-images t)
 (setq org-startup-folded 'show-everything)
 (setq org-image-actual-width 300)
 (setq org-startup-truncated nil) ; wrap lines
