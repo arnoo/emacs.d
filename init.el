@@ -569,6 +569,7 @@ otherwise, close current tab (elscreen)."
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((js     . t)
+   (emacs-lisp . t)
    (lisp   . t)
    (python . t)
    (sh     . t)
