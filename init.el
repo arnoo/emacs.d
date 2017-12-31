@@ -535,7 +535,7 @@ otherwise, close current tab (elscreen)."
 (setq org-return-follows-link t)
 (setq org-startup-with-inline-images t)
 (setq org-startup-folded 'show-everything)
-(setq org-image-actual-width 300)
+(setq org-image-actual-width nil)
 (setq org-startup-truncated nil) ; wrap lines
 (setq org-hide-leading-stars t)
 (setq org-src-fontify-natively t)
