@@ -89,6 +89,8 @@
 
 (add-hook 'after-init-hook 'global-company-mode)
 
+(add-hook 'after-init-hook #'global-emojify-mode)
+
 
 (define-key global-map (kbd "<C-next>") 'elscreen-next)
 (define-key global-map (kbd "<C-prior>") 'elscreen-previous)
