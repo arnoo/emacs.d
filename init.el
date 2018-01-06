@@ -152,7 +152,8 @@
 
 ;(require 'emojify)
 ;(add-hook 'after-init-hook #'global-emojify-mode)
-
+(require 'unicode-fonts)
+(unicode-fonts-setup)
 
 (define-key global-map (kbd "<C-next>") 'elscreen-next)
 (define-key global-map (kbd "<C-prior>") 'elscreen-previous)
