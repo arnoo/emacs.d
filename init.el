@@ -119,7 +119,6 @@
         color-theme
         dumb-jump
         dtrt-indent
-        emojify
         unicode-fonts
         evil
         evil-numbers
