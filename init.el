@@ -89,6 +89,7 @@
 
 (add-hook 'after-init-hook 'global-company-mode)
 
+(require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
 
 
