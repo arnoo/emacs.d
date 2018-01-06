@@ -58,6 +58,7 @@
         color-theme
         dumb-jump
         dtrt-indent
+        emojify
         evil
         evil-numbers
         evil-tabs
