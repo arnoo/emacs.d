@@ -157,8 +157,8 @@ dumb-jump-find-rules
 	           :regex "\\\((defun|defmacro)\\s+JJJ\\j"
 	           ;; \\j usage see `dumb-jump-ag-word-boundary`
 	           :tests ("(defun test (blah)" "(defun test\n" "(defmacro test (blah)" "(defmacro test\n")
-	           :not ("(defun test-asdf (blah)" "(defun test-blah\n" "(cl-defun test-asdf (blah)"
-	                 "(cl-defun test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
+	           :not ("(defun test-asdf (blah)" "(defun test-blah\n" "(defmacro test-asdf (blah)"
+	                 "(defmacro test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
 	
 	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "elisp"
 	           :regex "\\\(defvar\\b\\s*JJJ\\j"
