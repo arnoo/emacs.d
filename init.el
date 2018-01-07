@@ -151,6 +151,39 @@
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
+
+dumb-jump-find-rules
+	  '((:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
+	           :regex "\\\((defun|defmacro)\\s+JJJ\\j"
+	           ;; \\j usage see `dumb-jump-ag-word-boundary`
+	           :tests ("(defun test (blah)" "(defun test\n" "(defmacro test (blah)" "(defmacro test\n")
+	           :not ("(defun test-asdf (blah)" "(defun test-blah\n" "(cl-defun test-asdf (blah)"
+	                 "(cl-defun test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
+	
+	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "elisp"
+	           :regex "\\\(defvar\\b\\s*JJJ\\j"
+	           :tests ("(defvar test " "(defvar test\n")
+	           :not ("(defvar tester" "(defvar test?" "(defvar test-"))
+	
+	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "elisp"
+	           :regex "\\\(defcustom\\b\\s*JJJ\\j"
+	           :tests ("(defcustom test " "(defcustom test\n")
+	           :not ("(defcustom tester" "(defcustom test?" "(defcustom test-"))
+	
+	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "elisp"
+	           :regex "\\\(setq\\b\\s*JJJ\\j" :tests ("(setq test 123)")
+	           :not ("setq test-blah 123)" "(setq tester" "(setq test?" "(setq test-"))
+	
+	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "elisp"
+	           :regex "\\\(JJJ\\s+" :tests ("(let ((test 123)))") :not ("(let ((test-2 123)))"))
+	
+	    ;; variable in method signature
+	    (:type "variable" :supports ("ag" "rg" "git-grep") :language "elisp"
+	           :regex "\\((defun|cl-defun)\\s*.+\\\(?\\s*JJJ\\j\\s*\\\)?"
+	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
+	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
+	
+
 ;;;; WEB-MODE
 
 (require 'web-mode)
