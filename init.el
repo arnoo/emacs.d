@@ -353,8 +353,7 @@ otherwise, close current tab (elscreen)."
 
 (defun arno-latex-mode ()
   (global-set-key (kbd "<f12>")
-          (lambda ()
-            (interactive)
+          (lambda () (interactive)
             (flyspell-mode 1)
             (shell-command (concat "pdflatex " buffer-file-name)))))
 
