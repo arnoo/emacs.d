@@ -152,13 +152,14 @@
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
 
-dumb-jump-find-rules
-	  '((:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
+(push 
+	  '(:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
 	           :regex "\\\((defun|defmacro)\\s+JJJ\\j"
 	           ;; \\j usage see `dumb-jump-ag-word-boundary`
 	           :tests ("(defun test (blah)" "(defun test\n" "(defmacro test (blah)" "(defmacro test\n")
 	           :not ("(defun test-asdf (blah)" "(defun test-blah\n" "(defmacro test-asdf (blah)"
 	                 "(defmacro test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
+     dumb-jump-find-rules)
 	
 	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
 	           :regex "\\\(defvar\\b\\s*JJJ\\j"
