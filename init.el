@@ -151,7 +151,6 @@
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
-
 (push '(:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
 	           :regex "\\\((defun|defmacro)\\s+JJJ\\j"
 	           ;; \\j usage see `dumb-jump-ag-word-boundary`
