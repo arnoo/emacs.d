@@ -160,7 +160,7 @@ dumb-jump-find-rules
 	           :not ("(defun test-asdf (blah)" "(defun test-blah\n" "(defmacro test-asdf (blah)"
 	                 "(defmacro test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
 	
-	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "elisp"
+	    (:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
 	           :regex "\\\(defvar\\b\\s*JJJ\\j"
 	           :tests ("(defvar test " "(defvar test\n")
 	           :not ("(defvar tester" "(defvar test?" "(defvar test-"))
