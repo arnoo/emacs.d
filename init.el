@@ -366,8 +366,11 @@ otherwise, close current tab (elscreen)."
   (arno-all-lisps-mode)
   (require 'slime)
   (global-set-key (kbd "<f12>") 'switch-slime-buffer)
-  (evil-define-key 'normal lisp-mode-map "\C-]" 'slime-edit-definition)
-                                                'dumb-jump-go
+  (evil-define-key 'normal lisp-mode-map "\C-]"
+                                         (lambda ()
+                                           (if (equal (get-slime-buffer (buffer-list)) nil)
+                                               (dumb-jump-go
+                                               'slime-edit-definition)
   (evil-define-key 'normal lisp-mode-map (kbd "K") 'slime-documentation-lookup)
   (evil-define-key 'normal lisp-mode-map (kbd "<f11>") 'slime-compile-defun)
   (evil-define-key 'normal lisp-mode-map (kbd "<C-l>") 'slime-repl-clear-buffer)
