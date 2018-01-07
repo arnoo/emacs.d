@@ -59,67 +59,6 @@
         dumb-jump
         dtrt-indent
         emojify
-        (add-to-list 'load-path "~/.emacs.d/plugins/")
-
-(setq frame-title-format '("%b - Emacs"))
-
-(setq inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
-
-(setq kill-buffer-query-functions
-      (remq 'process-kill-buffer-query-function
-                     kill-buffer-query-functions))
-
-; Make background semi-transparent
-;(set-frame-parameter (selected-frame) 'alpha '(85 85))
-
-(defun set-maximized ()
-  (interactive)
-  (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
-(add-hook 'window-setup-hook 'set-maximized t)
-
-;(defvar min-timer)
-;(defun schedule-minimize ()
-;  (when (eq (frame-parameter (selected-frame) 'fullscreen)
-;            'maximized)
-;    (setq min-timer (run-at-time "1 sec" nil 'minimize-other-windows))))
-;
-;(defun minimize-other-windows ()
-;  (shell-command (concat "bash -c 'xdotool search --desktop `xdotool get_desktop` --name \".*\" | grep -v " (frame-parameter (selected-frame) 'outer-window-id) " | xargs -r -n 1 xdotool windowminimize'")))
-;
-;; xfwm sends a focus-in event just prior to switching to another workspace, which ruins everything...
-;(defun prevent-minimize ()
-;  (when (and (boundp 'min-timer) min-timer)
-;     (cancel-timer min-timer)
-;     (setq min-timer nil)))
-;
-;(add-hook 'focus-in-hook 'schedule-minimize)
-;(add-hook 'focus-out-hook 'prevent-minimize)
-
-; Don't warn when loading files smaller than 200M
-(setq large-file-warning-threshold 200000000)
-
-;;; Make underscore a word character
-(add-hook 'after-change-major-mode-hook
-          '(lambda () (modify-syntax-entry ?_ "w")))
-
-(require 'uniquify)
-
-; *** MELPA ***
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(package-initialize)
-
-;;;; my-Packages
-(setq my-packages
-      '(package
-        cl-lib
-        color
-        color-theme
-        dumb-jump
-        dtrt-indent
-        unicode-fonts
         evil
         evil-numbers
         evil-tabs
@@ -150,10 +89,8 @@
 
 (add-hook 'after-init-hook 'global-company-mode)
 
-;(require 'emojify)
-;(add-hook 'after-init-hook #'global-emojify-mode)
-(require 'unicode-fonts)
-(unicode-fonts-setup)
+(require 'emojify)
+(add-hook 'after-init-hook #'global-emojify-mode)
 
 (define-key global-map (kbd "<C-next>") 'elscreen-next)
 (define-key global-map (kbd "<C-prior>") 'elscreen-previous)
@@ -430,6 +367,7 @@ otherwise, close current tab (elscreen)."
   (require 'slime)
   (global-set-key (kbd "<f12>") 'switch-slime-buffer)
   (evil-define-key 'normal lisp-mode-map "\C-]" 'slime-edit-definition)
+                                                'dumb-jump-go
   (evil-define-key 'normal lisp-mode-map (kbd "K") 'slime-documentation-lookup)
   (evil-define-key 'normal lisp-mode-map (kbd "<f11>") 'slime-compile-defun)
   (evil-define-key 'normal lisp-mode-map (kbd "<C-l>") 'slime-repl-clear-buffer)
