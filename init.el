@@ -169,7 +169,7 @@ dumb-jump-find-rules
 	           :regex "\\\(JJJ\\s+" :tests ("(let ((test 123)))") :not ("(let ((test-2 123)))"))
 	
 	    ;; variable in method signature
-	    (:type "variable" :supports ("ag" "rg" "git-grep") :language "elisp"
+	    (:type "variable" :supports ("ag" "rg" "git-grep") :language "lisp"
 	           :regex "\\((defun|cl-defun)\\s*.+\\\(?\\s*JJJ\\j\\s*\\\)?"
 	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
 	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
