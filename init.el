@@ -148,6 +148,7 @@
   (ag-project (thing-at-point 'symbol)))
 (define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
+(require 'dumb-jump)
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
