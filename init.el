@@ -174,7 +174,6 @@
 	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
 	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
       dumb-jump-find-rules)
-	
 
 ;;;; WEB-MODE
 
