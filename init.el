@@ -367,10 +367,10 @@ otherwise, close current tab (elscreen)."
   (require 'slime)
   (global-set-key (kbd "<f12>") 'switch-slime-buffer)
   (evil-define-key 'normal lisp-mode-map "\C-]"
-                                         (lambda ()
+                                         (lambda () (interactive)
                                            (if (equal (get-slime-buffer (buffer-list)) nil)
-                                               (dumb-jump-go
-                                               'slime-edit-definition)
+                                               (call-interactively 'dumb-jump-go)
+                                               (call-interactively 'slime-edit-definition))))
   (evil-define-key 'normal lisp-mode-map (kbd "K") 'slime-documentation-lookup)
   (evil-define-key 'normal lisp-mode-map (kbd "<f11>") 'slime-compile-defun)
   (evil-define-key 'normal lisp-mode-map (kbd "<C-l>") 'slime-repl-clear-buffer)
