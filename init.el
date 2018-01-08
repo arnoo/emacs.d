@@ -160,17 +160,17 @@
 	                 "(defmacro test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
       dumb-jump-find-rules)
 	
-(push	(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
+(push '(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
 	           :regex "\\\(defvar\\b\\s*JJJ\\j"
 	           :tests ("(defvar test " "(defvar test\n")
 	           :not ("(defvar tester" "(defvar test?" "(defvar test-"))
       dumb-jump-find-rules)
 	
-(push	(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
+(push '(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
 	           :regex "\\\(JJJ\\s+" :tests ("(let ((test 123)))") :not ("(let ((test-2 123)))"))
       dumb-jump-find-rules)
 	
-(push	(:type "variable" :supports ("ag" "rg" "git-grep") :language "lisp"
+(push '(:type "variable" :supports ("ag" "rg" "git-grep") :language "lisp"
 	           :regex "\\((defun|defmacro)\\s*.+\\\(?\\s*JJJ\\j\\s*\\\)?"
 	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
 	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
@@ -783,5 +783,10 @@ otherwise, close current tab (elscreen)."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern color-theme ag))))
+    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern color-theme ag)))
+ '(safe-local-variable-values
+   (quote
+    ((Base . 10)
+     (Package . CL-USER)
+     (Syntax . COMMON-LISP)))))
 
