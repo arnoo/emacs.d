@@ -66,7 +66,6 @@
         js2-mode
         fiplr
         markdown-mode
-        mu4e
         evil-search-highlight-persist
         company
         company-tern
