@@ -1,3 +1,4 @@
+
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
 (setq frame-title-format '("%b - Emacs"))
@@ -60,6 +61,7 @@
         dtrt-indent
         emojify
         evil
+        evil-mu4e
         evil-numbers
         evil-tabs
         scala-mode2
@@ -561,6 +563,124 @@ otherwise, close current tab (elscreen)."
 (defpowerline buffer-id   (propertize (car (propertized-buffer-identification (powerline-buffer-name)))
                                       'face (powerline-make-face color1)))
 
+
+
+;------ MU4E
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+(require 'mu4e)
+(require 'evil-mu4e)
+
+; Required for mbsync as UIDs are in the filenames
+(setq mu4e-change-filenames-when-moving t)
+
+(define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive)
+(define-key mu4e-headers-mode-map (kbd "t") 'mu4e-msg-to-task)
+;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
+;(define-key mu4e-headers-mode-map (kbd "g T") 'elscreen-previous)
+
+(defun mu4e-inbox ()
+  (mu4e-headers-search "maildir:/Inbox"); OR maildir:/Archive")
+  ;(mu4e)
+   )
+
+(defun my-mu4e-archive ()
+  (interactive)
+  (cond ((eq major-mode 'mu4e-view-mode)
+          (mu4e-view-mark-for-refile))
+        ((eq major-mode 'mu4e-headers-mode)
+          (mu4e-headers-mark-for-refile))))
+
+(require 'smtpmail)
+;(setq message-send-mail-function 'smtpmail-send-it
+;   starttls-use-gnutls t
+;   smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+;   smtpmail-auth-credentials
+;     '(("smtp.gmail.com" 587 "USERNAME@gmail.com" nil))
+;   smtpmail-default-smtp-server "smtp.gmail.com"
+;   smtpmail-smtp-server "smtp.gmail.com"
+;   smtpmail-smtp-service 587)
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+(setq send-mail-function 'smtpmail-send-it)
+(setq message-send-mail-function 'smtpmail-send-it)
+(setq smtpmail-smtp-server "smtp.fastmail.com")
+(setq smtpmail-smtp-service 465)
+(setq smtpmail-stream-type 'ssl)
+
+(defun mu4e-msg-to-task ()
+  "Archive a message and create a task in taskwarrior"
+  (interactive)
+  (let ((msg  (mu4e-message-at-point)))
+    (when msg
+      (let ((result (shell-command-to-string (concat "task add " (plist-get msg :subject) " m#" (plist-get msg :message-id)
+                                                     (if (string-suffix-p "@octo.com" (plist-get msg :to))
+                                                         " +octo"
+                                                         "")
+                                                      " "))))
+        (my-mu4e-archive)        
+        (message result)))))
+
+;(add-to-list 'mu4e-marks
+;  '(archive
+;     :char       "y"
+;     :prompt     "Archive"
+;     :show-target (lambda (target) "archive")
+;     :action      (lambda (docid msg target)
+;                    ;(mu4e-action-retag-message msg "-\\Inbox")
+;                    (mu4e~proc-move docid nil "+S-u-N"))))
+;
+;(mu4e~headers-defun-mark-for archive)
+;(define-key mu4e-headers-mode-map (kbd "y") 'mu4e-headers-mark-for-archive)
+
+(setq mu4e-compose-in-new-frame t)
+
+(setq mu4e-headers-visible-lines 20)
+
+(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+
+(setq mu4e-view-show-images t)
+;; use imagemagick, if available
+(when (fboundp 'imagemagick-register-types)
+  (imagemagick-register-types))
+
+;; show full addresses in view message (instead of just names)
+;; toggle per name with M-RET
+(setq mu4e-view-show-addresses 't)
+
+(setq user-mail-address "arnaud@btmx.fr")
+
+;; the list of all of my e-mail addresses
+(setq mu4e-user-mail-address-list '("arnaud@btmx.fr"
+                                    "abetremieux@octo.com"
+                                    "arnaud.betremieux@beta.gouv.fr"))
+
+;; don't keep message buffers around
+(setq message-kill-buffer-on-exit t)
+
+
+;(add-hook 'mu4e-mark-execute-pre-hook
+;          (lambda (mark msg)
+;            (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
+;                  ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
+;                  ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"))))) 
+
+(setq mu4e-sent-folder "/Sent"
+      mu4e-drafts-folder "/Drafts"
+      mu4e-refile-folder "/Archive") 
+
+ (add-hook 'message-mode-hook 'turn-on-orgtbl)
+ (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+
+;; Call mu every 5 minutes to update and index Maildir
+;; (setq mu4e-update-interval 300)
+
+
 ;----- ORG-MODE STUFF
 (require 'org-install)
 (setq org-log-done t)
@@ -789,4 +909,3 @@ otherwise, close current tab (elscreen)."
     ((Base . 10)
      (Package . CL-USER)
      (Syntax . COMMON-LISP)))))
-
