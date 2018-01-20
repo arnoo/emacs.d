@@ -649,8 +649,11 @@ otherwise, close current tab (elscreen)."
           :leave-func (lambda () (mu4e-message "Leaving context 'Perso'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (mu4e-message-contact-field-matches msg 
-                            :to ".*@btmx.fr")))
+                          (or
+                            (mu4e-message-contact-field-matches msg 
+                              :maildir "/INBOX")
+                            (mu4e-message-contact-field-matches msg 
+                              :to ".*@btmx.fr"))))
           :vars '( ( user-mail-address      . "arnaud@btmx.fr")
                    ( mu4e-sent-folder       . "/Sent")
                    ( mu4e-drafts-folder     . "/Drafts")
