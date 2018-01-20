@@ -574,44 +574,26 @@ otherwise, close current tab (elscreen)."
 ; Required for mbsync as UIDs are in the filenames
 (setq mu4e-change-filenames-when-moving t)
 
-(define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive)
+;(define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive)
 (define-key mu4e-headers-mode-map (kbd "t") 'mu4e-msg-to-task)
 ;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
 ;(define-key mu4e-headers-mode-map (kbd "g T") 'elscreen-previous)
 
 (defun mu4e-inbox ()
-  (mu4e-headers-search "maildir:/Inbox"); OR maildir:/Archive")
-  ;(mu4e)
-   )
+  (let* ((time (decode-time (current-time)))
+         (hour (elt time 2))
+         (dow  (elt time 6)))
+    (mu4e-headers-search 
+      (concat "maildir:/Inbox"
+              (if (and (>= hour 6) (<= hour 19) (<= dow 4))
+                  " OR maildir:/OCTO_INBOX"
+                  "")
+                  ))))
 
-(defun my-mu4e-archive ()
-  (interactive)
-  (cond ((eq major-mode 'mu4e-view-mode)
-          (mu4e-view-mark-for-refile))
-        ((eq major-mode 'mu4e-headers-mode)
-          (mu4e-headers-mark-for-refile))))
-
-(require 'smtpmail)
-;(setq message-send-mail-function 'smtpmail-send-it
-;   starttls-use-gnutls t
-;   smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-;   smtpmail-auth-credentials
-;     '(("smtp.gmail.com" 587 "USERNAME@gmail.com" nil))
-;   smtpmail-default-smtp-server "smtp.gmail.com"
-;   smtpmail-smtp-server "smtp.gmail.com"
-;   smtpmail-smtp-service 587)
-
-(defun get-string-from-file (filePath)
-  "Return filePath's file content."
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (buffer-string)))
-
-(setq send-mail-function 'smtpmail-send-it)
-(setq message-send-mail-function 'smtpmail-send-it)
-(setq smtpmail-smtp-server "smtp.fastmail.com")
-(setq smtpmail-smtp-service 465)
-(setq smtpmail-stream-type 'ssl)
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
+(setq sendmail-program "/usr/bin/msmtp")
+(setq message-sendmail-f-is-evil 't)
+(setq message-sendmail-extra-arguments '("--read-envelope-from"))
 
 (defun mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
@@ -626,23 +608,17 @@ otherwise, close current tab (elscreen)."
         (my-mu4e-archive)        
         (message result)))))
 
-;(add-to-list 'mu4e-marks
-;  '(archive
-;     :char       "y"
-;     :prompt     "Archive"
-;     :show-target (lambda (target) "archive")
-;     :action      (lambda (docid msg target)
-;                    ;(mu4e-action-retag-message msg "-\\Inbox")
-;                    (mu4e~proc-move docid nil "+S-u-N"))))
-;
-;(mu4e~headers-defun-mark-for archive)
-;(define-key mu4e-headers-mode-map (kbd "y") 'mu4e-headers-mark-for-archive)
-
 (setq mu4e-compose-in-new-frame t)
 
 (setq mu4e-headers-visible-lines 20)
 
 (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+
+(setq mu4e-use-fancy-chars t)
+
+(setq mu4e-attachment-dir "~/Downloads")
+
+(setq mu4e-update-interval 60)
 
 (setq mu4e-view-show-images t)
 ;; use imagemagick, if available
@@ -653,9 +629,9 @@ otherwise, close current tab (elscreen)."
 ;; toggle per name with M-RET
 (setq mu4e-view-show-addresses 't)
 
+(setq user-full-name "Arnaud Bétrémieux")
 (setq user-mail-address "arnaud@btmx.fr")
 
-;; the list of all of my e-mail addresses
 (setq mu4e-user-mail-address-list '("arnaud@btmx.fr"
                                     "abetremieux@octo.com"
                                     "arnaud.betremieux@beta.gouv.fr"))
@@ -663,19 +639,57 @@ otherwise, close current tab (elscreen)."
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
 
+(add-hook 'message-mode-hook 'turn-on-orgtbl)
+(add-hook 'message-mode-hook 'turn-on-orgstruct++)
 
-;(add-hook 'mu4e-mark-execute-pre-hook
-;          (lambda (mark msg)
-;            (cond ((member mark '(refile trash)) (mu4e-action-retag-message msg "-\\Inbox"))
-;                  ((equal mark 'flag) (mu4e-action-retag-message msg "\\Starred"))
-;                  ((equal mark 'unflag) (mu4e-action-retag-message msg "-\\Starred"))))) 
-
-(setq mu4e-sent-folder "/Sent"
-      mu4e-drafts-folder "/Drafts"
-      mu4e-refile-folder "/Archive") 
-
- (add-hook 'message-mode-hook 'turn-on-orgtbl)
- (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+(setq mu4e-contexts
+    `( ,(make-mu4e-context
+          :name "Perso"
+          :enter-func (lambda () (mu4e-message "Entering context 'Perso'"))
+          :leave-func (lambda () (mu4e-message "Leaving context 'Perso'"))
+          :match-func (lambda (msg)
+                        (when msg 
+                          (mu4e-message-contact-field-matches msg 
+                            :to ".*@btmx.fr")))
+          :vars '( ( user-mail-address      . "arnaud@btmx.fr")
+                   ( mu4e-sent-folder       . "/Sent")
+                   ( mu4e-drafts-folder     . "/Drafts")
+                   ( mu4e-refile-folder     . "/Archive") 
+                   ( mu4e-compose-signature . "")
+                   ))
+       ,(make-mu4e-context
+          :name "Octo"
+          :enter-func (lambda () (mu4e-message "Entering context 'Octo'"))
+          :leave-func (lambda () (mu4e-message "Leaving context 'Octo'"))
+          :match-func (lambda (msg)
+                        (when msg 
+                          (mu4e-message-contact-field-matches msg 
+                            :to ".*@octo.com")))
+          :vars '( ( user-mail-address      . "abetremieux@octo.com" )
+                   ( mu4e-sent-messages-behavior . delete)
+                   ( mu4e-sent-folder       . "/Octo_Sent")
+                   ( mu4e-drafts-folder     . "/Octo_Drafts")
+                   ( mu4e-refile-folder     . "/Octo_AllMail") 
+                   ( mu4e-compose-signature .
+                     (concat
+                       "Arnaud Bétrémieux\n"
+                       ""))))
+       ,(make-mu4e-context
+          :name "beta.gouv"
+          :enter-func (lambda () (mu4e-message "Entering context 'beta.gouv'"))
+          :leave-func (lambda () (mu4e-message "Leaving context 'beta.gouv'"))
+          :match-func (lambda (msg)
+                        (when msg 
+                          (mu4e-message-contact-field-matches msg 
+                            :to ".*@beta.gouv.fr")))
+           :vars '(( user-mail-address      . "arnaud.betremieux@beta.gouv.fr" )
+                   ( mu4e-sent-folder       . "/Octo_Sent")
+                   ( mu4e-drafts-folder     . "/Octo_Drafts")
+                   ( mu4e-refile-folder     . "/Octo_AllMail") 
+                   ( mu4e-compose-signature .
+                     (concat
+                       "Arnaud Bétrémieux\n"
+                       ""))))))
 
 ;; Call mu every 5 minutes to update and index Maildir
 ;; (setq mu4e-update-interval 300)
