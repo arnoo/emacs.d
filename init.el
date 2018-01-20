@@ -595,6 +595,9 @@ otherwise, close current tab (elscreen)."
 (setq message-sendmail-f-is-evil 't)
 (setq message-sendmail-extra-arguments '("--read-envelope-from"))
 
+(defun mu4e-archive-thread ()
+  (mu4e-headers-mark-thread-using-markpair)
+
 (defun mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
   (interactive)
