@@ -596,6 +596,7 @@ otherwise, close current tab (elscreen)."
 (setq message-sendmail-extra-arguments '("--read-envelope-from"))
 
 (defun mu4e-archive-thread ()
+  (interactive)
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
 (defun mu4e-msg-to-task ()
