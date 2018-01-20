@@ -585,9 +585,9 @@ otherwise, close current tab (elscreen)."
          (dow  (elt time 6)))
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
-              (if (and (>= hour 6) (<= hour 19) (<= dow 4))
+              ;(if (and (>= hour 6) (<= hour 19) (<= dow 4))
                   " OR maildir:/OCTO_INBOX"
-                  "")
+              ;    "")
                   ))))
 
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
