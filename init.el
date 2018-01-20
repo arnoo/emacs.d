@@ -650,8 +650,7 @@ otherwise, close current tab (elscreen)."
           :match-func (lambda (msg)
                         (when msg 
                           (or
-                            (mu4e-message-contact-field-matches msg 
-                              :maildir "/INBOX")
+                            (string= (mu4e-message-field msg :maildir) "/INBOX")
                             (mu4e-message-contact-field-matches msg 
                               :to ".*@btmx.fr"))))
           :vars '( ( user-mail-address      . "arnaud@btmx.fr")
