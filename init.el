@@ -677,9 +677,9 @@ otherwise, close current tab (elscreen)."
           :match-func (lambda (msg)
                         (when msg 
                           (or (mu4e-message-contact-field-matches msg 
-                                 :to ".*@beta.gouv.fr")
+                                 :to "arnaud.betremieux@beta.gouv.fr")
                               (mu4e-message-contact-field-matches msg 
-                                 :cc ".*@beta.gouv.fr")))
+                                 :cc "arnaud.betremieux@beta.gouv.fr"))))
            :vars '(( user-mail-address      . "arnaud.betremieux@beta.gouv.fr" )
                    ( mu4e-sent-folder       . "/Octo_Sent")
                    ( mu4e-drafts-folder     . "/Octo_Drafts")
