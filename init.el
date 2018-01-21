@@ -584,6 +584,7 @@ otherwise, close current tab (elscreen)."
   (let* ((time (decode-time (current-time)))
          (hour (elt time 2))
          (dow  (elt time 6)))
+    (message "DOW" dow)
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
               (if (and (>= hour 6) (<= hour 19) (or (<= dow 3) (= dow 6)))
