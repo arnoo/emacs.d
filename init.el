@@ -676,8 +676,10 @@ otherwise, close current tab (elscreen)."
           :leave-func (lambda () (mu4e-message "Leaving context 'Octo'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (mu4e-message-contact-field-matches msg 
-                            :to ".*@octo.com")))
+                          (or
+                            (string= (mu4e-message-field msg :maildir) "/Octo_Inbox")
+                            (mu4e-message-contact-field-matches msg 
+                              :to ".*@octo.com"))))
           :vars '( ( user-mail-address      . "abetremieux@octo.com" )
                    ( mu4e-sent-messages-behavior . delete)
                    ( mu4e-sent-folder       . "/Octo_Sent")
