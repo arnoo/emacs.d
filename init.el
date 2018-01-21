@@ -587,7 +587,7 @@ otherwise, close current tab (elscreen)."
     (message "DOW :  %S" dow)
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
-              (if (and (>= hour 6) (<= hour 19) (or (<= dow 3) (= dow 6)))
+              (if (and (>= hour 6) (<= hour 19) (>= dow 1) (<= dow 4)))
                   " OR maildir:/Octo_Inbox"
                   "")
                   ))))
