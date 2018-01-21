@@ -676,8 +676,10 @@ otherwise, close current tab (elscreen)."
           :leave-func (lambda () (mu4e-message "Leaving context 'beta.gouv'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (mu4e-message-contact-field-matches msg 
-                            :to ".*@beta.gouv.fr")))
+                          (or (mu4e-message-contact-field-matches msg 
+                                 :to ".*@beta.gouv.fr")
+                              (mu4e-message-contact-field-matches msg 
+                                 :cc ".*@beta.gouv.fr")))
            :vars '(( user-mail-address      . "arnaud.betremieux@beta.gouv.fr" )
                    ( mu4e-sent-folder       . "/Octo_Sent")
                    ( mu4e-drafts-folder     . "/Octo_Drafts")
