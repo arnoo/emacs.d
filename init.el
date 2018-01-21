@@ -574,8 +574,8 @@ otherwise, close current tab (elscreen)."
 ; Required for mbsync as UIDs are in the filenames
 (setq mu4e-change-filenames-when-moving t)
 
-(define-key mu4e-headers-mode-map (kbd "r") 'mu4e-archive-thread)
-(define-key mu4e-headers-mode-map (kbd "m") 'mu4e-mute-thread)
+(define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive-thread)
+(define-key mu4e-headers-mode-map (kbd "m") 'my-mu4e-mute-thread)
 ;(define-key mu4e-headers-mode-map (kbd "t") 'mu4e-msg-to-task)
 ;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
 ;(define-key mu4e-headers-mode-map (kbd "g T") 'elscreen-previous)
@@ -596,17 +596,17 @@ otherwise, close current tab (elscreen)."
 (setq message-sendmail-f-is-evil 't)
 (setq message-sendmail-extra-arguments '("--read-envelope-from"))
 
-(defun mu4e-archive-thread ()
+(defun my-mu4e-archive-thread ()
   (interactive)
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-(defun mu4e-mute-thread ()
+(defun my-mu4e-mute-thread ()
   (interactive)
   (let ((msg (mu4e-message-at-point)))
     (write-region (plist-get msg :message-id) nil "~/.muted-mailids" 'append)
     (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder msg)))))
 
-(defun mu4e-msg-to-task ()
+(defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
   (interactive)
   (let ((msg (mu4e-message-at-point)))
