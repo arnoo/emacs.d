@@ -576,7 +576,7 @@ otherwise, close current tab (elscreen)."
 
 (define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive-thread)
 (define-key mu4e-headers-mode-map (kbd "m") 'my-mu4e-mute-thread)
-;(define-key mu4e-headers-mode-map (kbd "t") 'mu4e-msg-to-task)
+(define-key mu4e-headers-mode-map (kbd "t") 'my-mu4e-msg-to-task)
 ;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
 ;(define-key mu4e-headers-mode-map (kbd "g T") 'elscreen-previous)
 
