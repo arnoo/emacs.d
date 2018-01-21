@@ -670,6 +670,22 @@ otherwise, close current tab (elscreen)."
                    ( mu4e-refile-folder     . "/Archive") 
                    ( mu4e-compose-signature . "")
                    ))
+        ,(make-mu4e-context
+          :name "beta.gouv"
+          :enter-func (lambda () (mu4e-message "Entering context 'beta.gouv'"))
+          :leave-func (lambda () (mu4e-message "Leaving context 'beta.gouv'"))
+          :match-func (lambda (msg)
+                        (when msg 
+                          (mu4e-message-contact-field-matches msg 
+                            :to ".*@beta.gouv.fr")))
+           :vars '(( user-mail-address      . "arnaud.betremieux@beta.gouv.fr" )
+                   ( mu4e-sent-folder       . "/Octo_Sent")
+                   ( mu4e-drafts-folder     . "/Octo_Drafts")
+                   ( mu4e-refile-folder     . "/Octo_AllMail") 
+                   ( mu4e-compose-signature .
+                     (concat
+                       "Arnaud Bétrémieux\n"
+                       ""))))
        ,(make-mu4e-context
           :name "Octo"
           :enter-func (lambda () (mu4e-message "Entering context 'Octo'"))
@@ -689,22 +705,7 @@ otherwise, close current tab (elscreen)."
                      (concat
                        "Arnaud Bétrémieux\n"
                        ""))))
-       ,(make-mu4e-context
-          :name "beta.gouv"
-          :enter-func (lambda () (mu4e-message "Entering context 'beta.gouv'"))
-          :leave-func (lambda () (mu4e-message "Leaving context 'beta.gouv'"))
-          :match-func (lambda (msg)
-                        (when msg 
-                          (mu4e-message-contact-field-matches msg 
-                            :to ".*@beta.gouv.fr")))
-           :vars '(( user-mail-address      . "arnaud.betremieux@beta.gouv.fr" )
-                   ( mu4e-sent-folder       . "/Octo_Sent")
-                   ( mu4e-drafts-folder     . "/Octo_Drafts")
-                   ( mu4e-refile-folder     . "/Octo_AllMail") 
-                   ( mu4e-compose-signature .
-                     (concat
-                       "Arnaud Bétrémieux\n"
-                       ""))))))
+       ))
 
 ;; Call mu every 5 minutes to update and index Maildir
 ;; (setq mu4e-update-interval 300)
