@@ -603,7 +603,7 @@ otherwise, close current tab (elscreen)."
 (defun my-mu4e-mute-thread ()
   (interactive)
   (let ((msg (mu4e-message-at-point)))
-    (write-region (plist-get msg :message-id) nil "~/.muted-mailids" 'append)
+    (write-region (concat (plist-get msg :message-id) "\n") nil "~/.muted-mailids" 'append)
     (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder msg)))))
 
 (defun my-mu4e-msg-to-task ()
