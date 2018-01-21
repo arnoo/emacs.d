@@ -677,7 +677,7 @@ otherwise, close current tab (elscreen)."
           :match-func (lambda (msg)
                         (when msg 
                           (or
-                            (string= (mu4e-message-field msg :maildir) "/INBOX")
+                            (string= (mu4e-message-field msg :maildir) "/Octo_INBOX")
                             (mu4e-message-contact-field-matches msg 
                               :to ".*@octo.com"))))
           :vars '( ( user-mail-address      . "abetremieux@octo.com" )
