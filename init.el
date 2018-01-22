@@ -617,7 +617,7 @@ otherwise, close current tab (elscreen)."
   (let ((found nil)
         (references (plist-get msg :references)))
     (while (and (not found)
-                (refernces)
+                (references)
     )
 
 (defun my-mu4e-msg-to-task ()
