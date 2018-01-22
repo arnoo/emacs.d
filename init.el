@@ -620,11 +620,11 @@ otherwise, close current tab (elscreen)."
 ;        (insert-file-contents "~/.muted-mailids" nil nil nil t)
 ;        (while (and (not found)
 ;                    (references))
-;          (when (
+;          (goto-char 1)
+;          (when (search-forward (car references) nil t)
 ;
 ;            (setq searchStr "somesearchstring" ) ; search string here
-;              (goto-char 1)
-;        (while (search-forward searchStr nil t)
+;        (while 
 ;          (setq ii (1+ ii)))
 ;
 ;        ;; report if the occurrence is not n times
