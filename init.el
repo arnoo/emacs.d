@@ -611,9 +611,9 @@ otherwise, close current tab (elscreen)."
 (add-hook 'mu4e-index-updated-hook
   (defun my-mu4e-check-for-muted-threads ()
     ("maildir:/Octo_Inbox")
-    
-    (replace-regexp-in-string "(<|>)" "" buffer-file-name))
-    (split-string (plist-get msg :references) " ")
+    (mapcar (lambda (r)
+            (replace-regexp-in-string "(<|>)" "" buffer-file-name))
+            (split-string (plist-get msg :references) " ")
 
      )))
 
