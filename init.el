@@ -610,7 +610,8 @@ otherwise, close current tab (elscreen)."
 ;TODO
 (add-hook 'mu4e-index-updated-hook
   (defun my-mu4e-check-for-muted-threads ()
-    (concat "maildir:/Octo_Inbox and "
+    ("maildir:/Octo_Inbox")
+    (plist-get msg :references)
 
      )))
 
