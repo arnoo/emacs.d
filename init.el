@@ -612,7 +612,7 @@ otherwise, close current tab (elscreen)."
   (defun my-mu4e-check-for-muted-threads ()
     ("maildir:/Octo_Inbox")
     (mapcar (lambda (r)
-            (replace-regexp-in-string "(<|>)" "" buffer-file-name))
+              (replace-regexp-in-string "(<|>)" "" r))
             (split-string (plist-get msg :references) " ")
 
      )))
