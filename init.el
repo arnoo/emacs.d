@@ -612,6 +612,7 @@ otherwise, close current tab (elscreen)."
   (defun my-mu4e-check-for-muted-threads ()
     ("maildir:/Octo_Inbox")
     (plist-get msg :references)
+    (split-string orig-root " ")
 
      )))
 
