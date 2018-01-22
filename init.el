@@ -610,7 +610,7 @@ otherwise, close current tab (elscreen)."
 ;TODO
 (add-hook 'mu4e-index-updated-hook
   (defun my-mu4e-check-for-muted-threads ()
-    ("maildir:/Octo_Inbox")
+    (mu4e-proc-find "maildir:/Octo_Inbox")
     (mapcar (lambda (r)
               (replace-regexp-in-string "(<|>)" "" r))
             (split-string (plist-get msg :references) " "))
