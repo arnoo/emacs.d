@@ -616,9 +616,16 @@ otherwise, close current tab (elscreen)."
 (defun my-mu4e-check-if-muted (msg)
   (let ((found nil)
         (references (plist-get msg :references)))
+     (with-temp-buffer
+        (insert-file-contents "~/.muted-mailids" nil nil nil t)
     (while (and (not found)
                 (references))
-      (when ()
+      (when (
+
+        (setq searchStr "somesearchstring" ) ; search string here
+
+
+             )
         (setf found t))
       (setq references (cdr references)))))
 
