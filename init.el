@@ -617,8 +617,8 @@ otherwise, close current tab (elscreen)."
   (let ((found nil)
         (references (plist-get msg :references)))
     (while (and (not found)
-                (references)
-    )
+                (references))
+      (setq references (cdr references)))))
 
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
