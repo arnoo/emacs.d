@@ -610,12 +610,13 @@ otherwise, close current tab (elscreen)."
 ;TODO
 (add-hook 'mu4e-index-updated-hook
   (defun my-mu4e-check-for-muted-threads ()
-    (mu4e-proc-find "maildir:/Octo_Inbox")
-    (mapcar (lambda (r)
-              (replace-regexp-in-string "(<|>)" "" r))
-            (split-string (plist-get msg :references) " "))
+    (let ((mu4e-header-func 'my-mu4e-check-if-muted))
+      (mu4e-proc-find "maildir:/Octo_Inbox" t nil nil nil))))
 
-     )))
+(defun my-mu4e-check-if-muted (msg)
+    (mapcar (lambda (r)
+               (replace-regexp-in-string "(<|>)" "" r))
+            (split-string (plist-get msg :references) " ")))
 
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
