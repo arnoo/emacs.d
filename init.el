@@ -622,17 +622,7 @@ otherwise, close current tab (elscreen)."
 ;                    (references))
 ;          (goto-char 1)
 ;          (when (search-forward (car references) nil t)
-;
-;            (setq searchStr "somesearchstring" ) ; search string here
-;        (while 
-;          (setq ii (1+ ii)))
-;
-;        ;; report if the occurrence is not n times
-;        (when (not (= ii 0))
-;            (princ (format "this many: %d %s\n" ii fPath)))
-;
-;
-;                )
+;    (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point))))
 ;            (setf found t))
 ;          (setq references (cdr references)))))
 
