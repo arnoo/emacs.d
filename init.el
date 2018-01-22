@@ -601,33 +601,40 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-(defun my-mu4e-mute-thread ()
-  (interactive)
-  (let ((msg (mu4e-message-at-point)))
-    (write-region (concat (plist-get msg :message-id) "\n") nil "~/.muted-mailids" 'append)
-    (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder msg)))))
-
-;TODO
-(add-hook 'mu4e-index-updated-hook
-  (defun my-mu4e-check-for-muted-threads ()
-    (let ((mu4e-header-func 'my-mu4e-check-if-muted))
-      (mu4e-proc-find "maildir:/Octo_Inbox" t nil nil nil))))
-
-(defun my-mu4e-check-if-muted (msg)
-  (let ((found nil)
-        (references (plist-get msg :references)))
-     (with-temp-buffer
-        (insert-file-contents "~/.muted-mailids" nil nil nil t)
-    (while (and (not found)
-                (references))
-      (when (
-
-        (setq searchStr "somesearchstring" ) ; search string here
-
-
-             )
-        (setf found t))
-      (setq references (cdr references)))))
+;(defun my-mu4e-mute-thread ()
+;  (interactive)
+;  (let ((msg (mu4e-message-at-point)))
+;    (write-region (concat (plist-get msg :message-id) "\n") nil "~/.muted-mailids" 'append)
+;    (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder msg)))))
+;
+;;TODO
+;(add-hook 'mu4e-index-updated-hook
+;  (defun my-mu4e-check-for-muted-threads ()
+;    (let ((mu4e-header-func 'my-mu4e-check-if-muted))
+;      (mu4e-proc-find "maildir:/Octo_Inbox" t nil nil nil))))
+;
+;(defun my-mu4e-check-if-muted (msg)
+;  (let ((found nil)
+;        (references (plist-get msg :references)))
+;     (with-temp-buffer
+;        (insert-file-contents "~/.muted-mailids" nil nil nil t)
+;        (while (and (not found)
+;                    (references))
+;          (when (
+;
+;            (setq searchStr "somesearchstring" ) ; search string here
+;              (goto-char 1)
+;        (while (search-forward searchStr nil t)
+;          (setq ii (1+ ii)))
+;
+;        ;; report if the occurrence is not n times
+;        (when (not (= ii 0))
+;            (princ (format "this many: %d %s\n" ii fPath)))
+;
+;
+;                )
+;            (setf found t))
+;          (setq references (cdr references)))))
 
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
