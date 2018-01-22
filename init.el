@@ -613,7 +613,7 @@ otherwise, close current tab (elscreen)."
     ("maildir:/Octo_Inbox")
     (mapcar (lambda (r)
               (replace-regexp-in-string "(<|>)" "" r))
-            (split-string (plist-get msg :references) " ")
+            (split-string (plist-get msg :references) " "))
 
      )))
 
