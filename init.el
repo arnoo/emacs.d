@@ -614,9 +614,7 @@ otherwise, close current tab (elscreen)."
       (mu4e-proc-find "maildir:/Octo_Inbox" t nil nil nil))))
 
 (defun my-mu4e-check-if-muted (msg)
-    (mapcar (lambda (r)
-               (replace-regexp-in-string "(<|>)" "" r))
-            (split-string (plist-get msg :references) " ")))
+  (plist-get msg :references))
 
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
