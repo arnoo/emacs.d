@@ -602,8 +602,9 @@ otherwise, close current tab (elscreen)."
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
 (defun my-mu4e-archive-thread-from-view (msg)
+  (interactive)
   (mu4e-select-other-view)
-  )
+  (my-mu4e-archive-thread))
 
 (add-to-list 'mu4e-view-actions
   '("rarchive thread" . my-mu4e-archive-thread-from-msg) t)
