@@ -625,7 +625,7 @@ otherwise, close current tab (elscreen)."
             ;(mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point))))
             (message "Muting thread")
             (setf found t))
-          (setq references (cdr references)))))
+          (setq references (cdr references))))))
 
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
