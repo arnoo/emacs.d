@@ -628,7 +628,7 @@ otherwise, close current tab (elscreen)."
           (goto-char 1)
           (when (re-search-forward (concat "^" (car references) "$" nil t))
             ;(mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point))))
-            (message "Muting thread")
+            (message "Thread is muted, auto-archiving")
             (setf found t))
           (setq references (cdr references))))))
 
