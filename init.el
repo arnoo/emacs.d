@@ -647,6 +647,7 @@ otherwise, close current tab (elscreen)."
 (setq mu4e-headers-visible-lines 20)
 
 (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+(setq mu4e-headers-time-format "%H:%M")
 
 (setq mu4e-use-fancy-chars t)
 
