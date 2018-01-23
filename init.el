@@ -609,7 +609,6 @@ otherwise, close current tab (elscreen)."
   (write-region (concat (plist-get (mu4e-message-at-point) :message-id) "\n") nil "~/.muted-mailids" 'append)
   (my-mu4e-archive-thread))
 
-;;TODO
 (add-hook 'mu4e-index-updated-hook
   (defun my-mu4e-check-for-muted-threads ()
     (message "Checking for muted threads")
