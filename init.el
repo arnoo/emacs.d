@@ -647,7 +647,7 @@ otherwise, close current tab (elscreen)."
 (setq mu4e-headers-visible-lines 20)
 
 (setq mu4e-headers-fields
-      ((:human-date    .   12)
+      ((:human-date    .   15)
       ;(:flags         .    6)
        (:mailing-list  .   10)
        (:from          .   22)
