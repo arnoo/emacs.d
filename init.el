@@ -611,7 +611,7 @@ otherwise, close current tab (elscreen)."
   (defun my-mu4e-check-for-muted-threads ()
     (message "Checking for muted threads")
     (let ((mu4e-header-func 'my-mu4e-check-if-muted))
-      (mu4e-proc-find "maildir:/Octo_INBOX" t nil nil nil))))
+      (mu4e~proc-find "maildir:/Octo_INBOX" t nil nil nil))))
 
 (defun my-mu4e-check-if-muted (msg)
   (let ((found nil)
