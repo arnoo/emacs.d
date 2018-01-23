@@ -600,9 +600,9 @@ otherwise, close current tab (elscreen)."
 (setq message-sendmail-f-is-evil 't)
 (setq message-sendmail-extra-arguments '("--read-envelope-from"))
 
-(defun my-mu4e-archive-thread (msg)
+(defun my-mu4e-archive-thread ()
   (interactive)
-  (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (or msg (mu4e-message-at-point))))))
+  (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
 (defun my-mu4e-mute-thread (msg)
   (interactive)
