@@ -601,12 +601,12 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-;(defun my-mu4e-mute-thread ()
-;  (interactive)
-;  (let ((msg (mu4e-message-at-point)))
-;    (write-region (concat (plist-get msg :message-id) "\n") nil "~/.muted-mailids" 'append)
-;    (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder msg)))))
-;
+(defun my-mu4e-mute-thread ()
+  (interactive)
+  (let ((msg (mu4e-message-at-point)))
+    (write-region (concat (plist-get msg :message-id) "\n") nil "~/.muted-mailids" 'append)
+    (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder msg)))))
+
 ;;TODO
 ;(add-hook 'mu4e-index-updated-hook
 ;  (defun my-mu4e-check-for-muted-threads ()
