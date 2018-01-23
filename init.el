@@ -575,9 +575,7 @@ otherwise, close current tab (elscreen)."
 (setq mu4e-change-filenames-when-moving t)
 
 (define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive-thread)
-(define-key mu4e-view-mode-map (kbd "r") 'my-mu4e-archive-thread)
 (define-key mu4e-headers-mode-map (kbd "m") 'my-mu4e-mute-thread)
-(define-key mu4e-view-mode-map (kbd "m") 'my-mu4e-mute-thread)
 (define-key mu4e-headers-mode-map (kbd "t") 'my-mu4e-msg-to-task)
 (define-key mu4e-view-mode-map (kbd "t") 'my-mu4e-msg-to-task)
 ;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
@@ -604,8 +602,7 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-(defun my-mu4e-archive-thread-from-msg (msg)
-
+(defun my-mu4e-archive-thread-from-view (msg)
   (mu4e-select-other-view)
   )
 
