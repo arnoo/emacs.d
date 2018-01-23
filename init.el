@@ -612,7 +612,7 @@ otherwise, close current tab (elscreen)."
 (defun my-mu4e-check-for-muted-threads ()
     (message "Checking for muted threads")
 ;    (setq mu4e-header-func 'my-mu4e-check-if-muted)
-      (mu4e~proc-find "maildir:/Octo_INBOX" t :date 'ascending nil nil nil)))
+      (mu4e~proc-find "maildir:/Octo_INBOX" t :date 'ascending nil nil nil))
 
 (add-hook 'after-init-hook 'my-mu4e-check-for-muted-threads)
 (add-hook 'mu4e-index-updated-hook 'my-mu4e-check-for-muted-threads)
