@@ -602,7 +602,13 @@ otherwise, close current tab (elscreen)."
 
 (defun my-mu4e-archive-thread ()
   (interactive)
-  (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
+  (my-mu4e-archive-thread-from-msg (mu4e-message-at-point)))
+
+(defun my-mu4e-archive-thread-from-msg (msg)
+  (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder msg))))
+
+(add-to-list 'mu4e-view-actions
+  '("xsearch for sender" . search-for-sender) t)
 
 (defun my-mu4e-mute-thread (msg)
   (interactive)
