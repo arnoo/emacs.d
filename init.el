@@ -588,7 +588,7 @@ otherwise, close current tab (elscreen)."
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
               (if (and (>= hour 6) (<= hour 19) (>= dow 1) (<= dow 4))
-                  " OR maildir:/Octo_Inbox"
+                  " OR maildir:/Octo_INBox"
                   "")
                   ))))
 
@@ -612,7 +612,7 @@ otherwise, close current tab (elscreen)."
   (defun my-mu4e-check-for-muted-threads ()
     (message "Checking for muted threads")
     (let ((mu4e-header-func 'my-mu4e-check-if-muted))
-      (mu4e-proc-find "maildir:/Octo_Inbox" t nil nil nil))))
+      (mu4e-proc-find "maildir:/Octo_INBOX" t nil nil nil))))
 
 (defun my-mu4e-check-if-muted (msg)
   (let ((found nil)
@@ -718,7 +718,7 @@ otherwise, close current tab (elscreen)."
           :match-func (lambda (msg)
                         (when msg 
                           (or
-                            (string= (mu4e-message-field msg :maildir) "/Octo_Inbox")
+                            (string= (mu4e-message-field msg :maildir) "/Octo_INBOX")
                             (mu4e-message-contact-field-matches msg 
                               :to ".*@octo.com"))))
           :vars '( ( user-mail-address      . "abetremieux@octo.com" )
