@@ -624,7 +624,7 @@ otherwise, close current tab (elscreen)."
      (with-temp-buffer
         (insert-file-contents "~/.muted-mailids" nil nil nil t)
         (while (and (not found)
-                    (references))
+                    references)
           (goto-char 1)
           (when (re-search-forward (concat "^" (car references) "$" nil t))
             (message "Thread is muted, auto-archiving")
