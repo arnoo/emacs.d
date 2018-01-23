@@ -609,11 +609,13 @@ otherwise, close current tab (elscreen)."
   (write-region (concat (plist-get (mu4e-message-at-point) :message-id) "\n") nil "~/.muted-mailids" 'append)
   (my-mu4e-archive-thread))
 
-(add-hook 'mu4e-index-updated-hook
-  (defun my-mu4e-check-for-muted-threads ()
+(defun my-mu4e-check-for-muted-threads ()
     (message "Checking for muted threads")
     (let ((mu4e-header-func 'my-mu4e-check-if-muted))
-      (mu4e~proc-find "maildir:/Octo_INBOX" t nil nil nil))))
+      (mu4e~proc-find "maildir:/Octo_INBOX" t nil nil nil)))
+
+(add-hook 'headers-mode-hook 'my-mu4e-check-for-muted-threads)
+(add-hook 'mu4e-index-updated-hook 'my-mu4e-check-for-muted-threads)
 
 (defun my-mu4e-check-if-muted (msg)
   (let ((found nil)
