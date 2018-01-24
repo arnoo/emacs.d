@@ -724,6 +724,8 @@ otherwise, close current tab (elscreen)."
                      (concat
                        "Arnaud Bétrémieux\n"
                        "Équipe Pass Culture\n"
+                       "+33 (0)6 89 85 88 41\n"
+                       "du lundi au jeudi\n"
                        ""))))
        ,(make-mu4e-context
           :name "Octo"
