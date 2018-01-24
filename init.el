@@ -742,7 +742,15 @@ otherwise, close current tab (elscreen)."
                    ( mu4e-compose-signature .
                      (concat
                        "Arnaud Bétrémieux\n"
-                       ""))))
+                       "Consultant\n"
+                       "OCTO Technology\n"
+                       ".....................\n"
+                       "34, Avenue de l'Opéra\n"
+                       "75002 Paris\n"
+                       "+33 (0)6 89 85 88 41\n"
+                       "du lundi au jeudi\n"
+                       "http://www.octo.com/\n"
+                       "http://blog.octo.com/\n"))))
        ))
 
 ;; Call mu every 5 minutes to update and index Maildir
