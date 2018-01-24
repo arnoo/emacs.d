@@ -623,30 +623,6 @@ otherwise, close current tab (elscreen)."
 (add-to-list 'mu4e-view-actions
   '("mmute thread" . my-mu4e-mute-thread-from-view) t)
 
-(defun my-mu4e-check-for-muted-threads ()
-    (message "Checking for muted threads")
-;    (setq mu4e-header-func 'my-mu4e-check-if-muted)
-    (mu4e~proc-find "maildir:/Octo_INBOX" t :date 'ascending nil nil nil))
-
-(defun my-mu4e~headers-header-handler (msg &optional point)
-  (mu4e~headers-header-handler (msg &optional point)
-  )
-
-(defun my-mu4e-check-if-muted (msg)
-  (message "Checking whether individual thread is muted")
-  (let ((found nil)
-        (references (plist-get msg :references)))
-     (with-temp-buffer
-        (insert-file-contents "~/.muted-mailids" nil nil nil t)
-        (while (and (not found)
-                    references)
-          (goto-char 1)
-          (when (re-search-forward (concat "^" (car references) "$") nil t)
-            (message "Thread is muted, auto-archiving")
-            ;(mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point))))
-            (setf found t))
-          (setq references (cdr references))))))
-
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
   (interactive)
