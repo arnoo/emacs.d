@@ -628,6 +628,9 @@ otherwise, close current tab (elscreen)."
 ;    (setq mu4e-header-func 'my-mu4e-check-if-muted)
     (mu4e~proc-find "maildir:/Octo_INBOX" t :date 'ascending nil nil nil))
 
+(defun my-mu4e~headers-header-handler ()
+  )
+
 (defun my-mu4e-check-if-muted (msg)
   (message "Checking whether individual thread is muted")
   (let ((found nil)
