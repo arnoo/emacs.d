@@ -724,6 +724,7 @@ otherwise, close current tab (elscreen)."
                      (concat
                        "Arnaud Bétrémieux\n"
                        "Équipe Pass Culture\n"
+                       ".....................\n"
                        "+33 (0)6 89 85 88 41\n"
                        "du lundi au jeudi\n"
                        ""))))
