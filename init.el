@@ -629,6 +629,7 @@ otherwise, close current tab (elscreen)."
     (mu4e~proc-find "maildir:/Octo_INBOX" t :date 'ascending nil nil nil))
 
 (defun my-mu4e~headers-header-handler (msg &optional point)
+  (my-mu4e-check-if-muted msg)
   (mu4e~headers-header-handler msg point))
 
 (defun my-mu4e-check-if-muted (msg)
