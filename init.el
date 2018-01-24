@@ -645,7 +645,7 @@ otherwise, close current tab (elscreen)."
   (my-mu4e-msg-to-task))
 
 (add-to-list 'mu4e-view-actions
-  '("mmute thread" . my-mu4e-mute-thread-from-view) t)
+  '("tcreate task" . my-mu4e-msg-to-task-from-view) t)
 
 (setq mu4e-compose-in-new-frame t)
 
