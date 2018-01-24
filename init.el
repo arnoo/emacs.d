@@ -609,11 +609,10 @@ otherwise, close current tab (elscreen)."
 (add-to-list 'mu4e-view-actions
   '("rarchive thread" . my-mu4e-archive-thread-from-view) t)
 
-(defun my-mu4e-mute-thread (msg)
+(defun my-mu4e-mute-thread ()
   (interactive)
-  (unless msg (setf msg (mu4e-message-at-point)))
-  (write-region (concat (plist-get msg :message-id) "\n") nil "~/.muted-mailids" 'append)
-  (my-mu4e-archive-thread msg))
+  (write-region (concat (plist-get (mu4e-message-at-point) :message-id) "\n") nil "~/.muted-mailids" 'append)
+  (my-mu4e-archive-thread))
 
 (defun my-mu4e-mute-thread-from-view (msg)
   (interactive)
