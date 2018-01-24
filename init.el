@@ -723,6 +723,7 @@ otherwise, close current tab (elscreen)."
                    ( mu4e-compose-signature .
                      (concat
                        "Arnaud Bétrémieux\n"
+                       "Équipe Pass Culture\n"
                        ""))))
        ,(make-mu4e-context
           :name "Octo"
