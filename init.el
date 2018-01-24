@@ -614,12 +614,12 @@ otherwise, close current tab (elscreen)."
 (defun my-mu4e-mute-thread ()
   (interactive)
   (write-region (concat (plist-get (mu4e-message-at-point) :message-id) "\n") nil "~/.muted-mailids" 'append)
-  (sit-for 0.5)
   (my-mu4e-archive-thread))
 
 (defun my-mu4e-mute-thread-from-view (msg)
   (interactive)
   (mu4e-select-other-view)
+  (sit-for 0.5)
   (my-mu4e-mute-thread))
 
 (add-to-list 'mu4e-view-actions
