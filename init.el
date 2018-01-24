@@ -621,7 +621,7 @@ otherwise, close current tab (elscreen)."
   (my-mu4e-mute-thread))
 
 (add-to-list 'mu4e-view-actions
-  '("mute thread" . my-mu4e-mute-thread-from-view) t)
+  '("mmute thread" . my-mu4e-mute-thread-from-view) t)
 
 (defun my-mu4e-check-for-muted-threads ()
     (message "Checking for muted threads")
