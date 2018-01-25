@@ -605,12 +605,16 @@ otherwise, close current tab (elscreen)."
 
 (defun my-mu4e-mute-thread ()
   (interactive)
+  (when (eq major-mode 'mu4e-view-mode)
+    (mu4e~view-quit-buffer))
   (write-region (concat (plist-get (mu4e-message-at-point) :message-id) "\n") nil "~/.muted-mailids" 'append)
   (my-mu4e-archive-thread))
 
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
   (interactive)
+  (when (eq major-mode 'mu4e-view-mode)
+    (mu4e~view-quit-buffer))
   (let ((msg (mu4e-message-at-point)))
     (when msg
       (let ((result (shell-command-to-string (concat "task add " (plist-get msg :subject) " m#" (plist-get msg :message-id)
