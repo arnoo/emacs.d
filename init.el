@@ -619,7 +619,7 @@ otherwise, close current tab (elscreen)."
 (defun my-mu4e-mute-thread-from-view (msg)
   (interactive)
   (mu4e-select-other-view)
-  (sit-for 0.5)
+  (sit-for 1)
   (my-mu4e-mute-thread))
 
 (add-to-list 'mu4e-view-actions
