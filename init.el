@@ -597,11 +597,6 @@ otherwise, close current tab (elscreen)."
                   "")
                   ))))
 
-(setq message-send-mail-function 'message-send-mail-with-sendmail)
-(setq sendmail-program "/usr/bin/msmtp")
-(setq message-sendmail-f-is-evil 't)
-(setq message-sendmail-extra-arguments '("--read-envelope-from"))
-
 (defun my-mu4e-archive-thread ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
@@ -626,15 +621,7 @@ otherwise, close current tab (elscreen)."
         (my-mu4e-archive-thread)
         (message result)))))
 
-(setq mu4e-compose-in-new-frame t)
-
 (setq mu4e-headers-visible-lines 20)
-
-(defun no-auto-fill ()
-  "Turn off auto-fill-mode"
-  (auto-fill-mode -1))
-
-(add-hook 'mu4e-compose-mode-hook 'no-auto-fill)
 
 (setq mu4e-headers-fields
      '((:human-date    .   17)
@@ -673,6 +660,18 @@ otherwise, close current tab (elscreen)."
 
 (add-hook 'message-mode-hook 'turn-on-orgtbl)
 (add-hook 'message-mode-hook 'turn-on-orgstruct++)
+
+(setq mu4e-compose-in-new-frame t)
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
+(setq sendmail-program "/usr/bin/msmtp")
+(setq message-sendmail-f-is-evil 't)
+(setq message-sendmail-extra-arguments '("--read-envelope-from"))
+
+(defun no-auto-fill ()
+  "Turn off auto-fill-mode"
+  (auto-fill-mode -1))
+
+(add-hook 'mu4e-compose-mode-hook 'no-auto-fill)
 
 (setq mu4e-contexts
     `( ,(make-mu4e-context
