@@ -635,7 +635,7 @@ otherwise, close current tab (elscreen)."
                                                          " +octo"
                                                          "")
                                                       " "))))
-        (my-mu4e-archive)        
+        (my-mu4e-archive-thread)
         (message result)))))
 
 (defun my-mu4e-msg-to-task-from-view (msg)
