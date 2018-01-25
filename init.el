@@ -531,7 +531,7 @@ otherwise, close current tab (elscreen)."
 
 (add-hook 'elpy-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
-         (push '("lambda" . ?\u2192) prettify-symbols-alist)))
+         (push '("lambda" . ?λ) prettify-symbols-alist)))
 ;----- FIPLR
 (require 'fiplr)
 (defun fiplr-find-file-newtab ()
