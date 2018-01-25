@@ -605,7 +605,7 @@ otherwise, close current tab (elscreen)."
 (defun my-mu4e-archive-thread-from-view (msg)
   (interactive)
   (mu4e~view-quit-buffer)
-  ;(sit-for 0.5)
+  (sit-for 0.5)
   (my-mu4e-archive-thread))
 
 (add-to-list 'mu4e-view-actions
