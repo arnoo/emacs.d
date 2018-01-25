@@ -610,8 +610,8 @@ otherwise, close current tab (elscreen)."
   (sit-for 0.5)
   (my-mu4e-archive-thread))
 
-(add-to-list 'mu4e-view-actions
-  '("rarchive thread" . my-mu4e-archive-thread-from-view) t)
+;(add-to-list 'mu4e-view-actions
+;  '("rarchive thread" . my-mu4e-archive-thread-from-view) t)
 
 (defun my-mu4e-mute-thread ()
   (interactive)
