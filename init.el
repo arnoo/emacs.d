@@ -660,7 +660,7 @@ otherwise, close current tab (elscreen)."
 (setq mu4e-headers-fields
      '((:human-date    .   17)
       ;(:flags         .    6)
-       (:mailing-list  .   10)
+      ;(:mailing-list  .   10)
        (:from          .   22)
        (:subject       .   nil)))
 
