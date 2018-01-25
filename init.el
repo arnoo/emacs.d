@@ -608,27 +608,10 @@ otherwise, close current tab (elscreen)."
     (mu4e~view-quit-buffer))
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-(defun my-mu4e-archive-thread-from-view ()
-  (interactive)
-  (mu4e~view-quit-buffer)
-  ;(sit-for 0.5)
-  (my-mu4e-archive-thread))
-
-;(add-to-list 'mu4e-view-actions
-;  '("rarchive thread" . my-mu4e-archive-thread-from-view) t)
-
 (defun my-mu4e-mute-thread ()
   (interactive)
   (write-region (concat (plist-get (mu4e-message-at-point) :message-id) "\n") nil "~/.muted-mailids" 'append)
   (my-mu4e-archive-thread))
-
-(defun my-mu4e-mute-thread-from-view (msg)
-  (interactive)
-  (mu4e~view-quit-buffer)
-  (my-mu4e-mute-thread))
-
-(add-to-list 'mu4e-view-actions
-  '("mmute thread" . my-mu4e-mute-thread-from-view) t)
 
 (defun my-mu4e-msg-to-task ()
   "Archive a message and create a task in taskwarrior"
@@ -642,15 +625,6 @@ otherwise, close current tab (elscreen)."
                                                       " "))))
         (my-mu4e-archive-thread)
         (message result)))))
-
-(defun my-mu4e-msg-to-task-from-view (msg)
-  (interactive)
-  (mu4e-select-other-view)
-  (sit-for 0.5)
-  (my-mu4e-msg-to-task))
-
-(add-to-list 'mu4e-view-actions
-  '("tcreate task" . my-mu4e-msg-to-task-from-view) t)
 
 (setq mu4e-compose-in-new-frame t)
 
