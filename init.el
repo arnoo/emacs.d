@@ -523,6 +523,7 @@ otherwise, close current tab (elscreen)."
 
 
 ; *** PYTHON ***
+(elpy-enable)
 (add-hook 'python-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
