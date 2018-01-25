@@ -59,6 +59,7 @@
         color-theme
         dumb-jump
         dtrt-indent
+        elpy
         emojify
         evil
         evil-mu4e
@@ -520,6 +521,22 @@ otherwise, close current tab (elscreen)."
 (global-unset-key (kbd "ESC :"))
 (global-unset-key (kbd "<M-:>"))
 
+
+; *** PYTHON ***
+(add-hook 'python-mode-hook
+   (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
+         (push '("return" . ?\u2192) prettify-symbols-alist)
+         (prettify-symbols-mode)
+         (add-to-list 'load-path "/usr/lib/node_modules/tern/emacs/")
+         (add-to-list 'company-backends 'company-tern)
+         (autoload 'tern-mode "tern.el" nil t)
+         (tern-mode t)
+         (setq tern-command (cons (executable-find "tern") '()))
+         ;(evil-define-key 'normal tern-mode-keymap "\C-]" 'tern-find-definition)
+         (eval-after-load 'tern
+             '(progn
+               (require 'tern-auto-complete)
+               (tern-ac-setup)))))
 ;----- FIPLR
 (require 'fiplr)
 (defun fiplr-find-file-newtab ()
