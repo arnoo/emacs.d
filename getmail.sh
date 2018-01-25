@@ -12,3 +12,4 @@ mu find maildir:/Octo_INBOX AND NOT to:abetremieux@octo.com AND NOT to arb@octo.
       echo -e "$cmd\nquit" | mu server &> /dev/null || emacsclient -e "(mu4e~proc-send-command \"$cmd\")" &> /dev/null
   fi
 done
+mu index || emacsclient -e '(mu4e-update-index)'
