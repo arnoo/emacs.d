@@ -645,8 +645,8 @@ otherwise, close current tab (elscreen)."
 
 (setq mu4e-view-show-images t)
 ;; use imagemagick, if available
-(when (fboundp 'imagemagick-register-types)
-  (imagemagick-register-types))
+;(when (fboundp 'imagemagick-register-types)
+;  (imagemagick-register-types))
 
 ;; show full addresses in view message (instead of just names)
 ;; toggle per name with M-RET
