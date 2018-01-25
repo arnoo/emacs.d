@@ -651,6 +651,12 @@ otherwise, close current tab (elscreen)."
 
 (setq mu4e-headers-visible-lines 20)
 
+(defun no-auto-fill ()
+  "Turn off auto-fill-mode"
+  (auto-fill-mode -1))
+
+(add-hook 'mu4e-compose-mode-hook 'no-auto-fill)
+
 (setq mu4e-headers-fields
      '((:human-date    .   17)
       ;(:flags         .    6)
