@@ -524,7 +524,11 @@ otherwise, close current tab (elscreen)."
 
 ; *** PYTHON ***
 (elpy-enable)
-(add-hook 'python-mode-hook
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+(add-hook 'elpy-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("return" . ?\u2192) prettify-symbols-alist)
          (prettify-symbols-mode)
