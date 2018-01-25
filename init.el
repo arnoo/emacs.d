@@ -269,6 +269,7 @@ otherwise, close current tab (elscreen)."
 (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(define-key mu4e-view-mode-map [escape] 'mu4e~view-quit-buffer)
 
 ;(display-time-mode t)
 
