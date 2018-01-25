@@ -118,7 +118,7 @@
 
 (electric-indent-local-mode -1)
 (add-hook 'after-change-major-mode-hook
-          '(lambda () (electric-indent-mode -1)))
+          (lambda () (electric-indent-mode -1)))
 (setq-default indent-tabs-mode nil)
 (global-set-key (kbd "TAB") 'tab-to-tab-stop)
 
@@ -531,7 +531,9 @@ otherwise, close current tab (elscreen)."
 
 (add-hook 'elpy-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
-         (push '("lambda" . ?λ) prettify-symbols-alist)))
+         (push '("lambda" . ?λ) prettify-symbols-alist)
+         (highlight-indentation-mode -1)))
+
 ;----- FIPLR
 (require 'fiplr)
 (defun fiplr-find-file-newtab ()
@@ -591,6 +593,7 @@ otherwise, close current tab (elscreen)."
 (define-key mu4e-view-mode-map    (kbd "r") 'my-mu4e-archive-thread)
 (define-key mu4e-headers-mode-map (kbd "m") 'my-mu4e-mute-thread)
 (define-key mu4e-view-mode-map    (kbd "m") 'my-mu4e-mute-thread)
+(define-key mu4e-headers-mode-map (kbd "p") 'my-mu4e-msg-to-task)
 (define-key mu4e-headers-mode-map (kbd "t") 'my-mu4e-msg-to-task)
 (define-key mu4e-view-mode-map    (kbd "t") 'my-mu4e-msg-to-task)
 (define-key mu4e-view-mode-map    [escape]  'mu4e~view-quit-buffer)
@@ -623,7 +626,6 @@ otherwise, close current tab (elscreen)."
   (my-mu4e-archive-thread))
 
 (defun my-mu4e-msg-to-task ()
-  "Archive a message and create a task in taskwarrior"
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
