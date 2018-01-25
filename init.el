@@ -604,6 +604,8 @@ otherwise, close current tab (elscreen)."
 
 (defun my-mu4e-archive-thread ()
   (interactive)
+  (when (eq major-mode 'mu4e-view-mode)
+    (mu4e~view-quit-buffer))
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
 (defun my-mu4e-archive-thread-from-view ()
