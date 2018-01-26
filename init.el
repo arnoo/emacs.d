@@ -605,7 +605,7 @@ otherwise, close current tab (elscreen)."
 (define-key my-mu4e-g-leader-map "T" 'elscreen-previous)
 
 
-;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
+(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
 ;(define-key mu4e-headers-mode-map (kbd "g T") 'elscreen-previous)
 
 (defun mu4e-inbox ()
