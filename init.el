@@ -598,6 +598,13 @@ otherwise, close current tab (elscreen)."
 (define-key evil-outer-text-objects-map "t" 'my-mu4e-msg-to-task)
 (define-key evil-inner-text-objects-map "t" 'my-mu4e-msg-to-task)
 (define-key mu4e-view-mode-map    [escape]  'mu4e~view-quit-buffer)
+
+(defvar my-mu4e-g-leader-map (make-sparse-keymap))
+(define-key evil-normal-state-map "g" my-mu4e-g-leader-map)
+(define-key my-mu4e-g-leader-map "t" 'elscreen-next)
+(define-key my-mu4e-g-leader-map "T" 'elscreen-previous)
+
+
 ;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
 ;(define-key mu4e-headers-mode-map (kbd "g T") 'elscreen-previous)
 
