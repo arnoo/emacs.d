@@ -54,9 +54,12 @@
 ;;;; my-Packages
 (setq my-packages
       '(package
+        ag
         cl-lib
         color
         color-theme
+        company
+        company-tern
         dumb-jump
         dtrt-indent
         elpy
@@ -70,11 +73,7 @@
         fiplr
         markdown-mode
         evil-search-highlight-persist
-        company
-        company-tern
-        ag
-        ;neotree
-        ;wanderlust
+        org-gcal
         wdired
         web-mode))
 
