@@ -812,8 +812,7 @@ otherwise, close current tab (elscreen)."
 
 (setq org-gcal-client-id "your-id-foo.apps.googleusercontent.com"
       org-gcal-client-secret "your-secret"
-      org-gcal-file-alist '(("your-mail@gmail.com" .  "~/schedule.org")
-                            ("another-mail@gmail.com" .  "~/task.org")))
+      org-gcal-file-alist '(("abetremieux@octo.com" .  "~/wiki/agenda_octo.org")))
 
 (setq org-confirm-babel-evaluate nil)
 
