@@ -810,9 +810,7 @@ otherwise, close current tab (elscreen)."
 
 (setq org-agenda-files (list "~/wiki/todo.org"))
 
-(setq org-gcal-client-id "your-id-foo.apps.googleusercontent.com"
-      org-gcal-client-secret "your-secret"
-      org-gcal-file-alist '(("abetremieux@octo.com" .  "~/wiki/agenda_octo.org")))
+(load "~/.emacs.d/gcal.el")
 
 (setq org-confirm-babel-evaluate nil)
 
