@@ -72,7 +72,7 @@
         fiplr
         js2-mode
         markdown-mode
-        org-gcal
+        org-caldav
         scala-mode2
         wdired
         web-mode))
