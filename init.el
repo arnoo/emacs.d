@@ -808,14 +808,14 @@ otherwise, close current tab (elscreen)."
 ;     (prettify-symbols-mode)
 ;     (org-indent-mode)))
 
-(setq org-link-abbrev-alist
-      '(("mail" . "https://mail.google.com/a/arnoo.net/#mbox/%s") ; [[mail:a234xffsdf13244f]]
-        ("omail" . "https://mail.google.com/a/octo.com/#mbox/%s")
-        ))
+(setq org-agenda-files (list "~/wiki/todo.org"))
+
+(setq org-gcal-client-id "your-id-foo.apps.googleusercontent.com"
+      org-gcal-client-secret "your-secret"
+      org-gcal-file-alist '(("your-mail@gmail.com" .  "~/schedule.org")
+                            ("another-mail@gmail.com" .  "~/task.org")))
 
 (setq org-confirm-babel-evaluate nil)
-
-(setq org-agenda-files (list "~/wiki/todo.org"))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
