@@ -69,11 +69,11 @@
         evil-numbers
         evil-search-highlight-persist
         evil-tabs
-        scala-mode2
         js2-mode
         fiplr
         markdown-mode
         org-gcal
+        scala-mode2
         wdired
         web-mode))
 
