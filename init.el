@@ -62,7 +62,7 @@
         elpy
         emojify
         evil
-        evil-mu4e
+        ;evil-mu4e
         evil-numbers
         evil-tabs
         scala-mode2
@@ -139,7 +139,6 @@
 (color-theme-standard)
 
 (undo-tree-mode 1)
-
 
 (global-evil-tabs-mode t)
 
@@ -584,29 +583,34 @@ otherwise, close current tab (elscreen)."
 
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (require 'mu4e)
-(require 'evil-mu4e)
+;(require 'evil-mu4e)
 
 ; Required for mbsync as UIDs are in the filenames
 (setq mu4e-change-filenames-when-moving t)
 
 (define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive-thread)
 (define-key mu4e-view-mode-map    (kbd "r") 'my-mu4e-archive-thread)
+
 (define-key mu4e-headers-mode-map (kbd "m") 'my-mu4e-mute-thread)
 (define-key mu4e-view-mode-map    (kbd "m") 'my-mu4e-mute-thread)
+
 (define-key mu4e-headers-mode-map (kbd "t") 'my-mu4e-msg-to-task)
 (define-key mu4e-view-mode-map    (kbd "t") 'my-mu4e-msg-to-task)
-(define-key evil-outer-text-objects-map "t" 'my-mu4e-msg-to-task)
-(define-key evil-inner-text-objects-map "t" 'my-mu4e-msg-to-task)
+
 (define-key mu4e-view-mode-map    [escape]  'mu4e~view-quit-buffer)
 
-(defvar my-mu4e-g-leader-map (make-sparse-keymap))
-(define-key evil-normal-state-map "g" my-mu4e-g-leader-map)
-(define-key my-mu4e-g-leader-map "t" 'elscreen-next)
-(define-key my-mu4e-g-leader-map "T" 'elscreen-previous)
+(define-key mu4e-headers-mode-map (kbd "j") 'mu4e-headers-next)
+(define-key mu4e-view-mode-map (kbd "j") 'next-line)
+(define-key mu4e-view-mode-map "\C-j" 'mu4e-view-headers-next)
 
+(define-key mu4e-headers-mode-map (kbd "k") 'mu4e-headers-prev)
+(define-key mu4e-view-mode-map (kbd "k") 'previous-line)
+(define-key mu4e-view-mode-map "\C-k" 'mu4e-view-headers-prev)
 
-;(define-key mu4e-headers-mode-map (kbd "g t") 'elscreen-next)
-;(define-key mu4e-headers-mode-map (kbd "g T") 'elscreen-previous)
+(define-prefix-command 'my-mu4e-g-map)
+(define-key mu4e-headers-mode-map "g" 'my-mu4e-g-map)
+(define-key my-mu4e-g-map (kbd "t") 'elscreen-next)
+(define-key my-mu4e-g-map (kbd "T") 'elscreen-previous)
 
 (defun mu4e-inbox ()
   (let* ((time (decode-time (current-time)))
@@ -811,6 +815,8 @@ otherwise, close current tab (elscreen)."
         ))
 
 (setq org-confirm-babel-evaluate nil)
+
+(setq org-agenda-files (list "~/wiki/todo.org"))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
