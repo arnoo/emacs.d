@@ -66,13 +66,13 @@
         emojify
         evil
         ;evil-mu4e
+        evil-search-highlight-persist
         evil-numbers
         evil-tabs
         scala-mode2
         js2-mode
         fiplr
         markdown-mode
-        evil-search-highlight-persist
         org-gcal
         wdired
         web-mode))
