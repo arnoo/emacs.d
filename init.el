@@ -69,8 +69,8 @@
         evil-numbers
         evil-search-highlight-persist
         evil-tabs
-        js2-mode
         fiplr
+        js2-mode
         markdown-mode
         org-gcal
         scala-mode2
