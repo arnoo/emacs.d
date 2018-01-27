@@ -811,6 +811,8 @@ otherwise, close current tab (elscreen)."
 
 (setq org-agenda-files (list "~/wiki/todo.org"))
 
+(setq plstore-cache-passphrase-for-symmetric-encryption t)
+
 (load "~/.emacs.d/gcal.el")
 
 (setq org-confirm-babel-evaluate nil)
