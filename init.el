@@ -73,6 +73,7 @@
         js2-mode
         markdown-mode
         org-caldav
+        oauth2
         scala-mode2
         wdired
         web-mode))
