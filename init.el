@@ -66,8 +66,8 @@
         emojify
         evil
         ;evil-mu4e
-        evil-search-highlight-persist
         evil-numbers
+        evil-search-highlight-persist
         evil-tabs
         scala-mode2
         js2-mode
