@@ -982,7 +982,9 @@ otherwise, close current tab (elscreen)."
 ; To only display string whose length is greater than or equal to 3
 ;(setq evil-search-highlight-string-min-len 3)
 
-(server-start)
+(require 'server)
+(or (server-running-p)
+    (server-start))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
