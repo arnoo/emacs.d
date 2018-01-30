@@ -689,7 +689,7 @@ otherwise, close current tab (elscreen)."
 (add-hook 'message-mode-hook 'turn-on-orgtbl)
 (add-hook 'message-mode-hook 'turn-on-orgstruct++)
 
-(setq mu4e-compose-in-new-frame t)
+;(setq mu4e-compose-in-new-frame t)
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq sendmail-program "/usr/bin/msmtp")
 (setq message-sendmail-f-is-evil 't)
