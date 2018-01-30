@@ -798,9 +798,6 @@ otherwise, close current tab (elscreen)."
                        "http://blog.octo.com/\n"))))
        ))
 
-;; Call mu every 5 minutes to update and index Maildir
-;; (setq mu4e-update-interval 300)
-
 
 ;----- ORG-MODE STUFF
 (require 'org-install)
