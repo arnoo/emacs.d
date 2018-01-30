@@ -90,6 +90,7 @@
     (mapc 'package-install uninstalled-packages)))
 
 (add-hook 'after-init-hook 'global-company-mode)
+(define-key 'company-active-map (kbd "<C-n>") 'company-complete-common)
 
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
@@ -530,7 +531,7 @@ otherwise, close current tab (elscreen)."
 (add-hook 'elpy-mode-hook
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("lambda" . ?λ) prettify-symbols-alist)
-         (evil-define-key 'normal php-mode-map (kbd "K") 'pydoc-at-point)
+         (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
          (highlight-indentation-mode -1)))
 
 ;----- FIPLR
