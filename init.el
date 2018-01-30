@@ -691,11 +691,13 @@ otherwise, close current tab (elscreen)."
 
 (setq mu4e-compose-in-new-frame t)
 
+;; Create an elscreen screen instead of a frame on opening.
 (defun mu4e~draft-open-file (path)
   "Open the the draft file at PATH."
   (if mu4e-compose-in-new-frame
       (elscreen-find-file path)
     (find-file path)))
+
 ;; Drop an elscreen screen instead of a frame on sending.
 (defun mu4e-message-kill-buffer ()
   "Wrapper around `message-kill-buffer'.
