@@ -985,6 +985,7 @@ otherwise, close current tab (elscreen)."
 (require 'server)
 (or (server-running-p)
     (server-start))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
