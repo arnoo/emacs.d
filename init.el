@@ -72,6 +72,7 @@
         fiplr
         js2-mode
         markdown-mode
+        pydoc
         scala-mode2
         wdired
         web-mode))
