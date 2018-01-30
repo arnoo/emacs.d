@@ -90,7 +90,7 @@
     (mapc 'package-install uninstalled-packages)))
 
 (add-hook 'after-init-hook 'global-company-mode)
-(define-key 'company-active-map (kbd "<C-n>") 'company-complete-common)
+(define-key company-active-map (kbd "<C-n>") 'company-complete-common)
 
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
