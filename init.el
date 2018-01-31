@@ -624,6 +624,9 @@ otherwise, close current tab (elscreen)."
                   "")
                   ))))
 
+(defun my-mu4e-view-msg-in-tab ()
+  )
+
 (defun my-mu4e-archive-thread ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
