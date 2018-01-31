@@ -94,19 +94,19 @@
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
 
-(define-key global-map (kbd "<C-next>") 'elscreen-next)
+(define-key global-map (kbd "<C-next>")  'elscreen-next)
 (define-key global-map (kbd "<C-prior>") 'elscreen-previous)
-(define-key global-map "<C-0>"    'elscreen-jump-0)
-(define-key global-map "<C-1>"    'elscreen-jump-1)
-(define-key global-map "<C-2>"    'elscreen-jump-2)
-(define-key global-map "<C-3>"    'elscreen-jump-3)
-(define-key global-map "<C-4>"    'elscreen-jump-4)
-(define-key global-map "<C-5>"    'elscreen-jump-5)
-(define-key global-map "<C-6>"    'elscreen-jump-6)
-(define-key global-map "<C-7>"    'elscreen-jump-7)
-(define-key global-map "<C-8>"    'elscreen-jump-8)
-(define-key global-map "<C-9>"    'elscreen-jump-9)
-(define-key global-map "<C-tab>"  'elscreen-toggle)
+(define-key global-map (kbd "<C-0>")     'elscreen-jump-0)
+(define-key global-map (kbd "<C-1>")     'elscreen-jump-1)
+(define-key global-map (kbd "<C-2>")     'elscreen-jump-2)
+(define-key global-map (kbd "<C-3>")     'elscreen-jump-3)
+(define-key global-map (kbd "<C-4>")     'elscreen-jump-4)
+(define-key global-map (kbd "<C-5>")     'elscreen-jump-5)
+(define-key global-map (kbd "<C-6>")     'elscreen-jump-6)
+(define-key global-map (kbd "<C-7>")     'elscreen-jump-7)
+(define-key global-map (kbd "<C-8>")     'elscreen-jump-8)
+(define-key global-map (kbd "<C-9>")     'elscreen-jump-9)
+(define-key global-map (kbd "<C-tab>")   'elscreen-toggle)
 
 ;;; Indentation ...
 (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -689,6 +689,7 @@ otherwise, close current tab (elscreen)."
 
 (setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 (setq mu4e-headers-time-format "%H:%M")
+(setq mu4e-headers-auto-update t)
 
 (setq mu4e-use-fancy-chars t)
 
