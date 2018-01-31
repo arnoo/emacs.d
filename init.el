@@ -96,6 +96,18 @@
 
 (define-key global-map (kbd "<C-next>") 'elscreen-next)
 (define-key global-map (kbd "<C-prior>") 'elscreen-previous)
+(define-key elscreen-map "<C-0>"    'elscreen-jump-0)
+(define-key elscreen-map "<C-1>"    'elscreen-jump-1)
+(define-key elscreen-map "<C-2>"    'elscreen-jump-2)
+(define-key elscreen-map "<C-3>"    'elscreen-jump-3)
+(define-key elscreen-map "<C-4>"    'elscreen-jump-4)
+(define-key elscreen-map "<C-5>"    'elscreen-jump-5)
+(define-key elscreen-map "<C-6>"    'elscreen-jump-6)
+(define-key elscreen-map "<C-7>"    'elscreen-jump-7)
+(define-key elscreen-map "<C-8>"    'elscreen-jump-8)
+(define-key elscreen-map "<C-9>"    'elscreen-jump-9)
+
+
 ;;; Indentation ...
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (dtrt-indent-mode 1)
