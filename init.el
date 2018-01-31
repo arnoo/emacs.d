@@ -625,6 +625,7 @@ otherwise, close current tab (elscreen)."
                   ))))
 
 (defun my-mu4e-view-msg-in-tab ()
+  (plist-get (mu4e-message-at-point) :message-id)
   )
 
 (defun my-mu4e-archive-thread ()
