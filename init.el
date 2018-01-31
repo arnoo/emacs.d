@@ -588,7 +588,7 @@ otherwise, close current tab (elscreen)."
 ; Required for mbsync as UIDs are in the filenames
 (setq mu4e-change-filenames-when-moving t)
 
-(define-key mu4e-headers-mode-map (kbd "<C-Enter>") 'my-mu4e-view-msg-in-tab)
+(define-key mu4e-headers-mode-map (kbd "<C-Return>") 'my-mu4e-view-msg-in-tab)
 
 (define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive-thread)
 (define-key mu4e-view-mode-map    (kbd "r") 'my-mu4e-archive-thread)
