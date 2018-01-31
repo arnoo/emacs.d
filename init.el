@@ -106,6 +106,7 @@
 (define-key elscreen-map "<C-7>"    'elscreen-jump-7)
 (define-key elscreen-map "<C-8>"    'elscreen-jump-8)
 (define-key elscreen-map "<C-9>"    'elscreen-jump-9)
+(define-key elscreen-map "<C-tab>"    'elscreen-toggle)
 
 
 ;;; Indentation ...
