@@ -701,23 +701,29 @@ otherwise, close current tab (elscreen)."
     (find-file path)))
 
 ;; Drop an elscreen screen instead of a frame on sending.
-(defun mu4e-message-kill-buffer ()
-  "Wrapper around `message-kill-buffer'.
- restores mu4e window layout after killing the compose-buffer."
-  (interactive)
-  (let ((msg-buffer (current-buffer)))
-    (message-kill-buffer)
-    ;; Compose buffer killed
-    (when (not (equal msg-buffer (current-buffer)))
-      ;; Restore mu4e
-      (if mu4e-compose-in-new-frame
-        (elscreen-kill)
-        (if (buffer-live-p mu4e~view-buffer)
-            (switch-to-buffer mu4e~view-buffer)
-          (if (buffer-live-p mu4e~headers-buffer)
-              (switch-to-buffer mu4e~headers-buffer)
-            ;; if all else fails, back to the main view
-            (when (fboundp 'mu4e) (mu4e))))))))
+(defun mu4e-sent-handler (docid path)
+  "Handler function, called with DOCID and PATH for the just-sent
+message. For Forwarded ('Passed') and Replied messages, try to set
+the appropriate flag at the message forwarded or replied-to."
+  (mu4e~compose-set-parent-flag path)
+  (when (file-exists-p path) ;; maybe the draft was not saved at all
+    (mu4e~proc-remove docid))
+  ;; kill any remaining buffers for the draft file, or they will hang around...
+  ;; this seems a bit hamfisted...
+  (dolist (buf (buffer-list))
+    (when (and (buffer-file-name buf)
+	    (string= (buffer-file-name buf) path))
+      (if message-kill-buffer-on-exit
+	(kill-buffer buf))))
+  (if mu4e-compose-in-new-frame
+          (elscreen-kill)
+          (if (buffer-live-p mu4e~view-buffer)
+              (switch-to-buffer mu4e~view-buffer)
+            (if (buffer-live-p mu4e~headers-buffer)
+                (switch-to-buffer mu4e~headers-buffer)
+              ;; if all else fails, back to the main view
+              (when (fboundp 'mu4e) (mu4e)))))
+  (mu4e-message "Message sent"))
 
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq sendmail-program "/usr/bin/msmtp")
