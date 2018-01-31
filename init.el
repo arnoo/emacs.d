@@ -627,28 +627,17 @@ otherwise, close current tab (elscreen)."
                   ))))
 
 (defun my-mu4e-view-msg-in-tab ()
-  ;TODO: does not work as intended, as mu4e-view-message-with-message-id entails a split headers/view display
-  ;Look at what the headers-view function does to create message views
-  ; (let* ((msg (mu4e-message-at-point))
-  ; 	  (docid (or (mu4e-message-field msg :docid)
-  ; 		   (mu4e-warn "No message at point")))
-  ; 	  ;; decrypt (or not), based on `mu4e-decryption-policy'.
-  ; 	  (decrypt
-  ; 	    (and (member 'encrypted (mu4e-message-field msg :flags))
-  ; 	      (if (eq mu4e-decryption-policy 'ask)
-  ; 		(yes-or-no-p (mu4e-format "Decrypt message?"))
-  ; 		mu4e-decryption-policy)))
-  ; 	  (viewwin (mu4e~headers-redraw-get-view-window)))
-  ;     (unless (window-live-p viewwin)
-  ;       (mu4e-error "Cannot get a message view"))
-  ;     (select-window viewwin)
-  ;     (switch-to-buffer (mu4e~headers-get-loading-buf))
-  ;     (mu4e~proc-view docid mu4e-view-show-images decrypt))
   (interactive)
-  (let ((msg-id (plist-get (mu4e-message-at-point)
-                           :message-id)))
+  (let* ((msg (mu4e-message-at-point))
+         (docid (or (mu4e-message-field msg :docid)
+                (mu4e-warn "No message at point")))
+  	  ;; decrypt (or not), based on `mu4e-decryption-policy'.
+         (decrypt (and (member 'encrypted (mu4e-message-field msg :flags))
+                       (if (eq mu4e-decryption-policy 'ask)
+                           (yes-or-no-p (mu4e-format "Decrypt message?"))
+                           mu4e-decryption-policy))))
     (elscreen-create)
-    (mu4e-view-message-with-message-id msg-id)))
+    (mu4e~proc-view docid mu4e-view-show-images decrypt)))
 
 (defun my-mu4e-archive-thread ()
   (interactive)
