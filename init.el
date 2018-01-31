@@ -90,7 +90,6 @@
     (mapc 'package-install uninstalled-packages)))
 
 (add-hook 'after-init-hook 'global-company-mode)
-(define-key company-active-map (kbd "<C-n>") 'company-complete-common)
 
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
@@ -706,10 +705,10 @@ otherwise, close current tab (elscreen)."
   "Wrapper around `message-kill-buffer'.
  restores mu4e window layout after killing the compose-buffer."
   (interactive)
-  (let ((current-buffer (current-buffer)))
+  (let ((msg-buffer (current-buffer)))
     (message-kill-buffer)
     ;; Compose buffer killed
-    (when (not (equal current-buffer (current-buffer)))
+    (when (not (equal msg-buffer (current-buffer)))
       ;; Restore mu4e
       (if mu4e-compose-in-new-frame
           (elscreen-kill)
@@ -1007,6 +1006,12 @@ otherwise, close current tab (elscreen)."
 ;;;; Highlight Searches
 (require 'evil-search-highlight-persist)
 (global-evil-search-highlight-persist t)
+
+(add-hook 'company-mode-hook
+          (lambda ()
+            (evil-define-key 'insert global-map (kbd "C-n") 'company-complete-common)
+            (define-key company-active-map (kbd "C-n") 'company-select-next)
+            (define-key company-active-map (kbd "C-p") #'company-select-previous)))
 
 ; To only display string whose length is greater than or equal to 3
 ;(setq evil-search-highlight-string-min-len 3)
