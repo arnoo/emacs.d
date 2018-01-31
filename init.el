@@ -719,8 +719,6 @@ otherwise, close current tab (elscreen)."
             ;; if all else fails, back to the main view
             (when (fboundp 'mu4e) (mu4e))))))))
 
-
-
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq sendmail-program "/usr/bin/msmtp")
 (setq message-sendmail-f-is-evil 't)
