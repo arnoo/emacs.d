@@ -774,7 +774,9 @@ the appropriate flag at the message forwarded or replied-to."
                        "....................\n"
                        "+33 (0)6 89 85 88 41\n"
                        "du lundi au jeudi\n"
-                       ""))))
+                       ""
+                       "beta.gouv (http://beta.gouv.fr) est l'incubateur des  "
+                       ))))
        ,(make-mu4e-context
           :name "Octo"
           :enter-func (lambda () (mu4e-message "Entering context 'Octo'"))
