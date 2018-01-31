@@ -627,6 +627,8 @@ otherwise, close current tab (elscreen)."
                   ))))
 
 (defun my-mu4e-view-msg-in-tab ()
+  ;TODO: does not work as intended, as mu4e-view-message-with-message-id entails a split headers/view display
+  ;Look at what the headers-view function does to create message views
   (interactive)
   (let ((msg-id (plist-get (mu4e-message-at-point)
                            :message-id)))
