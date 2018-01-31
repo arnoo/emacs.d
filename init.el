@@ -711,13 +711,13 @@ otherwise, close current tab (elscreen)."
     (when (not (equal msg-buffer (current-buffer)))
       ;; Restore mu4e
       (if mu4e-compose-in-new-frame
-         (elscreen-kill)
-         (if (buffer-live-p mu4e~view-buffer)
-             (switch-to-buffer mu4e~view-buffer)
-           (if (buffer-live-p mu4e~headers-buffer)
-               (switch-to-buffer mu4e~headers-buffer)
-             ;; if all else fails, back to the main view
-             (when (fboundp 'mu4e) (mu4e))))))))
+        (elscreen-kill)
+        (if (buffer-live-p mu4e~view-buffer)
+            (switch-to-buffer mu4e~view-buffer)
+          (if (buffer-live-p mu4e~headers-buffer)
+              (switch-to-buffer mu4e~headers-buffer)
+            ;; if all else fails, back to the main view
+            (when (fboundp 'mu4e) (mu4e))))))))
 
 
 
