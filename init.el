@@ -108,7 +108,6 @@
 (define-key elscreen-map "<C-9>"    'elscreen-jump-9)
 (define-key elscreen-map "<C-tab>"  'elscreen-toggle)
 
-
 ;;; Indentation ...
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (dtrt-indent-mode 1)
