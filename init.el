@@ -774,7 +774,7 @@ the appropriate flag at the message forwarded or replied-to."
                        "....................\n"
                        "+33 (0)6 89 85 88 41\n"
                        "du lundi au jeudi\n"
-                       ""
+                       "\n"
                        "betagouv <https://beta.gouv.fr/> est l'incubateur des Startups d'État, un service du Premier Ministre à la DINSIC. Nous créons des services publics numériques dans l'intérêt des usagers et des agents publics."
                        ))))
        ,(make-mu4e-context
