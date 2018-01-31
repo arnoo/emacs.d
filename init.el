@@ -770,7 +770,7 @@ the appropriate flag at the message forwarded or replied-to."
                    ( mu4e-compose-signature .
                      (concat
                        "Arnaud Bétrémieux\n"
-                       "Équipe Pass Culture\n"
+                       "Équipe Technique Pass Culture\n"
                        "....................\n"
                        "+33 (0)6 89 85 88 41\n"
                        "du lundi au jeudi\n"
