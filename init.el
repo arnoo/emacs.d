@@ -1051,8 +1051,8 @@ the appropriate flag at the message forwarded or replied-to."
 ;(setq evil-search-highlight-string-min-len 3)
 
 (require 'server)
-(let ((title-pos (seq-position argv "--title"))
-      (title (elt argv (+ title-pos 1))))
+(let* ((title-pos (seq-position argv "--title"))
+       (title (elt argv (+ title-pos 1))))
   (when (= title "mu4e")
       (set-variable 'server-name "mu4e"))
   (or (server-running-p)
