@@ -3,7 +3,8 @@ LOCKFILE="/home/arno/.emacs.d/mail.lock"
 [[ -e "$LOCKFILE" ]] && echo "Lock present, exiting" && exit
 touch "$LOCKFILE"
 mbsync -a
-mu index || emacsclient -e '(mu4e-update-index)'
+pgrep mu && kill `pgrep mu`
+mu index
 sort -u -o ~/.muted-mailids ~/.muted-mailids
 mu find maildir:/Octo_INBOX AND NOT to:abetremieux@octo.com AND NOT to arb@octo.com --exec echo | while read m; do
   echo "EMAIL : $m"
@@ -15,5 +16,4 @@ mu find maildir:/Octo_INBOX AND NOT to:abetremieux@octo.com AND NOT to arb@octo.
       echo -e "$cmd\nquit" | mu server &> /dev/null || emacsclient -e "(mu4e~proc-send-command \"$cmd\")" &> /dev/null
   fi
 done
-mu index || emacsclient -e '(mu4e-update-index)'
 rm -f "$LOCKFILE"

@@ -1051,6 +1051,7 @@ the appropriate flag at the message forwarded or replied-to."
 ;(setq evil-search-highlight-string-min-len 3)
 
 (require 'server)
+(set-variable 'server-name "foo")
 (or (server-running-p)
     (server-start))
 
