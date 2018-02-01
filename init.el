@@ -1053,10 +1053,10 @@ the appropriate flag at the message forwarded or replied-to."
 (require 'server)
 (let ((title-pos (seq-position argv "--title"))
       (title (elt argv (+ title-pos 1))))
-(elt argv 0)
-(set-variable 'server-name "foo")
-(or (server-running-p)
-    (server-start))
+  (when (= title "mu4e")
+      (set-variable 'server-name "mu4e"))
+  (or (server-running-p)
+      (server-start)))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
