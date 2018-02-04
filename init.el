@@ -626,6 +626,8 @@ otherwise, close current tab (elscreen)."
 (define-key my-mu4e-g-map (kbd "t") 'elscreen-next)
 (define-key my-mu4e-g-map (kbd "T") 'elscreen-previous)
 
+(setq mail-user-agent 'mu4e-user-agent)
+
 (defun mu4e-inbox ()
   (let* ((time (decode-time (current-time)))
          (hour (elt time 2))
@@ -1051,12 +1053,15 @@ the appropriate flag at the message forwarded or replied-to."
 ;(setq evil-search-highlight-string-min-len 3)
 
 (require 'server)
-(let* ((title-pos (seq-position argv "--title"))
-       (title (elt argv (+ title-pos 1))))
-  (when (= title "mu4e")
-      (set-variable 'server-name "mu4e"))
-  (or (server-running-p)
-      (server-start)))
+;(let* ((title-pos (seq-position argv "--title" 'string=))
+;       (title (and title-pos (elt argv (+ title-pos 1)))))
+;  (message argv)
+;  (message title-pos)
+;  (message title)
+;  (when (string= title "mu4e")
+;    (set-variable 'server-name "mu4e"))
+(or (server-running-p)
+    (server-start))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
