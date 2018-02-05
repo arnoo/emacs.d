@@ -70,6 +70,7 @@
         evil-search-highlight-persist
         evil-tabs
         fiplr
+        flycheck-mypy
         js2-mode
         markdown-mode
         pydoc
@@ -534,6 +535,12 @@ otherwise, close current tab (elscreen)."
 
 ; *** PYTHON ***
 (elpy-enable)
+
+(require 'flycheck-mypy)
+(add-hook 'python-mode-hook 'flycheck-mode)
+
+(add-to-list 'flycheck-disabled-checkers 'python-flake8)
+(add-to-list 'flycheck-disabled-checkers 'python-pylint)
 
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
