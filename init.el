@@ -536,12 +536,12 @@ otherwise, close current tab (elscreen)."
 ; *** PYTHON ***
 (elpy-enable)
 
-(require 'flycheck-mypy)
 
 (add-to-list 'flycheck-disabled-checkers 'python-flake8)
 (add-to-list 'flycheck-disabled-checkers 'python-pylint)
 
 (when (require 'flycheck nil t)
+  (require 'flycheck-mypy)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
