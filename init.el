@@ -795,10 +795,11 @@ the appropriate flag at the message forwarded or replied-to."
           :leave-func (lambda () (mu4e-message "Leaving context 'beta.gouv'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (or (mu4e-message-contact-field-matches msg 
-                                 :to "arnaud.betremieux@beta.gouv.fr")
-                              (mu4e-message-contact-field-matches msg 
-                                 :cc "arnaud.betremieux@beta.gouv.fr"))))
+                          (and (string-match "^/Octo_" (mu4e-message-field msg :maildir))
+                               (or (mu4e-message-contact-field-matches msg 
+                                     :to "arnaud.betremieux@beta.gouv.fr")
+                                   (mu4e-message-contact-field-matches msg 
+                                     :cc "arnaud.betremieux@beta.gouv.fr")))))
            :vars '(( user-mail-address      . "arnaud.betremieux@beta.gouv.fr" )
                    ( mu4e-sent-folder       . "/Octo_Sent")
                    ( mu4e-drafts-folder     . "/Octo_Drafts")
