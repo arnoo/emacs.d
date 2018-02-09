@@ -646,6 +646,8 @@ otherwise, close current tab (elscreen)."
                   "")
                   ))))
 
+(setq mu4e-headers-include-related t)
+
 (defun my-mu4e-view-msg-in-tab ()
   (interactive)
   (let* ((msg (mu4e-message-at-point))
