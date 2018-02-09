@@ -783,7 +783,7 @@ the appropriate flag at the message forwarded or replied-to."
           :match-func (lambda (msg)
                         (when msg 
                           (or
-                            (string= (mu4e-message-field msg :maildir) "/INBOX")
+                            (not (string-match "^/Octo_" (mu4e-message-field msg :maildir)))
                             (mu4e-message-contact-field-matches msg 
                               :to ".*@btmx.fr"))))
           :vars '( ( user-mail-address      . "arnaud@btmx.fr")
