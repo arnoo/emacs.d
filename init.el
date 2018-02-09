@@ -679,7 +679,8 @@ otherwise, close current tab (elscreen)."
   (let ((msg (mu4e-message-at-point)))
     (when msg
       (let ((result (shell-command-to-string (concat "task add '" (plist-get msg :subject) " m#" (plist-get msg :message-id) "'"
-                                                     (if (string-suffix-p "@octo.com" (plist-get msg :to))
+                                                     (if (or (string-suffix-p "@octo.com" (plist-get msg :to))
+                                                             (string-suffix-p "@octo.com>" (plist-get msg :to)))
                                                          " +octo"
                                                          "")
                                                       " "))))

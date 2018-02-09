@@ -1,7 +1,7 @@
 #!/bin/bash
-LOCKFILE="/home/arno/.emacs.d/mail.lock"
-[[ -e "$LOCKFILE" ]] && echo "Lock present, exiting" && exit
-touch "$LOCKFILE"
+#LOCKFILE="/home/arno/.emacs.d/mail.lock"
+#[[ -e "$LOCKFILE" ]] && echo "Lock present, exiting" && exit
+#touch "$LOCKFILE"
 mbsync -a
 pgrep mu && kill `pgrep mu`
 mu index
@@ -16,4 +16,4 @@ mu find maildir:/Octo_INBOX AND NOT to:abetremieux@octo.com AND NOT to arb@octo.
       echo -e "$cmd\nquit" | mu server &> /dev/null || emacsclient -e "(mu4e~proc-send-command \"$cmd\")" &> /dev/null
   fi
 done
-rm -f "$LOCKFILE"
+#rm -f "$LOCKFILE"
