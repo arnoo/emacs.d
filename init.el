@@ -819,10 +819,7 @@ the appropriate flag at the message forwarded or replied-to."
           :leave-func (lambda () (mu4e-message "Leaving context 'Octo'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (or
-                            (string= (mu4e-message-field msg :maildir) "/Octo_INBOX")
-                            (mu4e-message-contact-field-matches msg 
-                              :to ".*@octo.com"))))
+                          (string-match "^/Octo_" (mu4e-message-field msg :maildir))))
           :vars '( ( user-mail-address      . "abetremieux@octo.com" )
                    ( mu4e-sent-messages-behavior . delete)
                    ( mu4e-sent-folder       . "/Octo_Sent")
