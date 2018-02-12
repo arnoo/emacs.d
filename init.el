@@ -632,6 +632,8 @@ otherwise, close current tab (elscreen)."
 (define-key my-mu4e-g-map (kbd "t") 'elscreen-next)
 (define-key my-mu4e-g-map (kbd "T") 'elscreen-previous)
 
+(setq mu4e-headers-skip-duplicates t)
+
 (setq mail-user-agent 'mu4e-user-agent)
 
 (defun mu4e-inbox ()
