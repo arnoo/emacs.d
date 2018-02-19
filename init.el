@@ -563,7 +563,7 @@ otherwise, close current tab (elscreen)."
       '((directories
          (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node"))
         (files
-         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks"))))
+         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc"))))
 
 (defun my-fiplr-root (orig-fiplr-root)
   (let ((orig-root (funcall orig-fiplr-root)))
