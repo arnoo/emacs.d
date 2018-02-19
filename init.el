@@ -561,7 +561,7 @@ otherwise, close current tab (elscreen)."
 
 (setq fiplr-ignored-globs
       '((directories
-         (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node"))
+         (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node" "ftp_mirrors"))
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc"))))
 
