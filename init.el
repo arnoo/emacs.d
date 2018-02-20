@@ -326,6 +326,7 @@ otherwise, close current tab (elscreen)."
 
 (when (executable-find "hunspell")
   (setq-default ispell-program-name "hunspell")
+  (setq ispell-dictionary "francais") 
   (setq ispell-really-hunspell t))
 
 (defun flyspell-buffer-unless-large ()
