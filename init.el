@@ -628,7 +628,6 @@ otherwise, close current tab (elscreen)."
 (define-key mu4e-view-mode-map (kbd "k") 'previous-line)
 (define-key mu4e-view-mode-map "\C-k" 'mu4e-view-headers-prev)
 
-(define-key mu4e-headers-mode-map (kbd "g") 'beginning-of-buffer)
 (define-key mu4e-headers-mode-map (kbd "G") 'end-of-buffer)
 
 (define-key mu4e-headers-mode-map (kbd "<f5>") 'mu4e-headers-rerun-search)
@@ -637,6 +636,7 @@ otherwise, close current tab (elscreen)."
 
 (define-prefix-command 'my-mu4e-g-map)
 (define-key mu4e-headers-mode-map "g" 'my-mu4e-g-map)
+(define-key my-mu4e-g-map (kbd "g") 'beginning-of-buffer)
 (define-key my-mu4e-g-map (kbd "t") 'elscreen-next)
 (define-key my-mu4e-g-map (kbd "T") 'elscreen-previous)
 
