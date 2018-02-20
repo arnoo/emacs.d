@@ -654,6 +654,11 @@ otherwise, close current tab (elscreen)."
 
 (setq mu4e-headers-skip-duplicates t)
 
+(defun my-mu4e-headers-execute ()
+  (interactive)
+  (mu4e-mark-execute-all nil)
+  )
+
 (defun my-mu4e-view-msg-in-tab ()
   (interactive)
   (let* ((msg (mu4e-message-at-point))
