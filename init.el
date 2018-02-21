@@ -621,6 +621,7 @@ otherwise, close current tab (elscreen)."
 (define-key mu4e-view-mode-map    [escape]  'mu4e~view-quit-buffer)
 
 (define-key mu4e-headers-mode-map (kbd "j") 'mu4e-headers-next)
+(define-key mu4e-headers-mode-map "\C-j" 'mu4e-headers-next)
 (define-key mu4e-view-mode-map (kbd "j") 'next-line)
 (define-key mu4e-view-mode-map "\C-j" 'mu4e-view-headers-next)
 
