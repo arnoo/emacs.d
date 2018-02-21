@@ -696,16 +696,21 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
-  (let* ((msg (mu4e-message-at-point))
-         (context-name (mu4e-context-name (mu4e-context-determine msg))))
+  (let ((msg (mu4e-message-at-point)))
     (when msg
-      (let ((result (shell-command-to-string (concat "task add '" (plist-get msg :subject) " m#" (plist-get msg :message-id) "'"
+      (let ((context-name (mu4e-context-name (mu4e-context-determine msg))
+            (base-command (concat "task add '" (plist-get msg :subject) " m#" (plist-get msg :message-id) "'"
                                                      (if (string= context-name "Octo")
                                                          " +octo"
                                                          "")
                                                      (if (string= context-name "beta.gouv")
                                                          " +octo +pc"
-                                                         "")))))
+                                                         "")
+                                                     " "))
+            (result (shell-command-to-string (concat base-command
+                                                     " "
+                                                     (read-string base-command)
+                                                     ))))
         (my-mu4e-archive-thread)
         (message result)))))
 
