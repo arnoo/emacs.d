@@ -698,7 +698,7 @@ otherwise, close current tab (elscreen)."
     (mu4e~view-quit-buffer))
   (let ((msg (mu4e-message-at-point)))
     (when msg
-      (let ((context-name (mu4e-context-name (mu4e-context-determine msg))
+      (let ((context-name (mu4e-context-name (mu4e-context-determine msg)))
             (base-command (concat "task add '" (plist-get msg :subject) " m#" (plist-get msg :message-id) "'"
                                                      (if (string= context-name "Octo")
                                                          " +octo"
