@@ -696,10 +696,13 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
-  (let ((msg (mu4e-message-at-point)))
+  (let* ((msg (mu4e-message-at-point))
+         (context-name (mu4e-context-name (mu4e-context-determine msg))))
     (when msg
       (message (plist-get msg :to))
       (let ((result (shell-command-to-string (concat "task add '" (plist-get msg :subject) " m#" (plist-get msg :message-id) "'"
+                                                     (if (string= 
+                                                                  "Octo)
                                                      (if (or (string-suffix-p "@octo.com" (plist-get msg :to))
                                                              (string-suffix-p "@octo.com>" (plist-get msg :to)))
                                                          " +octo"
