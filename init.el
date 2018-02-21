@@ -705,8 +705,7 @@ otherwise, close current tab (elscreen)."
                                                          "")
                                                      (if (string= context-name "beta.gouv")
                                                          " +octo +pc"
-                                                         "")
-                                                      " "))))
+                                                         "")))))
         (my-mu4e-archive-thread)
         (message result)))))
 
