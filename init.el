@@ -699,13 +699,12 @@ otherwise, close current tab (elscreen)."
   (let* ((msg (mu4e-message-at-point))
          (context-name (mu4e-context-name (mu4e-context-determine msg))))
     (when msg
-      (message (plist-get msg :to))
       (let ((result (shell-command-to-string (concat "task add '" (plist-get msg :subject) " m#" (plist-get msg :message-id) "'"
-                                                     (if (string= 
-                                                                  "Octo)
-                                                     (if (or (string-suffix-p "@octo.com" (plist-get msg :to))
-                                                             (string-suffix-p "@octo.com>" (plist-get msg :to)))
+                                                     (if (string= context-name "Octo")
                                                          " +octo"
+                                                         "")
+                                                     (if (string= context-name "beta.gouv")
+                                                         " +octo +pc"
                                                          "")
                                                       " "))))
         (my-mu4e-archive-thread)
