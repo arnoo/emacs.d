@@ -711,7 +711,7 @@ otherwise, close current tab (elscreen)."
                                    " "))
              (complement (read-string base-command))
              (actual-command (concat base-command complement))
-             (result (if complement (shell-command-to-string actual-command) nil)))
+             (result (if complement (shell-command-to-string actual-command) "")))
         (my-mu4e-archive-thread)
         (message result)))))
 
