@@ -626,6 +626,7 @@ otherwise, close current tab (elscreen)."
 (define-key mu4e-view-mode-map "\C-j" 'mu4e-view-headers-next)
 
 (define-key mu4e-headers-mode-map (kbd "k") 'mu4e-headers-prev)
+(define-key mu4e-headers-mode-map (kbd "\C-k") 'mu4e-headers-prev)
 (define-key mu4e-view-mode-map (kbd "k") 'previous-line)
 (define-key mu4e-view-mode-map "\C-k" 'mu4e-view-headers-prev)
 
