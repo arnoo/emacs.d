@@ -708,7 +708,6 @@ otherwise, close current tab (elscreen)."
                                                          "")
                                                      " "))
             (result (shell-command-to-string (concat base-command
-                                                     " "
                                                      (read-string base-command)
                                                      ))))
         (my-mu4e-archive-thread)
