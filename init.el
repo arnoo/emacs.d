@@ -714,8 +714,7 @@ otherwise, close current tab (elscreen)."
                                        " +octo +pc"
                                        "")
                                    " "))
-             (complement (read-string base-command))
-             (actual-command (concat base-command complement))
+             (actual-command (read-string "" base-command))
              (result (if complement (shell-command-to-string actual-command) "")))
         (my-mu4e-archive-thread)
         (message result)))))
