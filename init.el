@@ -630,6 +630,8 @@ otherwise, close current tab (elscreen)."
 (define-key mu4e-view-mode-map (kbd "k") 'previous-line)
 (define-key mu4e-view-mode-map "\C-k" 'mu4e-view-headers-prev)
 
+(define-key mu4e-headers-mode-map (kbd "i") 'mu4e-inbox)
+
 (define-key mu4e-headers-mode-map (kbd "G")
                                   (lambda () (interactive)
                                     (end-of-buffer)
