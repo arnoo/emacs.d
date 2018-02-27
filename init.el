@@ -650,6 +650,7 @@ otherwise, close current tab (elscreen)."
 (setq mail-user-agent 'mu4e-user-agent)
 
 (defun mu4e-inbox ()
+  (interactive)
   (let* ((time (decode-time (current-time)))
          (hour (elt time 2))
          (dow  (elt time 6)))
