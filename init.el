@@ -290,6 +290,8 @@ otherwise, close current tab (elscreen)."
 (setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
 (setq auto-save-file-name-transforms `((".*" , "~/.emacs.d/autosave/" t)))
 
+(setq default-indicate-empty-lines t)
+
 ;;;; YAML mode
 
 (add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
