@@ -284,6 +284,13 @@ otherwise, close current tab (elscreen)."
 
 ;(display-time-mode t)
 
+;;;; Set autosave directory so that all the autosaves are in one place, and not all over the filesystem.
+
+(setq backup-directory-alist `((".*" . "~/.emacs.d/backup")))
+(setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
+(setq auto-save-file-name-transforms
+      `((".*" , "~/.emacs.d/autosave/" t)))
+
 ;;;; YAML mode
 
 (add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
