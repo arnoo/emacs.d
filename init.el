@@ -143,6 +143,8 @@
 
 (set-tab-width 2)
 
+(setq default-indicate-empty-lines t)
+
 
 ;;;; Colors
 (require 'color-theme)
@@ -289,8 +291,6 @@ otherwise, close current tab (elscreen)."
 (setq backup-directory-alist `((".*" . "~/.emacs.d/backup")))
 (setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
 (setq auto-save-file-name-transforms `((".*" , "~/.emacs.d/autosave/" t)))
-
-(setq default-indicate-empty-lines t)
 
 ;;;; YAML mode
 
