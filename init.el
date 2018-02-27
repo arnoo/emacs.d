@@ -715,7 +715,7 @@ otherwise, close current tab (elscreen)."
                                        "")
                                    " "))
              (actual-command (read-string "" base-command))
-             (result (if complement (shell-command-to-string actual-command) "")))
+             (result (if actual-command (shell-command-to-string actual-command) "")))
         (my-mu4e-archive-thread)
         (message result)))))
 
