@@ -877,6 +877,8 @@ the appropriate flag at the message forwarded or replied-to."
                        "http://blog.octo.com/\n"))))
        ))
 
+(setq mu4e-context-policy 'pick-first)
+
 
 ;----- ORG-MODE STUFF
 (require 'org-install)
