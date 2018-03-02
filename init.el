@@ -661,7 +661,8 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (let* ((time (decode-time (current-time)))
          (hour (elt time 2))
-         (dow  (elt time 6)))
+         (dow  (elt time 6))
+         (mu4e-context-policy 'pick-first))
     (message "DOW :  %S" dow)
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
