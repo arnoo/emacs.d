@@ -877,6 +877,7 @@ the appropriate flag at the message forwarded or replied-to."
                        "http://blog.octo.com/\n"))))
        ))
 
+; Use first context by default when entering the main view
 (setq mu4e-context-policy 'pick-first)
 
 
