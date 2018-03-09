@@ -1104,9 +1104,10 @@ the appropriate flag at the message forwarded or replied-to."
   (message argv)
   (message title-pos)
   (message title)
-  (if (string= title "mu4e")
-    (set-variable 'server-name "mu4e")
-    (set-variable 'server-name "emacs"))
+  (set-variable 'server-name
+                (if (string= title "mu4e")
+                "mu4e"
+                "emacs"))
   (or (server-running-p)
       (server-start)))
 
