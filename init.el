@@ -344,6 +344,7 @@ otherwise, close current tab (elscreen)."
 (dolist (hook '(text-mode-hook org-mode-hook))
   (add-hook hook (lambda ()
                    (turn-on-flyspell)
+                   (add-to-list 'ispell-skip-region-alist '("^#+BEGIN_SRC" . "^#+END_SRC"))
                    (setq flyspell-issue-message-flag nil)
                    (flyspell-buffer-unless-large))))
 
