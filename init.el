@@ -344,6 +344,7 @@ otherwise, close current tab (elscreen)."
 (dolist (hook '(text-mode-hook org-mode-hook))
   (add-hook hook (lambda ()
                    (turn-on-flyspell)
+                   (flyspell-issue-message-flag nil)
                    (flyspell-buffer-unless-large))))
 
 (defun fd-switch-dictionary()
