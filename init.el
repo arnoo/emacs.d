@@ -1105,7 +1105,7 @@ the appropriate flag at the message forwarded or replied-to."
   (message title-pos)
   (message title)
   (when (string= title "mu4e")
-    (set-variable 'server-name "mu4e"))
+    (set-variable 'server-name "mu4e")))
 (or (server-running-p)
     (server-start))
 
