@@ -167,6 +167,7 @@
 
 (require 'dumb-jump)
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" (lambda () (interactive) (elscreen-clone) (dumb-jump-go))))
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
 (push '(:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
@@ -668,7 +669,7 @@ otherwise, close current tab (elscreen)."
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
               (if (and (>= hour 6) (<= hour 19) (>= dow 1) (<= dow 4))
-                  " OR maildir:/Octo_INBOX"
+                  "" ;" OR maildir:/Octo_INBOX"
                   "")))))
 
 (setq mu4e-headers-include-related t)
@@ -714,7 +715,7 @@ otherwise, close current tab (elscreen)."
     (when msg
       (let* ((context-name (mu4e-context-name (mu4e-context-determine msg)))
              (base-command (concat "task add '"
-                                   (plist-get msg :subject)
+                                   (replace-regexp-in-string "'" " " (plist-get msg :subject))
                                    " m#" (plist-get msg :message-id) "'"
                                    (if (string= context-name "Octo")
                                        " +octo"
@@ -1099,17 +1100,12 @@ the appropriate flag at the message forwarded or replied-to."
 ;(setq evil-search-highlight-string-min-len 3)
 
 (require 'server)
-(let* ((title-pos (seq-position argv "--title" 'string=))
-       (title (and title-pos (elt argv (+ title-pos 1)))))
-  (message argv)
-  (message title-pos)
-  (message title)
-  (set-variable 'server-name
-                (if (string= title "mu4e")
-                "mu4e"
-                "emacs"))
-  (or (server-running-p)
-      (server-start)))
+(set-variable 'server-name
+              (if (string= (frame-parameter (selected-frame) 'name ) "emacs-mu4e")
+              "mu4e"
+              "emacs"))
+(or (server-running-p)
+    (server-start))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
