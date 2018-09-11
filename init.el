@@ -927,7 +927,7 @@ the appropriate flag at the message forwarded or replied-to."
    (lisp       . t)
    (perl       . t)
    (python     . t)
-   (sh         . t)
+   (bash       . t)
    ))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
