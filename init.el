@@ -900,7 +900,7 @@ the appropriate flag at the message forwarded or replied-to."
                        "Arnaud Bétrémieux\n"
                        "Rootcycle - Sustainability Systems\n"
                        "+33 (0)6 89 85 88 41\n"
-                       "http://rootcycle.com/\n"))))
+                       "http://rootcycle.com\n"))))
        ))
 
 ; Use first context by default when entering the main view
