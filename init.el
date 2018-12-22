@@ -895,7 +895,7 @@ the appropriate flag at the message forwarded or replied-to."
                      (concat
                        "Arnaud Bétrémieux\n"
                        "Rootcycle - Sustainability Systems\n"
-                       ".....................\n"
+                       "....................\n"
                        "+33 (0)6 89 85 88 41\n"
                        "http://rootcycle.com/\n"))))
        ))
