@@ -879,6 +879,25 @@ the appropriate flag at the message forwarded or replied-to."
                        "du lundi au jeudi\n"
                        "http://www.octo.com/\n"
                        "http://blog.octo.com/\n"))))
+        ,(make-mu4e-context
+          :name "Rootcycle"
+          :enter-func (lambda () (mu4e-message "Entering context 'Rootcycle'"))
+          :leave-func (lambda () (mu4e-message "Leaving context 'Rootcycle'"))
+          :match-func (lambda (msg)
+                        (when msg 
+                          (string-match "^/Octo_" (mu4e-message-field msg :maildir))))
+          :vars '( ( user-mail-address      . "abetremieux@octo.com" )
+                   ( mu4e-sent-messages-behavior . delete)
+                   ( mu4e-sent-folder       . "/Sent")
+                   ( mu4e-drafts-folder     . "/Drafts")
+                   ( mu4e-refile-folder     . "/Archive") 
+                   ( mu4e-compose-signature .
+                     (concat
+                       "Arnaud Bétrémieux\n"
+                       "Rootcycle\n"
+                       ".....................\n"
+                       "+33 (0)6 89 85 88 41\n"
+                       "http://rootcycle.com/\n"))))
        ))
 
 ; Use first context by default when entering the main view
