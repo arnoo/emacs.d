@@ -886,7 +886,7 @@ the appropriate flag at the message forwarded or replied-to."
           :match-func (lambda (msg)
                         (when msg 
                           (string-match "^/Octo_" (mu4e-message-field msg :maildir))))
-          :vars '( ( user-mail-address      . "abetremieux@octo.com" )
+          :vars '( ( user-mail-address      . "arnaud@rootcycle.com" )
                    ( mu4e-sent-messages-behavior . delete)
                    ( mu4e-sent-folder       . "/Sent")
                    ( mu4e-drafts-folder     . "/Drafts")
