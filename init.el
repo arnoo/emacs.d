@@ -885,7 +885,11 @@ the appropriate flag at the message forwarded or replied-to."
           :leave-func (lambda () (mu4e-message "Leaving context 'Rootcycle'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (string-match "^/Octo_" (mu4e-message-field msg :maildir))))
+                          (and (not (string-match "^/Octo_" (mu4e-message-field msg :maildir)))
+                               (or (mu4e-message-contact-field-matches msg 
+                                     :to "arnaud@rootcycle.com")
+                                   (mu4e-message-contact-field-matches msg 
+                                     :cc "arnaud@rootcycle.com")))))
           :vars '( ( user-mail-address      . "arnaud@rootcycle.com" )
                    ( mu4e-sent-messages-behavior . delete)
                    ( mu4e-sent-folder       . "/Sent")
