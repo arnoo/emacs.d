@@ -761,6 +761,7 @@ otherwise, close current tab (elscreen)."
 (setq user-mail-address "arnaud@btmx.fr")
 
 (setq mu4e-user-mail-address-list '("arnaud@btmx.fr"
+                                    "arnaud@rootcycle.com"
                                     "abetremieux@octo.com"
                                     "arnaud.betremieux@beta.gouv.fr"))
 
@@ -894,6 +895,7 @@ the appropriate flag at the message forwarded or replied-to."
 (setq org-startup-truncated nil) ; wrap lines
 (setq org-hide-leading-stars t)
 (setq org-src-fontify-natively t)
+(setq org-babel-sh-command "bash")
 (global-set-key (kbd "<f7>") 'toggle-truncate-lines)
 
 (custom-set-faces
@@ -927,7 +929,7 @@ the appropriate flag at the message forwarded or replied-to."
    (lisp       . t)
    (perl       . t)
    (python     . t)
-   (bash       . t)
+   (shell      . t)
    ))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
