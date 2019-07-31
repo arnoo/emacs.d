@@ -1,23 +1,17 @@
+(setq user-full-name "Arnaud Bétrémieux")
+(setq user-mail-address "arnaud@btmx.fr")
+
 (add-to-list 'load-path "~/.emacs.d/plugins/")
-
-(setq frame-title-format '("%b - Emacs"))
-
-(setq inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
 
 (setq kill-buffer-query-functions
       (remq 'process-kill-buffer-query-function
                      kill-buffer-query-functions))
 
-; Make background semi-transparent
-;(set-frame-parameter (selected-frame) 'alpha '(85 85))
-
-(defun set-maximized ()
+(defun arnaud/set-maximized ()
   (interactive)
   (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
-(add-hook 'window-setup-hook 'set-maximized t)
+(add-hook 'window-setup-hook 'arnaud/set-maximized t)
 
-; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
 
 ;;; Make underscore a word character
@@ -32,13 +26,11 @@
              '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-;;;; my-Packages
-(setq my-packages
+(setq arnaud/packages
       '(package
         ag
         cl-lib
         color
-        ;color-theme
         company
         company-tern
         dumb-jump
@@ -47,8 +39,6 @@
         elpy
         emojify
         evil
-        evil-collection
-        ;evil-mu4e
         evil-numbers
         evil-search-highlight-persist
         evil-tabs
@@ -67,19 +57,19 @@
         wgrep-ag
         yaml-mode))
 
-; Install my-packages as necessary
+; Install arnaud/packages as necessary
 (defun filter (condp lst)
   "Filter a list of elements with a given predicate"
   (delq nil
         (mapcar (lambda (x) (and (funcall condp x) x)) lst)))
 
-(let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
+(let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) arnaud/packages)))
   (when (and (not (equal uninstalled-packages '()))
              (y-or-n-p (format "Install packages %s?" uninstalled-packages)))
     (package-refresh-contents)
     (mapc 'package-install uninstalled-packages)))
 
-(add-hook 'after-init-hook 'global-company-mode)
+;(add-hook 'after-init-hook 'global-company-mode)
 
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
@@ -102,21 +92,6 @@
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (dtrt-indent-mode 1)
 (setf indent-tabs-mode nil) 
-(setq make-backup-files nil)
-(setq initial-scratch-message nil)
-(show-paren-mode 1)
-(setq show-paren-delay 0)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-(display-time-mode -1)
-(savehist-mode 1)
-(setq require-final-newline nil)
-(setq column-number-mode t)
-(global-unset-key (kbd "<f11>"))
-(set-face-attribute 'default nil :height 120)
-(defalias 'yes-or-no-p 'y-or-n-p)
-
 (electric-indent-local-mode -1)
 (add-hook 'after-change-major-mode-hook
           (lambda () (electric-indent-mode -1)))
@@ -132,34 +107,31 @@
 
 (set-tab-width 2)
 
+;; UI
+(setq column-number-mode t)
+(display-time-mode -1)
+(global-evil-tabs-mode t)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(set-face-attribute 'default nil :height 120)
+(setq frame-title-format '("%b - Emacs"))
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
+
+
+(setq make-backup-files nil)
+(setq initial-scratch-message nil)
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+(savehist-mode 1)
+(setq require-final-newline nil)
+(global-unset-key (kbd "<f11>"))
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 (setq default-indicate-empty-lines t)
 
-
-;;;; Colors
-;(require 'color-theme)
-;(setq color-theme-is-global t)
-;(color-theme-initialize)
-;(color-theme-standard)
-
 (undo-tree-mode 1)
-
-(global-evil-tabs-mode t)
-
-
-;;;; AG
-(require 'ag)
-(setq ag-highlight-search t)
-(setq ag-reuse-buffers t)
-(setq ag-reuse-window t)
-
-(require 'wgrep-ag)
-(autoload 'wgrep-ag-setup "wgrep-ag")
-(add-hook 'ag-mode-hook 'wgrep-ag-setup)
-
-(defun ag-search-at-point ()
-  (interactive)
-  (ag-project (thing-at-point 'symbol)))
-(define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
 
 (require 'dumb-jump)
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
@@ -257,14 +229,14 @@ otherwise, close current tab (elscreen)."
 
 ;;; by default, repeat should include the count of the original command !
 
-(evil-define-command my-repeat (&optional count)
+(evil-define-command arnaud/repeat (&optional count)
     :repeat ignore
         (interactive)
       (message "count :  %S" count)
       (evil-repeat count nil))
-(define-key evil-normal-state-map "." 'my-repeat)
+(define-key evil-normal-state-map "." 'arnaud/repeat)
 
-(evil-set-initial-state 'ivy-occur-grep-mode 'normal)
+(evil-set-initial-state 'ag-mode 'normal)
 
 ;;; esc quits
 (defun minibuffer-keyboard-quit ()
@@ -303,9 +275,9 @@ otherwise, close current tab (elscreen)."
 
 (add-hook 'php-mode-hook
    (lambda ()
-      (evil-define-key 'normal php-mode-map (kbd "K") 'my-php-symbol-lookup)))
+      (evil-define-key 'normal php-mode-map (kbd "K") 'arnaud/php-symbol-lookup)))
 
-(defun my-php-symbol-lookup ()
+(defun arnaud/php-symbol-lookup ()
   (interactive)
   (let ((symbol (symbol-at-point)))
     (if (not symbol)
@@ -317,7 +289,7 @@ otherwise, close current tab (elscreen)."
 
 (add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
 
-(defun my-put-file-name-on-clipboard ()
+(defun arnaud/put-file-name-on-clipboard ()
   "Put the current file name on the clipboard"
   (interactive)
   (let ((filename (if (equal major-mode 'dired-mode)
@@ -329,7 +301,7 @@ otherwise, close current tab (elscreen)."
         (clipboard-kill-region (point-min) (point-max)))
       (message filename))))
 
-(define-key evil-normal-state-map [C-f] 'my-put-file-name-on-clipboard)
+(define-key evil-normal-state-map [C-f] 'arnaud/put-file-name-on-clipboard)
 
 ; *** SPELL CHECKING ***
 
@@ -406,18 +378,18 @@ otherwise, close current tab (elscreen)."
 
 ; *** LATEX ***
 
-(defun arno-latex-mode ()
+(defun arnaud/latex-mode ()
   (global-set-key (kbd "<f12>")
           (lambda () (interactive)
             (flyspell-mode 1)
             (shell-command (concat "pdflatex " buffer-file-name)))))
 
-(add-hook 'latex-mode-hook 'arno-latex-mode)
+(add-hook 'latex-mode-hook 'arnaud/latex-mode)
 
 ; *** LISP MODE ***
 
-(defun arno-lisp-mode ()
-  (arno-all-lisps-mode)
+(defun arnaud/lisp-mode ()
+  (arnaud/all-lisps-mode)
   (require 'slime)
   (global-set-key (kbd "<f12>") 'switch-slime-buffer)
   (evil-define-key 'normal lisp-mode-map "\C-]"
@@ -449,7 +421,7 @@ otherwise, close current tab (elscreen)."
   (setq inferior-lisp-program "/usr/bin/sbcl")
   (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/"))
 
-(defun arno-all-lisps-mode ()
+(defun arnaud/all-lisps-mode ()
   (require 'rainbow-delimiters)
   (require 'cl-lib)
   (require 'color)
@@ -468,8 +440,8 @@ otherwise, close current tab (elscreen)."
   (setq evil-shift-width tab-width)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
-(add-hook 'lisp-mode-hook 'arno-lisp-mode)
-(add-hook 'emacs-lisp-mode-hook 'arno-lisp-mode)
+(add-hook 'lisp-mode-hook 'arnaud/lisp-mode)
+(add-hook 'emacs-lisp-mode-hook 'arnaud/lisp-mode)
   
 ;; Syntax highlighting in Slime REPL
 (defvar slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
@@ -514,7 +486,7 @@ otherwise, close current tab (elscreen)."
                      (buffer-name *temp-bookmark*) 
                      (buffer-name (current-buffer))))))
 
-(defun my-slime () (interactive)
+(defun arnaud/slime () (interactive)
   (let ((wnd (current-window-configuration)))
     (call-interactively 'slime)
     (sit-for 1)
@@ -530,7 +502,7 @@ otherwise, close current tab (elscreen)."
         (if (equal slime-buf nil)
           (progn
             (message "Can't find REPL buffer, starting slime !")
-            (my-slime))
+            (arnaud/slime))
           (switch-buffers)))))
 
 
@@ -581,7 +553,7 @@ otherwise, close current tab (elscreen)."
         (files
          ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc"))))
 
-(defun my-fiplr-root (orig-fiplr-root)
+(defun arnaud/fiplr-root (orig-fiplr-root)
   (let ((orig-root (funcall orig-fiplr-root)))
     (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kravpass/")
@@ -591,7 +563,7 @@ otherwise, close current tab (elscreen)."
           ;  "/home/arno/workspace/fc/")
           (t orig-root))))
 
-(advice-add #'fiplr-root :around 'my-fiplr-root)
+(advice-add #'fiplr-root :around 'arnaud/fiplr-root)
 
 ;Redefine tabedit to be in the right dir
 (evil-define-command evil-tabs-tabedit (file)
@@ -606,10 +578,13 @@ otherwise, close current tab (elscreen)."
 (require 'powerline)
 
 (defun powerline-buffer-name ()
-  (replace-regexp-in-string (fiplr-root) "" buffer-file-name))
+  (let* ((root (fiplr-root))
+	 (project-name (car (last (remove "" (split-string root "/")))))
+	 (relative-file-name (replace-regexp-in-string root "" buffer-file-name)))
+     (concat relative-file-name " (" project-name ")")))
 
-(defpowerline buffer-id   (propertize (car (propertized-buffer-identification (powerline-buffer-name)))
-                                      'face (powerline-make-face color1)))
+(defpowerline buffer-id  (propertize (car (propertized-buffer-identification (powerline-buffer-name)))
+                                     'face (powerline-make-face color1)))
 
 
 
@@ -617,21 +592,17 @@ otherwise, close current tab (elscreen)."
 
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (require 'mu4e)
-;(require 'evil-mu4e)
 
-; Required for mbsync as UIDs are in the filenames
-(setq mu4e-change-filenames-when-moving t)
+(define-key mu4e-headers-mode-map (kbd "<C-return>") 'arnaud/mu4e-view-msg-in-tab)
 
-(define-key mu4e-headers-mode-map (kbd "<C-return>") 'my-mu4e-view-msg-in-tab)
+(define-key mu4e-headers-mode-map (kbd "r") 'arnaud/mu4e-archive-thread)
+(define-key mu4e-view-mode-map    (kbd "r") 'arnaud/mu4e-archive-thread)
 
-(define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive-thread)
-(define-key mu4e-view-mode-map    (kbd "r") 'my-mu4e-archive-thread)
+(define-key mu4e-headers-mode-map (kbd "m") 'arnaud/mu4e-mute-thread)
+(define-key mu4e-view-mode-map    (kbd "m") 'arnaud/mu4e-mute-thread)
 
-(define-key mu4e-headers-mode-map (kbd "m") 'my-mu4e-mute-thread)
-(define-key mu4e-view-mode-map    (kbd "m") 'my-mu4e-mute-thread)
-
-(define-key mu4e-headers-mode-map (kbd "t") 'my-mu4e-msg-to-task)
-(define-key mu4e-view-mode-map    (kbd "t") 'my-mu4e-msg-to-task)
+(define-key mu4e-headers-mode-map (kbd "t") 'arnaud/mu4e-msg-to-task)
+(define-key mu4e-view-mode-map    (kbd "t") 'arnaud/mu4e-msg-to-task)
 
 (define-key mu4e-view-mode-map    [escape]  'mu4e~view-quit-buffer)
 
@@ -645,7 +616,7 @@ otherwise, close current tab (elscreen)."
 (define-key mu4e-view-mode-map (kbd "k") 'previous-line)
 (define-key mu4e-view-mode-map "\C-k" 'mu4e-view-headers-prev)
 
-(define-key mu4e-headers-mode-map (kbd "i") 'mu4e-inbox)
+(define-key mu4e-headers-mode-map (kbd "i") 'arnaud/mu4e-inbox)
 
 (define-key mu4e-headers-mode-map (kbd "G")
                                   (lambda () (interactive)
@@ -654,17 +625,17 @@ otherwise, close current tab (elscreen)."
 
 (define-key mu4e-headers-mode-map (kbd "<f5>") 'mu4e-headers-rerun-search)
 (define-key mu4e-headers-mode-map (kbd "\C-r") 'mu4e-headers-rerun-search)
-(define-key mu4e-headers-mode-map (kbd "x") 'my-mu4e-headers-execute)
+(define-key mu4e-headers-mode-map (kbd "x") 'arnaud/mu4e-headers-execute)
 
-(define-prefix-command 'my-mu4e-g-map)
-(define-key mu4e-headers-mode-map "g" 'my-mu4e-g-map)
-(define-key my-mu4e-g-map (kbd "g") 'beginning-of-buffer)
-(define-key my-mu4e-g-map (kbd "t") 'elscreen-next)
-(define-key my-mu4e-g-map (kbd "T") 'elscreen-previous)
+(define-prefix-command 'arnaud/mu4e-g-map)
+(define-key mu4e-headers-mode-map "g" 'arnaud/mu4e-g-map)
+(define-key arnaud/mu4e-g-map (kbd "g") 'beginning-of-buffer)
+(define-key arnaud/mu4e-g-map (kbd "t") 'elscreen-next)
+(define-key arnaud/mu4e-g-map (kbd "T") 'elscreen-previous)
 
 (setq mail-user-agent 'mu4e-user-agent)
 
-(defun mu4e-inbox ()
+(defun arnaud/mu4e-inbox ()
   (interactive)
   (let* ((time (decode-time (current-time)))
          (hour (elt time 2))
@@ -676,17 +647,13 @@ otherwise, close current tab (elscreen)."
                   " OR maildir:/Octo_INBOX OR maildir:/PC_INBOX"
                   "")))))
 
-(setq mu4e-headers-include-related t)
-
-(setq mu4e-headers-skip-duplicates t)
-
-(defun my-mu4e-headers-execute ()
+(defun arnaud/mu4e-headers-execute ()
   (interactive)
   (mu4e-mark-execute-all t)
   (mu4e-update-index)
   (mu4e-headers-rerun-search))
 
-(defun my-mu4e-view-msg-in-tab ()
+(defun arnaud/mu4e-view-msg-in-tab ()
   (interactive)
   (let* ((msg (mu4e-message-at-point))
          (docid (or (mu4e-message-field msg :docid)
@@ -699,13 +666,13 @@ otherwise, close current tab (elscreen)."
     (elscreen-create)
     (mu4e~proc-view docid mu4e-view-show-images decrypt)))
 
-(defun my-mu4e-archive-thread ()
+(defun arnaud/mu4e-archive-thread ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-(defun my-mu4e-mute-thread ()
+(defun arnaud/mu4e-mute-thread ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
@@ -723,9 +690,9 @@ otherwise, close current tab (elscreen)."
                 nil
                 "~/.sieve/mutes"
                 'append)
-  (my-mu4e-archive-thread))
+  (arnaud/mu4e-archive-thread))
 
-(defun my-mu4e-msg-to-task ()
+(defun arnaud/mu4e-msg-to-task ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
@@ -745,44 +712,36 @@ otherwise, close current tab (elscreen)."
                                    " "))
              (actual-command (read-string "" base-command))
              (result (if actual-command (shell-command-to-string actual-command) "")))
-        (my-mu4e-archive-thread)
+        (arnaud/mu4e-archive-thread)
         (message result)))))
 
-(setq mu4e-headers-visible-lines 20)
-
+(setq mu4e-attachment-dir "~/Downloads")
+(setq mu4e-change-filenames-when-moving t) ; Required for mbsync as UIDs are in the filenames
+(setq mu4e-headers-auto-update t)
+(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 (setq mu4e-headers-fields
      '((:human-date    .   17)
       ;(:flags         .    6)
       ;(:mailing-list  .   10)
        (:from          .   22)
        (:subject       .   nil)))
-
-(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+(setq mu4e-headers-include-related t)
+(setq mu4e-headers-skip-duplicates t)
 (setq mu4e-headers-time-format "%H:%M")
-(setq mu4e-headers-auto-update t)
-
-(setq mu4e-use-fancy-chars t)
-
-(setq mu4e-attachment-dir "~/Downloads")
-
+(setq mu4e-headers-visible-lines 20)
 (setq mu4e-update-interval 60)
-
-(setq mu4e-view-show-images t)
-;; use imagemagick, if available
-;(when (fboundp 'imagemagick-register-types)
-;  (imagemagick-register-types))
-
-;; show full addresses in view message (instead of just names)
-;; toggle per name with M-RET
-(setq mu4e-view-show-addresses 't)
-
-(setq user-full-name "Arnaud Bétrémieux")
-(setq user-mail-address "arnaud@btmx.fr")
-
+(setq mu4e-use-fancy-chars t)
 (setq mu4e-user-mail-address-list '("arnaud@btmx.fr"
                                     "arnaud@rootcycle.com"
                                     "abetremieux@octo.com"
                                     "arnaud.betremieux@passculture.app"))
+(setq mu4e-view-show-addresses 't) ;; show full addresses in view message (instead of just names)
+(setq mu4e-view-show-images t)
+
+;; use imagemagick, if available
+;(when (fboundp 'imagemagick-register-types)
+;  (imagemagick-register-types))
+
 
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
@@ -922,7 +881,7 @@ the appropriate flag at the message forwarded or replied-to."
 (setq mu4e-context-policy 'pick-first)
 
 
-;----- ORG-MODE STUFF
+;----- ORG-MODE
 (require 'org-install)
 (setq org-log-done t)
 (setq org-return-follows-link t)
@@ -949,13 +908,6 @@ the appropriate flag at the message forwarded or replied-to."
 (add-hook 'org-mode-hook 'org-indent-mode)
 (require 'org-pretty-table)
 (add-hook 'org-mode-hook 'org-pretty-table-mode)
-;(add-hook 'org-mode-hook
-;   (lambda ()
-;     (push '("|" . ?│) prettify-symbols-alist)
-;     (push '("-" . ?─) prettify-symbols-alist)
-;     (push '("+" . ?┼) prettify-symbols-alist)
-;     (prettify-symbols-mode)
-;     (org-indent-mode)))
 
 (setq org-confirm-babel-evaluate nil)
 
@@ -970,117 +922,6 @@ the appropriate flag at the message forwarded or replied-to."
    ))
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-
-;(defun org-display-inline-images (&optional include-linked refresh beg end)
-;   "Display inline images.
-; 
-; An inline image is a link which follows either of these
-; conventions:
-; 
-;   1. Its path is a file with an extension matching return value
-;      from `image-file-name-regexp' and it has no contents.
-; 
-;   2. Its description consists in a single link of the previous
-;      type.
-; 
-; When optional argument INCLUDE-LINKED is non-nil, also links with
-; a text description part will be inlined.  This can be nice for
-; a quick look at those images, but it does not reflect what
-; exported files will look like.
-; 
-; When optional argument REFRESH is non-nil, refresh existing
-; images between BEG and END.  This will create new image displays
-; only if necessary.  BEG and END default to the buffer
-; boundaries."
-;   (interactive "P")
-;   (when (display-graphic-p)
-;     (unless refresh
-;       (org-remove-inline-images)
-;       (when (fboundp 'clear-image-cache) (clear-image-cache)))
-;     (org-with-wide-buffer
-;      (goto-char (or beg (point-min)))
-;      (let ((case-fold-search t)
-;            (file-extension-re (org-image-file-name-regexp)))
-;        (while (re-search-forward "[][]\\[\\(?:file\\|[./~]\\)" end t)
-;          (let ((link (save-match-data (org-element-context))))
-;            ;; Check if we're at an inline image.
-;            (when (and (equal (org-element-property :type link) "file")
-;                       (or include-linked
-;                           (not (org-element-property :contents-begin link)))
-;                       (let ((parent (org-element-property :parent link)))
-;                         (or (not (eq (org-element-type parent) 'link))
-;                             (not (cdr (org-element-contents parent)))))
-;                       (org-string-match-p file-extension-re
-;                                           (org-element-property :path link)))
-;              (let ((file (expand-file-name
-;                           (org-link-unescape
-;                            (org-element-property :path link)))))
-;                (when (file-exists-p file)
-;                  (let ((width
-;                         ;; Apply `org-image-actual-width' specifications.
-;                         (cond
-;                          ((not (image-type-available-p 'imagemagick)) nil)
-;                          ((eq org-image-actual-width t) nil)
-;                          ((listp org-image-actual-width)
-;                           (or
-;                            ;; First try to find a width among
-;                            ;; attributes associated to the paragraph
-;                            ;; containing link.
-;                            (let ((paragraph
-;                                   (let ((e link))
-;                                     (while (and (setq e (org-element-property
-;                                                          :parent e))
-;                                                 (not (eq (org-element-type e)
-;                                                          'paragraph))))
-;                                     e)))
-;                              (when paragraph
-;                                (save-excursion
-;                                  (goto-char (org-element-property :begin paragraph))
-;                                  (when
-;                                      (re-search-forward
-;                                       "^[ \t]*#\\+attr_.*?: +.*?:width +\\(\\S-+\\)"
-;                                       (org-element-property
-;                                        :post-affiliated paragraph)
-;                                       t)
-;                                    (string-to-number (match-string 1))))))
-;                            ;; Otherwise, fall-back to provided number.
-;                            (car org-image-actual-width)))
-;                          ((numberp org-image-actual-width)
-;                           org-image-actual-width)))
-;                        (old (get-char-property-and-overlay
-;                              (org-element-property :begin link)
-;                              'org-image-overlay)))
-;                    (if (and (car-safe old) refresh)
-;                        (image-refresh (overlay-get (cdr old) 'display))
-;                      (let ((image (create-image file
-;                                                 (and width 'imagemagick)
-;                                                 nil
-;                                                 :width width)))
-;                        (when image
-;                          (let* ((link
-;                                  ;; If inline image is the description
-;                                  ;; of another link, be sure to
-;                                  ;; consider the latter as the one to
-;                                  ;; apply the overlay on.
-;                                  (let ((parent
-;                                         (org-element-property :parent link)))
-;                                    (if (eq (org-element-type parent) 'link)
-;                                        parent
-;                                      link)))
-;                                 (ov (make-overlay
-;                                      (org-element-property :begin link)
-;                                      (progn
-;                                        (goto-char
-;                                         (org-element-property :end link))
-;                                        (skip-chars-backward " \t")
-;                                        (point)))))
-;                            (overlay-put ov 'display image)
-;                            (overlay-put ov 'face 'default)
-;                            (overlay-put ov 'org-image-overlay t)
-;                            (overlay-put
-;                             ov 'modification-hooks
-;                             (list 'org-display-inline-remove-overlay))
-;                            (push ov org-inline-image-overlays)))))))))))))))
 
 (defun htmlorg-clipboard ()
   "Convert clipboard contents from HTML to Org and then paste (yank)."
@@ -1116,6 +957,45 @@ the appropriate flag at the message forwarded or replied-to."
 (add-hook 'image-minor-mode-hook
   (setq blink-cursor-mode nil))
 
+;;;; AG
+(require 'ag)
+(setq ag-highlight-search t)
+(setq ag-reuse-buffers t)
+(setq ag-reuse-window t)
+(setq ag-group-matches nil)
+
+(defun arnaud/ag-search-at-point ()
+  (interactive)
+  (ag-project (thing-at-point 'symbol))
+  (other-window 1))
+
+(defun arnaud/wgrep-save-and-quit ()
+  (interactive)
+  (when (y-or-n-p "Save wgrep changes ?")
+    (wgrep-finish-edit)
+    (wgrep-save-all-buffers))
+  (wgrep-abort-all-change)
+  (wgrep-exit)
+  (quit-window))
+
+(require 'wgrep-ag)
+(autoload 'wgrep-ag-setup "wgrep-ag")
+(add-hook 'ag-mode-hook 'wgrep-ag-setup)
+(define-key ag-mode-map (kbd "e") 'wgrep-change-to-wgrep-mode)
+(define-key ag-mode-map [escape] 'quit-window)
+(define-key wgrep-mode-map [escape] 'arnaud/wgrep-save-and-quit)
+(define-key evil-normal-state-map (kbd "C-*") 'arnaud/ag-search-at-point)
+
+;; Press `dd' to delete lines in `wgrep-mode' in evil directly
+(defadvice evil-delete (around evil-delete-hack activate)
+  ;; make buffer writable
+  (if (and (boundp 'wgrep-prepared) wgrep-prepared)
+      (wgrep-toggle-readonly-area))
+  ad-do-it
+  ;; make buffer read-only
+  (if (and (boundp 'wgrep-prepared) wgrep-prepared)
+      (wgrep-toggle-readonly-area)))
+
 ; set up Emacs for transparent encryption and decryption
 (require 'epa-file)
 (epa-file-enable)
@@ -1128,8 +1008,6 @@ the appropriate flag at the message forwarded or replied-to."
 ;---- EVIL MODE, should remain at the end
 (require 'evil)
 (evil-mode 1)
-(require 'evil-collection)
-(evil-collection-init 'wgrep)
 (require 'evil-tabs)
 
 ;;;; Highlight Searches
@@ -1166,3 +1044,4 @@ the appropriate flag at the message forwarded or replied-to."
     ((Base . 10)
      (Package . CL-USER)
      (Syntax . COMMON-LISP)))))
+
