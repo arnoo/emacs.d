@@ -236,6 +236,8 @@ otherwise, close current tab (elscreen)."
       (evil-repeat count nil))
 (define-key evil-normal-state-map "." 'arnaud/repeat)
 
+(define-key evil-normal-state-map (kbd "C-;") 'eval-expression)
+
 (evil-set-initial-state 'ag-mode 'normal)
 
 ;;; esc quits
@@ -971,19 +973,19 @@ the appropriate flag at the message forwarded or replied-to."
 
 (defun arnaud/wgrep-save-and-quit ()
   (interactive)
-  (when (y-or-n-p "Save wgrep changes ?")
-    (wgrep-finish-edit)
-    (wgrep-save-all-buffers))
-  (wgrep-abort-all-change)
-  (wgrep-exit)
+  (when (buffer-modified-p)
+    (when (y-or-n-p "Save wgrep changes ?")
+      (wgrep-finish-edit)
+      (wgrep-save-all-buffers))
+    (wgrep-abort-changes)
+    (wgrep-exit))
   (quit-window))
 
 (require 'wgrep-ag)
 (autoload 'wgrep-ag-setup "wgrep-ag")
 (add-hook 'ag-mode-hook 'wgrep-ag-setup)
-(define-key ag-mode-map (kbd "e") 'wgrep-change-to-wgrep-mode)
-(define-key ag-mode-map [escape] 'quit-window)
-(define-key wgrep-mode-map [escape] 'arnaud/wgrep-save-and-quit)
+(add-hook 'ag-search-finished-hook 'wgrep-change-to-wgrep-mode)
+(evil-define-key 'normal wgrep-mode-map [escape] 'arnaud/wgrep-save-and-quit)
 (define-key evil-normal-state-map (kbd "C-*") 'arnaud/ag-search-at-point)
 
 ;; Press `dd' to delete lines in `wgrep-mode' in evil directly
