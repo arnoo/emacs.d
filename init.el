@@ -1,4 +1,3 @@
-
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
 (setq frame-title-format '("%b - Emacs"))
@@ -17,24 +16,6 @@
   (interactive)
   (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
 (add-hook 'window-setup-hook 'set-maximized t)
-
-;(defvar min-timer)
-;(defun schedule-minimize ()
-;  (when (eq (frame-parameter (selected-frame) 'fullscreen)
-;            'maximized)
-;    (setq min-timer (run-at-time "1 sec" nil 'minimize-other-windows))))
-;
-;(defun minimize-other-windows ()
-;  (shell-command (concat "bash -c 'xdotool search --desktop `xdotool get_desktop` --name \".*\" | grep -v " (frame-parameter (selected-frame) 'outer-window-id) " | xargs -r -n 1 xdotool windowminimize'")))
-;
-;; xfwm sends a focus-in event just prior to switching to another workspace, which ruins everything...
-;(defun prevent-minimize ()
-;  (when (and (boundp 'min-timer) min-timer)
-;     (cancel-timer min-timer)
-;     (setq min-timer nil)))
-;
-;(add-hook 'focus-in-hook 'schedule-minimize)
-;(add-hook 'focus-out-hook 'prevent-minimize)
 
 ; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
@@ -57,26 +38,34 @@
         ag
         cl-lib
         color
-        color-theme
+        ;color-theme
         company
         company-tern
         dumb-jump
         dtrt-indent
+        ein
         elpy
         emojify
         evil
+        evil-collection
         ;evil-mu4e
         evil-numbers
         evil-search-highlight-persist
         evil-tabs
         fiplr
         flycheck-mypy
+        git-gutter-fringe
+        importmagic
         js2-mode
         markdown-mode
+        org-download
+        powerline
         pydoc
         scala-mode2
         wdired
-        web-mode))
+        web-mode
+        wgrep-ag
+        yaml-mode))
 
 ; Install my-packages as necessary
 (defun filter (condp lst)
@@ -147,10 +136,10 @@
 
 
 ;;;; Colors
-(require 'color-theme)
-(setq color-theme-is-global t)
-(color-theme-initialize)
-(color-theme-standard)
+;(require 'color-theme)
+;(setq color-theme-is-global t)
+;(color-theme-initialize)
+;(color-theme-standard)
 
 (undo-tree-mode 1)
 
@@ -160,6 +149,13 @@
 ;;;; AG
 (require 'ag)
 (setq ag-highlight-search t)
+(setq ag-reuse-buffers t)
+(setq ag-reuse-window t)
+
+(require 'wgrep-ag)
+(autoload 'wgrep-ag-setup "wgrep-ag")
+(add-hook 'ag-mode-hook 'wgrep-ag-setup)
+
 (defun ag-search-at-point ()
   (interactive)
   (ag-project (thing-at-point 'symbol)))
@@ -193,6 +189,8 @@
 	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
 	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
       dumb-jump-find-rules)
+
+(require 'git-gutter-fringe)
 
 ;;;; WEB-MODE
 
@@ -265,6 +263,8 @@ otherwise, close current tab (elscreen)."
       (message "count :  %S" count)
       (evil-repeat count nil))
 (define-key evil-normal-state-map "." 'my-repeat)
+
+(evil-set-initial-state 'ivy-occur-grep-mode 'normal)
 
 ;;; esc quits
 (defun minibuffer-keyboard-quit ()
@@ -344,6 +344,8 @@ otherwise, close current tab (elscreen)."
 
 (dolist (hook '(text-mode-hook org-mode-hook))
   (add-hook hook (lambda ()
+                   (setq org-download-image-dir "/home/arno/wiki/media")
+                   (setq org-download-heading-lvl nil)
                    (turn-on-flyspell)
                    (add-to-list 'ispell-skip-region-alist '("^#+BEGIN_SRC" . "^#+END_SRC"))
                    (setq flyspell-issue-message-flag nil)
@@ -381,6 +383,7 @@ otherwise, close current tab (elscreen)."
          (add-to-list 'company-backends 'company-tern)
          (autoload 'tern-mode "tern.el" nil t)
          (tern-mode t)
+         (setq flycheck-checkers '(javascript-eslint))
          (setq tern-command (cons (executable-find "tern") '()))
          ;(evil-define-key 'normal tern-mode-keymap "\C-]" 'tern-find-definition)
          (eval-after-load 'tern
@@ -561,6 +564,7 @@ otherwise, close current tab (elscreen)."
    (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
          (push '("lambda" . ?λ) prettify-symbols-alist)
          (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
+         (importmagic-mode)
          (highlight-indentation-mode -1)))
 
 ;----- FIPLR
@@ -669,7 +673,7 @@ otherwise, close current tab (elscreen)."
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
               (if (and (>= hour 6) (<= hour 19) (>= dow 1) (<= dow 4))
-                  "" ;" OR maildir:/Octo_INBOX"
+                  " OR maildir:/Octo_INBOX OR maildir:/PC_INBOX"
                   "")))))
 
 (setq mu4e-headers-include-related t)
@@ -679,6 +683,7 @@ otherwise, close current tab (elscreen)."
 (defun my-mu4e-headers-execute ()
   (interactive)
   (mu4e-mark-execute-all t)
+  (mu4e-update-index)
   (mu4e-headers-rerun-search))
 
 (defun my-mu4e-view-msg-in-tab ()
@@ -704,7 +709,20 @@ otherwise, close current tab (elscreen)."
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
-  (write-region (concat (plist-get (mu4e-message-at-point) :message-id) "\n") nil "~/.muted-mailids" 'append)
+  (write-region (concat "if allof (anyof (header :contains \"References\" \"<" (plist-get (mu4e-message-at-point) :message-id) ">\",\n"
+                        "                 header :is \"Message-Id\" \"<" (plist-get (mu4e-message-at-point) :message-id) ">\"),\n"
+                        "          not anyof (address :is \"to\" \"arb@octo.com\",\n"
+                        "                     address :is \"to\" \"abetremieux@octo.com\",\n"
+                        "                     address :is \"to\" \"arnaud.betremieux@passculture.app\",\n"
+                        "                     address :is \"to\" \"arnaud.betremieux@beta.gouv.fr\"))\n"
+                        "{\n"
+                        "  fileinto \"Octo_AllMail\";\n"
+                        "  stop;\n"
+                        "}\n"
+                        "\n")
+                nil
+                "~/.sieve/mutes"
+                'append)
   (my-mu4e-archive-thread))
 
 (defun my-mu4e-msg-to-task ()
@@ -713,14 +731,15 @@ otherwise, close current tab (elscreen)."
     (mu4e~view-quit-buffer))
   (let ((msg (mu4e-message-at-point)))
     (when msg
-      (let* ((context-name (mu4e-context-name (mu4e-context-determine msg)))
+      (let* ((context (mu4e-context-determine msg))
+             (context-name (if context (mu4e-context-name context) "Perso"))
              (base-command (concat "task add '"
                                    (replace-regexp-in-string "'" " " (plist-get msg :subject))
                                    " m#" (plist-get msg :message-id) "'"
                                    (if (string= context-name "Octo")
                                        " +octo"
                                        "")
-                                   (if (string= context-name "beta.gouv")
+                                   (if (string= context-name "pc")
                                        " +octo +pc"
                                        "")
                                    " "))
@@ -763,7 +782,7 @@ otherwise, close current tab (elscreen)."
 (setq mu4e-user-mail-address-list '("arnaud@btmx.fr"
                                     "arnaud@rootcycle.com"
                                     "abetremieux@octo.com"
-                                    "arnaud.betremieux@beta.gouv.fr"))
+                                    "arnaud.betremieux@passculture.app"))
 
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
@@ -817,13 +836,11 @@ the appropriate flag at the message forwarded or replied-to."
 (add-hook 'mu4e-compose-mode-hook 'no-auto-fill)
 
 (setq mu4e-contexts
-    `( ,(make-mu4e-context
+    `(
+       ,(make-mu4e-context
           :name "Perso"
           :enter-func (lambda () (mu4e-message "Entering context 'Perso'"))
           :leave-func (lambda () (mu4e-message "Leaving context 'Perso'"))
-          :match-func (lambda (msg)
-                        (when msg 
-                            (not (string-match "^/Octo_" (mu4e-message-field msg :maildir)))))
           :vars '( ( user-mail-address      . "arnaud@btmx.fr")
                    ( mu4e-sent-folder       . "/Sent")
                    ( mu4e-drafts-folder     . "/Drafts")
@@ -831,29 +848,28 @@ the appropriate flag at the message forwarded or replied-to."
                    ( mu4e-compose-signature . "")
                    ))
         ,(make-mu4e-context
-          :name "beta.gouv"
-          :enter-func (lambda () (mu4e-message "Entering context 'beta.gouv'"))
-          :leave-func (lambda () (mu4e-message "Leaving context 'beta.gouv'"))
+          :name "pc"
+          :enter-func (lambda () (mu4e-message "Entering context 'pc'"))
+          :leave-func (lambda () (mu4e-message "Leaving context 'pc'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (and (string-match "^/Octo_" (mu4e-message-field msg :maildir))
-                               (or (mu4e-message-contact-field-matches msg 
-                                     :to "arnaud.betremieux@beta.gouv.fr")
-                                   (mu4e-message-contact-field-matches msg 
-                                     :cc "arnaud.betremieux@beta.gouv.fr")))))
-           :vars '(( user-mail-address      . "arnaud.betremieux@beta.gouv.fr" )
-                   ( mu4e-sent-folder       . "/Octo_Sent")
-                   ( mu4e-drafts-folder     . "/Octo_Drafts")
-                   ( mu4e-refile-folder     . "/Octo_AllMail") 
+                          (and (string-match "^/PC_" (mu4e-message-field msg :maildir))
+                               ;(or (mu4e-message-contact-field-matches msg 
+                               ;      :to "arnaud.betremieux@passculture.app")
+                               ;   (mu4e-message-contact-field-matches msg 
+                               ;     :cc "arnaud.betremieux@passculture.app"))
+                               )))
+           :vars '(( user-mail-address      . "arnaud.betremieux@passculture.app" )
+                   ( mu4e-sent-folder       . "/PC_Sent")
+                   ( mu4e-drafts-folder     . "/PC_Drafts")
+                   ( mu4e-refile-folder     . "/PC_AllMail") 
                    ( mu4e-compose-signature .
                      (concat
                        "Arnaud Bétrémieux\n"
-                       "Équipe Technique Pass Culture\n"
+                       "Tech Lead Pass Culture\n"
                        "....................\n"
                        "+33 (0)6 89 85 88 41\n"
                        "du lundi au jeudi\n"
-                       "\n"
-                       "betagouv <https://beta.gouv.fr/> est l'incubateur des Startups d'État, un service du Premier Ministre à la DINSIC. Nous créons des services publics numériques dans l'intérêt des usagers et des agents publics."
                        ))))
        ,(make-mu4e-context
           :name "Octo"
@@ -877,7 +893,6 @@ the appropriate flag at the message forwarded or replied-to."
                        "75002 Paris\n"
                        "+33 (0)6 89 85 88 41\n"
                        "du lundi au jeudi\n"
-                       "http://www.octo.com/\n"
                        "http://blog.octo.com/\n"))))
         ,(make-mu4e-context
           :name "Rootcycle"
@@ -1105,9 +1120,16 @@ the appropriate flag at the message forwarded or replied-to."
 (require 'epa-file)
 (epa-file-enable)
 
+; EIN (Emacs iPython Notebook)
+(require 'ein)
+(require 'ein-notebook)
+(require 'ein-subpackages)
+
 ;---- EVIL MODE, should remain at the end
 (require 'evil)
 (evil-mode 1)
+(require 'evil-collection)
+(evil-collection-init 'wgrep)
 (require 'evil-tabs)
 
 ;;;; Highlight Searches
