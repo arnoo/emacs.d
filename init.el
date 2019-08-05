@@ -20,6 +20,7 @@
 (setq arnaud/packages
       '(package
         ag
+        all-the-icons
         cl-lib
         color
         company
@@ -64,6 +65,8 @@
 
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
+
+(require 'all-the-icons)
 
 (define-key global-map (kbd "<C-next>")  'elscreen-next)
 (define-key global-map (kbd "<C-prior>") 'elscreen-previous)
@@ -162,8 +165,21 @@
 (require 'git-gutter)
 (global-git-gutter-mode +1)
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(git-gutter:ask-p nil)
- '(git-gutter:update-interval 2))
+ '(git-gutter:modified-sign "*")
+ '(git-gutter:update-interval 2)
+ '(package-selected-packages
+   (quote
+    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
+ '(safe-local-variable-values
+   (quote
+    ((Base . 10)
+     (Package . CL-USER)
+     (Syntax . COMMON-LISP)))))
 
 (set-face-foreground 'git-gutter:added "black")
 (set-face-background 'git-gutter:added "green")
@@ -1034,17 +1050,5 @@ the appropriate flag at the message forwarded or replied-to."
 (or (server-running-p)
     (server-start))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
- '(safe-local-variable-values
-   (quote
-    ((Base . 10)
-     (Package . CL-USER)
-     (Syntax . COMMON-LISP)))))
+
 
