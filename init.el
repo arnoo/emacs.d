@@ -41,7 +41,6 @@
         js2-mode
         markdown-mode
         org-download
-        powerline
         pydoc
         scala-mode2
         wdired
@@ -597,7 +596,20 @@ otherwise, close current tab (elscreen)."
 (defpowerline buffer-id  (propertize (car (propertized-buffer-identification (arnaud/powerline-buffer-name)))
                                      'face (powerline-make-face color1)))
 
+(defun arnaud/powerline-git-branch ()
+  (let ((branch (mapconcat 'concat (cdr (split-string vc-mode "[:-]")) "-")))
+    (concat
+     " "
+     (propertize (format "%s" (all-the-icons-octicon "git-branch"))
+                 'face `(:height 1.3 :family ,(all-the-icons-octicon-family))
+                 'display '(raise -0.1))
+     (propertize (format " %s" branch) 'face `(:height 0.9)))))
 
+(defpowerline vc  
+  (when vc-mode
+    (cond
+      ((string-match "Git[:-]" vc-mode) (arnaud/powerline-git-branch))
+      (t (format "%s" vc-mode)))))
 
 ;------ MU4E
 
@@ -910,6 +922,11 @@ the appropriate flag at the message forwarded or replied-to."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(elscreen-tab-control-face           ((t (:background "#797979" :foreground "#f6f3e8" :underline nil :bold t ))))
+ '(elscreen-tab-current-screen-face    ((t (:background "#eeeeee" :foreground "#000000" :underline nil :bold t ))))
+ '(elscreen-tab-other-screen-face      ((t (:background "#797979" :foreground "#aaaaaa" :underline nil :bold nil ))))
+ '(elscreen-tab-background-face        ((t (:background "#797979" :foreground "#aaaaaa" :underline nil :bold nil ))))
+ '(powerline-gui-use-vcs-glyph t)
  '(org-level-1 ((t (:inherit outline-1 :height 1.5))))
  '(org-level-2 ((t (:inherit outline-2 :height 1.4))))
  '(org-level-3 ((t (:inherit outline-3 :height 1.3))))
