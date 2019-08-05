@@ -7,16 +7,7 @@
       (remq 'process-kill-buffer-query-function
                      kill-buffer-query-functions))
 
-(defun arnaud/set-maximized ()
-  (interactive)
-  (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
-(add-hook 'window-setup-hook 'arnaud/set-maximized t)
-
 (setq large-file-warning-threshold 200000000)
-
-;;; Make underscore a word character
-(add-hook 'after-change-major-mode-hook
-          '(lambda () (modify-syntax-entry ?_ "w")))
 
 (require 'uniquify)
 
@@ -44,7 +35,7 @@
         evil-tabs
         fiplr
         flycheck-mypy
-        git-gutter-fringe
+        git-gutter
         importmagic
         js2-mode
         markdown-mode
@@ -101,11 +92,11 @@
 (defvaralias 'c-basic-offset 'tab-width)
 (defvaralias 'cperl-indent-level 'tab-width)
 
-(defun set-tab-width (x)
+(defun arnaud/set-tab-width (x)
   (setq tab-width x)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
-(set-tab-width 2)
+(arnaud/set-tab-width 2)
 
 ;; UI
 (setq column-number-mode t)
@@ -118,6 +109,12 @@
 (setq frame-title-format '("%b - Emacs"))
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message t)
+(defun arnaud/set-maximized ()
+  (interactive)
+  (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
+(add-hook 'window-setup-hook 'arnaud/set-maximized t)
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
 
 
 (setq make-backup-files nil)
@@ -126,7 +123,6 @@
 (setq show-paren-delay 0)
 (savehist-mode 1)
 (setq require-final-newline nil)
-(global-unset-key (kbd "<f11>"))
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 (setq default-indicate-empty-lines t)
@@ -162,9 +158,21 @@
 	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
       dumb-jump-find-rules)
 
-(require 'git-gutter-fringe)
+;;;; Git-Gutter mode
+(require 'git-gutter)
+(global-git-gutter-mode +1)
+(custom-set-variables
+ '(git-gutter:ask-p nil)
+ '(git-gutter:update-interval 2))
 
-;;;; WEB-MODE
+(set-face-foreground 'git-gutter:added "black")
+(set-face-background 'git-gutter:added "green")
+(set-face-foreground 'git-gutter:deleted "white")
+(set-face-background 'git-gutter:deleted "red")
+(set-face-foreground 'git-gutter:modified "white")
+(set-face-background 'git-gutter:modified "purple")
+
+;;;; Web-mode
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.ejs\\'" . web-mode))
@@ -186,7 +194,7 @@
 (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
 
 ;;; :q
-(defun vimlike-quit ()
+(defun arnaud/vimlike-quit ()
   "Vimlike ':q' behavior: close current window if there are split windows;
 otherwise, close current tab (elscreen)."
   (interactive)
@@ -206,18 +214,16 @@ otherwise, close current tab (elscreen)."
 					; if there is only one elscreen, just try to quit (calling elscreen-kill
 					; will not work, because elscreen-kill fails if there is only one
 					; elscreen)
-     (one-elscreen
-      (evil-quit)
-      nil))))
+     (one-elscreen (evil-quit) nil))))
 
-(defun vimlike-write-quit ()
+(defun arnaud/vimlike-write-quit ()
   "Vimlike ':wq' behavior: write then close..."
   (interactive)
   (save-buffer)
-  (vimlike-quit))
+  (arnaud/vimlike-quit))
 
-(evil-ex-define-cmd "q" 'vimlike-quit)
-(evil-ex-define-cmd "wq" 'vimlike-write-quit)
+(evil-ex-define-cmd "q" 'arnaud/vimlike-quit)
+(evil-ex-define-cmd "wq" 'arnaud/vimlike-write-quit)
 
 ;;; numbers
 (require 'evil-numbers)
@@ -225,7 +231,7 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
 
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
-(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file-newtab)
+(define-key evil-normal-state-map (kbd "C-p") 'arnaud/fiplr-find-file-newtab)
 
 ;;; by default, repeat should include the count of the original command !
 
@@ -241,7 +247,7 @@ otherwise, close current tab (elscreen)."
 (evil-set-initial-state 'ag-mode 'normal)
 
 ;;; esc quits
-(defun minibuffer-keyboard-quit ()
+(defun arnaud/minibuffer-keyboard-quit ()
   "Abort recursive edit.
     In Delete Selection mode, if the mark is active, just deactivate it;
     then it takes a second \\[keyboard-quit] to abort the minibuffer."
@@ -253,11 +259,11 @@ otherwise, close current tab (elscreen)."
 
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'arnaud/minibuffer-keyboard-quit)
 
 ;(display-time-mode t)
 
@@ -312,7 +318,7 @@ otherwise, close current tab (elscreen)."
   (setq ispell-dictionary "francais") 
   (setq ispell-really-hunspell t))
 
-(defun flyspell-buffer-unless-large ()
+(defun arnaud/flyspell-buffer-unless-large ()
    (unless (> (buffer-size) (* 70 1024))
      (flyspell-buffer)))
 
@@ -323,15 +329,15 @@ otherwise, close current tab (elscreen)."
                    (turn-on-flyspell)
                    (add-to-list 'ispell-skip-region-alist '("^#+BEGIN_SRC" . "^#+END_SRC"))
                    (setq flyspell-issue-message-flag nil)
-                   (flyspell-buffer-unless-large))))
+                   (arnaud/flyspell-buffer-unless-large))))
 
-(defun fd-switch-dictionary()
+(defun arnaud/fd-switch-dictionary()
    (interactive)
    (let* ((dic ispell-current-dictionary)
      (change (if (string= dic "francais") "english" "francais")))
      (ispell-change-dictionary change)
      (message "Dictionary switched from %s to %s" dic change)
-     (flyspell-buffer-unless-large)))
+     (arnaud/flyspell-buffer-unless-large)))
 
 (define-key evil-normal-state-map "]q"  'next-error)
 (define-key evil-normal-state-map "[q"  'previous-error)
@@ -340,7 +346,7 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map "]s"  'flyspell-goto-next-error)
 (define-key evil-normal-state-map "z="  'ispell-word)
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
-(global-set-key (kbd "<f8>") 'fd-switch-dictionary)
+(global-set-key (kbd "<f8>") 'arnaud/fd-switch-dictionary)
 
 (define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
 
@@ -370,13 +376,7 @@ otherwise, close current tab (elscreen)."
     (let ((bfn buffer-file-name))
       (when (and bfn (string-match "/node_modules/" bfn))
         (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
-          (read-only-mode)))
-      (when (and bfn (string-match "/france-entreprises/" bfn))
-        (unless (y-or-n-p "WARNING: are you sure you want to edit a file from france-entreprises (n will set read-only mode) ?")
-          (read-only-mode)))
-      (when (and bfn (string-match "public/images/logos-04V.svg" bfn))
-          (fiplr-find-file-newtab))
-      )))
+          (read-only-mode))))))
 
 ; *** LATEX ***
 
@@ -393,10 +393,10 @@ otherwise, close current tab (elscreen)."
 (defun arnaud/lisp-mode ()
   (arnaud/all-lisps-mode)
   (require 'slime)
-  (global-set-key (kbd "<f12>") 'switch-slime-buffer)
+  (global-set-key (kbd "<f12>") 'arnaud/switch-slime-buffer)
   (evil-define-key 'normal lisp-mode-map "\C-]"
                                          (lambda () (interactive)
-                                           (if (equal (get-slime-buffer (buffer-list)) nil)
+                                           (if (equal (arnaud/get-slime-buffer (buffer-list)) nil)
                                                (call-interactively 'dumb-jump-go)
                                                (call-interactively 'slime-edit-definition))))
   (evil-define-key 'normal lisp-mode-map (kbd "K") 'slime-documentation-lookup)
@@ -438,7 +438,7 @@ otherwise, close current tab (elscreen)."
   ;(add-to-list 'pretty-symbol-categories 'relational)
   (mapcar (lambda (x) (modify-syntax-entry x "w"))
           (list ?- ?/ ?* ?+))
-  (set-tab-width 2)
+  (arnaud/set-tab-width 2)
   (setq evil-shift-width tab-width)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
@@ -446,16 +446,16 @@ otherwise, close current tab (elscreen)."
 (add-hook 'emacs-lisp-mode-hook 'arnaud/lisp-mode)
   
 ;; Syntax highlighting in Slime REPL
-(defvar slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
-(defun slime-repl-font-lock-setup ()
+(defvar arnaud/slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
+(defun arnaud/slime-repl-font-lock-setup ()
   (setq font-lock-defaults
-        '(slime-repl-font-lock-keywords
+        '(arnaud/slime-repl-font-lock-keywords
          ;; From lisp-mode.el
          nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
          (font-lock-syntactic-face-function
          . lisp-font-lock-syntactic-face-function))))
 
-(add-hook 'slime-repl-mode-hook 'slime-repl-font-lock-setup)
+(add-hook 'slime-repl-mode-hook 'arnaud/slime-repl-font-lock-setup)
 
 (defadvice slime-repl-insert-prompt (after font-lock-face activate)
   (let ((inhibit-read-only t))
@@ -468,21 +468,21 @@ otherwise, close current tab (elscreen)."
 
 
 ;;----- BEGIN slime switcher code 
-(defun get-slime-buffer (&optional buflist)
+(defun arnaud/get-slime-buffer (&optional buflist)
   (if (equal 0 (length buflist))
     nil
     (if (and (> (length (buffer-name (car buflist))) 10)
              (string= "*slime-repl" (substring (buffer-name (car buflist)) 0 11 )))
       (car buflist)
-      (get-slime-buffer (cdr buflist)))))
+      (arnaud/get-slime-buffer (cdr buflist)))))
 
 (defvar *buffer-bookmark* nil)
 
-(defun switch-buffers ()
+(defun arnaud/switch-buffers ()
   (progn
     (setf *temp-bookmark* (current-buffer))
     ;TODO: (elscreen-toggle-display-tab) + disable gT/gt ?
-    (switch-to-buffer (or *buffer-bookmark* (get-slime-buffer (buffer-list))))
+    (switch-to-buffer (or *buffer-bookmark* (arnaud/get-slime-buffer (buffer-list))))
     (setf *buffer-bookmark* *temp-bookmark*)
     (message (format "switching from %s to %s"
                      (buffer-name *temp-bookmark*) 
@@ -494,38 +494,30 @@ otherwise, close current tab (elscreen)."
     (sit-for 1)
     (set-window-configuration wnd)))
 
-(defun switch-slime-buffer () (interactive)
+(defun arnaud/switch-slime-buffer () (interactive)
  (let ((cur-buf (current-buffer))
-       (slime-buf (get-slime-buffer (buffer-list))))
+       (slime-buf (arnaud/get-slime-buffer (buffer-list))))
     (if (equal cur-buf slime-buf)
         (if (equal *buffer-bookmark* nil)
           (message "Don't know which buffer to switch to!")
-          (switch-buffers))
+          (arnaud/switch-buffers))
         (if (equal slime-buf nil)
           (progn
             (message "Can't find REPL buffer, starting slime !")
             (arnaud/slime))
-          (switch-buffers)))))
+          (arnaud/switch-buffers)))))
 
 
 ;;----- END slime switcher code
 
 ; *** MARKDOWN ***
-(autoload 'markdown-mode "markdown-mode"
-   "Major mode for editing Markdown files" t)
+(autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C--") 'text-scale-decrease)
-(global-unset-key (kbd "ESC :"))
-(global-unset-key (kbd "<M-:>"))
 
 
 ; *** PYTHON ***
 (elpy-enable)
-
-
 
 (when (require 'flycheck nil t)
   (require 'flycheck-mypy)
@@ -539,11 +531,12 @@ otherwise, close current tab (elscreen)."
          (push '("lambda" . ?λ) prettify-symbols-alist)
          (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
          (importmagic-mode)
+         (evil-define-key 'normal importmagic-mode-map (kbd "C-i") 'importmagic-fix-symbol-at-point)
          (highlight-indentation-mode -1)))
 
 ;----- FIPLR
 (require 'fiplr)
-(defun fiplr-find-file-newtab ()
+(defun arnaud/fiplr-find-file-newtab ()
   (interactive)
   (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs #'evil-tabs-tabedit))
 
@@ -579,13 +572,13 @@ otherwise, close current tab (elscreen)."
 (add-to-list 'load-path "~/.emacs.d/emacs-powerline")
 (require 'powerline)
 
-(defun powerline-buffer-name ()
+(defun arnaud/powerline-buffer-name ()
   (let* ((root (fiplr-root))
 	 (project-name (car (last (remove "" (split-string root "/")))))
 	 (relative-file-name (replace-regexp-in-string root "" buffer-file-name)))
      (concat relative-file-name " (" project-name ")")))
 
-(defpowerline buffer-id  (propertize (car (propertized-buffer-identification (powerline-buffer-name)))
+(defpowerline buffer-id  (propertize (car (propertized-buffer-identification (arnaud/powerline-buffer-name)))
                                      'face (powerline-make-face color1)))
 
 
@@ -790,11 +783,11 @@ the appropriate flag at the message forwarded or replied-to."
 (setq message-sendmail-f-is-evil 't)
 (setq message-sendmail-extra-arguments '("--read-envelope-from"))
 
-(defun no-auto-fill ()
+(defun arnaud/no-auto-fill ()
   "Turn off auto-fill-mode"
   (auto-fill-mode -1))
 
-(add-hook 'mu4e-compose-mode-hook 'no-auto-fill)
+(add-hook 'mu4e-compose-mode-hook 'arnaud/no-auto-fill)
 
 (setq mu4e-contexts
     `(
@@ -925,7 +918,7 @@ the appropriate flag at the message forwarded or replied-to."
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
-(defun htmlorg-clipboard ()
+(defun arnaud/htmlorg-clipboard ()
   "Convert clipboard contents from HTML to Org and then paste (yank)."
   (interactive)
   (kill-new (shell-command-to-string "xclip -selection clipboard -o | pandoc -f html -t json | pandoc -f json -t org"))
@@ -965,6 +958,10 @@ the appropriate flag at the message forwarded or replied-to."
 (setq ag-reuse-buffers t)
 (setq ag-reuse-window t)
 (setq ag-group-matches nil)
+
+;;; Make underscore a word character
+(add-hook 'after-change-major-mode-hook
+          '(lambda () (modify-syntax-entry ?_ "w")))
 
 (defun arnaud/ag-search-at-point ()
   (interactive)
@@ -1012,6 +1009,10 @@ the appropriate flag at the message forwarded or replied-to."
 (evil-mode 1)
 (require 'evil-tabs)
 
+(global-unset-key (kbd "ESC :"))
+(global-unset-key (kbd "<M-:>"))
+(global-unset-key (kbd "<f11>"))
+
 ;;;; Highlight Searches
 (require 'evil-search-highlight-persist)
 (global-evil-search-highlight-persist t)
@@ -1040,7 +1041,7 @@ the appropriate flag at the message forwarded or replied-to."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern color-theme ag)))
+    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
  '(safe-local-variable-values
    (quote
     ((Base . 10)
