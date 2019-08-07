@@ -21,6 +21,7 @@
       '(package
         ag
         all-the-icons
+        centaur-tabs
         cl-lib
         color
         company
@@ -33,7 +34,7 @@
         evil
         evil-numbers
         evil-search-highlight-persist
-        evil-tabs
+        ;evil-tabs
         fiplr
         flycheck-mypy
         git-gutter
@@ -67,20 +68,6 @@
 
 (require 'all-the-icons)
 
-(define-key global-map (kbd "<C-next>")  'elscreen-next)
-(define-key global-map (kbd "<C-prior>") 'elscreen-previous)
-(define-key global-map (kbd "<C-0>")     'elscreen-jump-0)
-(define-key global-map (kbd "<C-1>")     'elscreen-jump-1)
-(define-key global-map (kbd "<C-2>")     'elscreen-jump-2)
-(define-key global-map (kbd "<C-3>")     'elscreen-jump-3)
-(define-key global-map (kbd "<C-4>")     'elscreen-jump-4)
-(define-key global-map (kbd "<C-5>")     'elscreen-jump-5)
-(define-key global-map (kbd "<C-6>")     'elscreen-jump-6)
-(define-key global-map (kbd "<C-7>")     'elscreen-jump-7)
-(define-key global-map (kbd "<C-8>")     'elscreen-jump-8)
-(define-key global-map (kbd "<C-9>")     'elscreen-jump-9)
-(define-key global-map (kbd "<C-tab>")   'elscreen-toggle)
-
 ;;; Indentation ...
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (dtrt-indent-mode 1)
@@ -101,9 +88,9 @@
 (arnaud/set-tab-width 2)
 
 ;; UI
+(require 'evil)
 (setq column-number-mode t)
 (display-time-mode -1)
-(global-evil-tabs-mode t)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -131,9 +118,46 @@
 
 (undo-tree-mode 1)
 
+;;; TABS
+
+(require 'centaur-tabs)
+(setq centaur-tabs-style "wave")
+(setq centaur-tabs-height 32)
+(setq centaur-tabs-set-icons t)
+(setq centaur-tabs-set-bar 'over)
+(setq centaur-tabs-set-modified-marker t)
+(centaur-tabs-mode t)
+(global-set-key (kbd "C-<prior>")  'centaur-tabs-backward)
+(global-set-key (kbd "C-<next>") 'centaur-tabs-forward)
+(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g t") 'centaur-tabs-forward))
+(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g T") 'centaur-tabs-backward))
+(add-hook 'mu4e-view-mode-hook 'centaur-tabs-local-mode)
+;(add-hook 'mu4e-compose-mode-hook 'centaur-tabs-local-mode)
+
+(defun centaur-tabs-buffer-groups ()
+  (list "single-group-for-now"))
+
+(defun arnaud/switch-to-previous-buffer ()
+  "Switch to previously open buffer."
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+
+(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "<C-tab>") 'arnaud/switch-to-previous-buffer))
+
+;;; JUMPING
+
 (require 'dumb-jump)
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" (lambda () (interactive) (elscreen-clone) (dumb-jump-go))))
+
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" 'dumb-jump-go))
+
+(defun arnaud/dumb-jump-go-in-same-buffer ()
+  (interactive)
+  (dumb-jump-go)
+  (arnaud/switch-to-previous-buffer)
+  (kill-current-buffer))
+
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-buffer))
+
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
 (push '(:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
@@ -173,7 +197,7 @@
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
+    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
  '(safe-local-variable-values
    (quote
     ((Base . 10)
@@ -199,37 +223,24 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
-;;;; Make Evil more Vim Like
-
-;;; No limit to number of tabs
-(require 'elscreen-outof-limit-mode)
-(elscreen-outof-limit-mode t)
-
 ;;; Filename expansion
 (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
 
 ;;; :q
 (defun arnaud/vimlike-quit ()
   "Vimlike ':q' behavior: close current window if there are split windows;
-otherwise, close current tab (elscreen)."
+otherwise, close current tab."
   (interactive)
-  (let ((one-elscreen (elscreen-one-screen-p))
-	      (one-window (one-window-p)))
+  (let ((one-window (one-window-p)))
     (cond
 					; if current tab has split windows in it, close the current live window
      ((not one-window)
       (delete-window) ; delete the current window
       (balance-windows) ; balance remaining windows
       nil)
-					; if there are multiple elscreens (tabs), close the current elscreen
-     ((not one-elscreen)
-      ;(kill-buffer)
-      (elscreen-kill)
-      nil)
-					; if there is only one elscreen, just try to quit (calling elscreen-kill
-					; will not work, because elscreen-kill fails if there is only one
-					; elscreen)
-     (one-elscreen (evil-quit) nil))))
+     (t
+      (kill-current-buffer)
+      nil))))
 
 (defun arnaud/vimlike-write-quit ()
   "Vimlike ':wq' behavior: write then close..."
@@ -246,7 +257,6 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
 
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
-(define-key evil-normal-state-map (kbd "C-p") 'arnaud/fiplr-find-file-newtab)
 
 ;;; by default, repeat should include the count of the original command !
 
@@ -279,8 +289,6 @@ otherwise, close current tab (elscreen)."
 (define-key minibuffer-local-completion-map [escape] 'arnaud/minibuffer-keyboard-quit)
 (define-key minibuffer-local-must-match-map [escape] 'arnaud/minibuffer-keyboard-quit)
 (define-key minibuffer-local-isearch-map [escape] 'arnaud/minibuffer-keyboard-quit)
-
-;(display-time-mode t)
 
 ;;;; Set autosave directory so that all the autosaves are in one place, and not all over the filesystem.
 
@@ -496,7 +504,6 @@ otherwise, close current tab (elscreen)."
 (defun arnaud/switch-buffers ()
   (progn
     (setf *temp-bookmark* (current-buffer))
-    ;TODO: (elscreen-toggle-display-tab) + disable gT/gt ?
     (switch-to-buffer (or *buffer-bookmark* (arnaud/get-slime-buffer (buffer-list))))
     (setf *buffer-bookmark* *temp-bookmark*)
     (message (format "switching from %s to %s"
@@ -551,9 +558,6 @@ otherwise, close current tab (elscreen)."
 
 ;----- FIPLR
 (require 'fiplr)
-(defun arnaud/fiplr-find-file-newtab ()
-  (interactive)
-  (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs #'evil-tabs-tabedit))
 
 (setq *grizzl-read-max-results* 20)
 
@@ -575,13 +579,19 @@ otherwise, close current tab (elscreen)."
 
 (advice-add #'fiplr-root :around 'arnaud/fiplr-root)
 
-;Redefine tabedit to be in the right dir
-(evil-define-command evil-tabs-tabedit (file)
+(evil-define-command tabedit (file)
   (interactive "<f>")
   (let ((dir default-directory))
-    (elscreen-create)
+    (switch-to-buffer "untitled")
     (cd dir))
   (find-file file))
+
+(defun arnaud/fiplr-find-file-newtab ()
+  (interactive)
+  (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs #'tabedit))
+
+(define-key evil-normal-state-map (kbd "C-p") 'arnaud/fiplr-find-file-newtab)
+
 
 ;----- POWERLINE
 (add-to-list 'load-path "~/.emacs.d/emacs-powerline")
@@ -653,8 +663,8 @@ otherwise, close current tab (elscreen)."
 (define-prefix-command 'arnaud/mu4e-g-map)
 (define-key mu4e-headers-mode-map "g" 'arnaud/mu4e-g-map)
 (define-key arnaud/mu4e-g-map (kbd "g") 'beginning-of-buffer)
-(define-key arnaud/mu4e-g-map (kbd "t") 'elscreen-next)
-(define-key arnaud/mu4e-g-map (kbd "T") 'elscreen-previous)
+(define-key arnaud/mu4e-g-map (kbd "t") 'centaur-tabs-forward)
+(define-key arnaud/mu4e-g-map (kbd "T") 'centaur-tabs-backward)
 
 (setq mail-user-agent 'mu4e-user-agent)
 
@@ -772,7 +782,7 @@ otherwise, close current tab (elscreen)."
 (add-hook 'message-mode-hook 'turn-on-orgtbl)
 (add-hook 'message-mode-hook 'turn-on-orgstruct++)
 
-(setq mu4e-compose-in-new-frame t)
+(setq mu4e-compose-in-new-frame nil)
 
 ;; Create an elscreen screen instead of a frame on opening.
 (defun mu4e~draft-open-file (path)
@@ -922,10 +932,6 @@ the appropriate flag at the message forwarded or replied-to."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(elscreen-tab-control-face           ((t (:background "#797979" :foreground "#f6f3e8" :underline nil :bold t ))))
- '(elscreen-tab-current-screen-face    ((t (:background "#eeeeee" :foreground "#000000" :underline nil :bold t ))))
- '(elscreen-tab-other-screen-face      ((t (:background "#797979" :foreground "#aaaaaa" :underline nil :bold nil ))))
- '(elscreen-tab-background-face        ((t (:background "#797979" :foreground "#aaaaaa" :underline nil :bold nil ))))
  '(powerline-gui-use-vcs-glyph t)
  '(org-level-1 ((t (:inherit outline-1 :height 1.5))))
  '(org-level-2 ((t (:inherit outline-2 :height 1.4))))
@@ -1038,9 +1044,7 @@ the appropriate flag at the message forwarded or replied-to."
 (require 'ein-subpackages)
 
 ;---- EVIL MODE, should remain at the end
-(require 'evil)
 (evil-mode 1)
-(require 'evil-tabs)
 
 (global-unset-key (kbd "ESC :"))
 (global-unset-key (kbd "<M-:>"))
