@@ -124,18 +124,23 @@
 (setq centaur-tabs-style "wave")
 (setq centaur-tabs-height 32)
 (setq centaur-tabs-set-icons t)
-(setq centaur-tabs-set-bar 'over)
 (setq centaur-tabs-set-modified-marker t)
 (centaur-tabs-mode t)
 (global-set-key (kbd "C-<prior>")  'centaur-tabs-backward)
 (global-set-key (kbd "C-<next>") 'centaur-tabs-forward)
 (eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g t") 'centaur-tabs-forward))
 (eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g T") 'centaur-tabs-backward))
-(add-hook 'mu4e-view-mode-hook 'centaur-tabs-local-mode)
-;(add-hook 'mu4e-compose-mode-hook 'centaur-tabs-local-mode)
 
 (defun centaur-tabs-buffer-groups ()
   (list "single-group-for-now"))
+
+(defun centaur-tabs-hide-tab (x)
+  (let ((name (format "%s" x)))
+ 	  (or
+	    (string= "*ag search*" name)
+	    (string= "*Completions*" name)
+	    (string= "*Compile-Log*" name)
+	    (string= "*Shell Command Output*" name))))
 
 (defun arnaud/switch-to-previous-buffer ()
   "Switch to previously open buffer."
@@ -150,11 +155,29 @@
 
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" 'dumb-jump-go))
 
-(defun arnaud/dumb-jump-go-in-same-buffer ()
+(defun arnaud/dumb-jump-go-in-same-tab ()
   (interactive)
-  (dumb-jump-go)
-  (arnaud/switch-to-previous-buffer)
-  (kill-current-buffer))
+  (let ((arnaud/dumb-jump-same-buffer t))
+    (dumb-jump-go)))
+
+(setq arnaud/dumb-jump-same-tab nil)
+
+(defun dumb-jump-goto-file-line (thefile theline pos)
+	  "Open THEFILE and go line THELINE"
+	  (if (fboundp 'xref-push-marker-stack)
+	      (xref-push-marker-stack)
+	   (ring-insert find-tag-marker-ring (point-marker)))
+	  (let* ((visible-buffer (find-buffer-visiting thefile))
+	         (visible-window (when visible-buffer (get-buffer-window visible-buffer))))
+	    (cond
+	     ((and visible-window dumb-jump-use-visible-window)
+	      (select-window visible-window))
+       (arnaud/dumb-jump-same-tab
+        (let ((new-buffer (find-file-noselect thefile)))
+          (kill-current-buffer)
+          (switch-to-buffer new-buffer)))
+	     (t
+        (find-file thefile)))))
 
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-buffer))
 
@@ -579,18 +602,7 @@ otherwise, close current tab."
 
 (advice-add #'fiplr-root :around 'arnaud/fiplr-root)
 
-(evil-define-command tabedit (file)
-  (interactive "<f>")
-  (let ((dir default-directory))
-    (switch-to-buffer "untitled")
-    (cd dir))
-  (find-file file))
-
-(defun arnaud/fiplr-find-file-newtab ()
-  (interactive)
-  (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs #'tabedit))
-
-(define-key evil-normal-state-map (kbd "C-p") 'arnaud/fiplr-find-file-newtab)
+(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)
 
 
 ;----- POWERLINE
@@ -665,6 +677,10 @@ otherwise, close current tab."
 (define-key arnaud/mu4e-g-map (kbd "g") 'beginning-of-buffer)
 (define-key arnaud/mu4e-g-map (kbd "t") 'centaur-tabs-forward)
 (define-key arnaud/mu4e-g-map (kbd "T") 'centaur-tabs-backward)
+
+(add-hook 'mu4e-view-mode-hook 'centaur-tabs-local-mode)
+(add-hook 'ag-mode-hook 'centaur-tabs-local-mode)
+;(add-hook 'mu4e-compose-mode-hook 'centaur-tabs-local-mode)
 
 (setq mail-user-agent 'mu4e-user-agent)
 
@@ -1015,7 +1031,8 @@ the appropriate flag at the message forwarded or replied-to."
       (wgrep-save-all-buffers))
     (wgrep-abort-changes)
     (wgrep-exit))
-  (quit-window))
+  (kill-current-buffer)
+  (evil-quit))
 
 (require 'wgrep-ag)
 (autoload 'wgrep-ag-setup "wgrep-ag")
