@@ -3,13 +3,30 @@
 
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(git-gutter:ask-p nil)
+ '(git-gutter:modified-sign "*")
+ '(git-gutter:update-interval 2)
+ '(package-selected-packages
+   (quote
+    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
+ '(safe-local-variable-values
+   (quote
+    ((Base . 10)
+     (Package . CL-USER)
+     (Syntax . COMMON-LISP)))))
+
 (setq kill-buffer-query-functions
       (remq 'process-kill-buffer-query-function
                      kill-buffer-query-functions))
 
 (setq large-file-warning-threshold 200000000)
-
-(require 'uniquify)
 
 ; *** MELPA ***
 (require 'package)
@@ -23,7 +40,6 @@
         all-the-icons
         centaur-tabs
         cl-lib
-        color
         company
         company-tern
         dumb-jump
@@ -40,10 +56,13 @@
         git-gutter
         importmagic
         js2-mode
+        magit ; dependency of eyeliner
         markdown-mode
         org-download
+        projectile ; dependency of eyeliner
         pydoc
         scala-mode2
+        spaceline
         wdired
         web-mode
         wgrep-ag
@@ -63,12 +82,15 @@
 
 ;(add-hook 'after-init-hook 'global-company-mode)
 
+;;; Icons
+
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
 
 (require 'all-the-icons)
 
-;;; Indentation ...
+;;; Indentation
+
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (dtrt-indent-mode 1)
 (setf indent-tabs-mode nil) 
@@ -88,6 +110,7 @@
 (arnaud/set-tab-width 2)
 
 ;; UI
+(load-theme 'dichromacy)
 (require 'evil)
 (setq column-number-mode t)
 (display-time-mode -1)
@@ -118,6 +141,13 @@
 
 (undo-tree-mode 1)
 
+;;; MODE LINE
+
+(add-to-list 'load-path "~/.emacs.d/plugins/eyeliner")
+(require 'projectile)
+(require 'eyeliner)
+(eyeliner/install)
+
 ;;; TABS
 
 (require 'centaur-tabs)
@@ -138,6 +168,7 @@
   (let ((name (format "%s" x)))
  	  (or
 	    (string= "*ag search*" name)
+	    (string-prefix-p "*epc con " name)
 	    (string= "*Completions*" name)
 	    (string= "*Compile-Log*" name)
 	    (string= "*Shell Command Output*" name))))
@@ -157,13 +188,14 @@
 
 (defun arnaud/dumb-jump-go-in-same-tab ()
   (interactive)
-  (let ((arnaud/dumb-jump-same-buffer t))
+  (let ((arnaud/dumb-jump-same-tab t))
     (dumb-jump-go)))
 
 (setq arnaud/dumb-jump-same-tab nil)
 
 (defun dumb-jump-goto-file-line (thefile theline pos)
-	  "Open THEFILE and go line THELINE"
+	  "Open THEFILE and go to line THELINE"
+    (evil-set-jump)
 	  (if (fboundp 'xref-push-marker-stack)
 	      (xref-push-marker-stack)
 	   (ring-insert find-tag-marker-ring (point-marker)))
@@ -175,11 +207,13 @@
        (arnaud/dumb-jump-same-tab
         (let ((new-buffer (find-file-noselect thefile)))
           (kill-current-buffer)
-          (switch-to-buffer new-buffer)))
+          (switch-to-buffer new-buffer)
+          (goto-line theline)))
 	     (t
-        (find-file thefile)))))
+        (find-file thefile)))
+        (goto-line theline)))
 
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-buffer))
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-tab))
 
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
@@ -210,22 +244,6 @@
 ;;;; Git-Gutter mode
 (require 'git-gutter)
 (global-git-gutter-mode +1)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(git-gutter:ask-p nil)
- '(git-gutter:modified-sign "*")
- '(git-gutter:update-interval 2)
- '(package-selected-packages
-   (quote
-    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
- '(safe-local-variable-values
-   (quote
-    ((Base . 10)
-     (Package . CL-USER)
-     (Syntax . COMMON-LISP)))))
 
 (set-face-foreground 'git-gutter:added "black")
 (set-face-background 'git-gutter:added "green")
@@ -472,7 +490,6 @@ otherwise, close current tab."
 (defun arnaud/all-lisps-mode ()
   (require 'rainbow-delimiters)
   (require 'cl-lib)
-  (require 'color)
   
   (rainbow-delimiters-mode)
   ;(cl-loop
@@ -588,7 +605,7 @@ otherwise, close current tab."
       '((directories
          (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node" "ftp_mirrors"))
         (files
-         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc"))))
+         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc" "*~" "#*#"))))
 
 (defun arnaud/fiplr-root (orig-fiplr-root)
   (let ((orig-root (funcall orig-fiplr-root)))
@@ -604,34 +621,6 @@ otherwise, close current tab."
 
 (define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)
 
-
-;----- POWERLINE
-(add-to-list 'load-path "~/.emacs.d/emacs-powerline")
-(require 'powerline)
-
-(defun arnaud/powerline-buffer-name ()
-  (let* ((root (fiplr-root))
-	 (project-name (car (last (remove "" (split-string root "/")))))
-	 (relative-file-name (replace-regexp-in-string root "" buffer-file-name)))
-     (concat relative-file-name " (" project-name ")")))
-
-(defpowerline buffer-id  (propertize (car (propertized-buffer-identification (arnaud/powerline-buffer-name)))
-                                     'face (powerline-make-face color1)))
-
-(defun arnaud/powerline-git-branch ()
-  (let ((branch (mapconcat 'concat (cdr (split-string vc-mode "[:-]")) "-")))
-    (concat
-     " "
-     (propertize (format "%s" (all-the-icons-octicon "git-branch"))
-                 'face `(:height 1.3 :family ,(all-the-icons-octicon-family))
-                 'display '(raise -0.1))
-     (propertize (format " %s" branch) 'face `(:height 0.9)))))
-
-(defpowerline vc  
-  (when vc-mode
-    (cond
-      ((string-match "Git[:-]" vc-mode) (arnaud/powerline-git-branch))
-      (t (format "%s" vc-mode)))))
 
 ;------ MU4E
 
@@ -680,7 +669,6 @@ otherwise, close current tab."
 
 (add-hook 'mu4e-view-mode-hook 'centaur-tabs-local-mode)
 (add-hook 'ag-mode-hook 'centaur-tabs-local-mode)
-;(add-hook 'mu4e-compose-mode-hook 'centaur-tabs-local-mode)
 
 (setq mail-user-agent 'mu4e-user-agent)
 
@@ -791,7 +779,6 @@ otherwise, close current tab."
 ;(when (fboundp 'imagemagick-register-types)
 ;  (imagemagick-register-types))
 
-
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
 
@@ -800,37 +787,30 @@ otherwise, close current tab."
 
 (setq mu4e-compose-in-new-frame nil)
 
-;; Create an elscreen screen instead of a frame on opening.
-(defun mu4e~draft-open-file (path)
-  "Open the the draft file at PATH."
-  (if mu4e-compose-in-new-frame
-      (elscreen-find-file path)
-    (find-file path)))
-
 ;; Drop an elscreen screen instead of a frame on sending.
-(defun mu4e-sent-handler (docid path)
-  "Handler function, called with DOCID and PATH for the just-sent
-message. For Forwarded ('Passed') and Replied messages, try to set
-the appropriate flag at the message forwarded or replied-to."
-  (mu4e~compose-set-parent-flag path)
-  (when (file-exists-p path) ;; maybe the draft was not saved at all
-    (mu4e~proc-remove docid))
-  ;; kill any remaining buffers for the draft file, or they will hang around...
-  ;; this seems a bit hamfisted...
-  (dolist (buf (buffer-list))
-    (when (and (buffer-file-name buf)
-	    (string= (buffer-file-name buf) path))
-      (if message-kill-buffer-on-exit
-	(kill-buffer buf))))
-  (if mu4e-compose-in-new-frame
-          (elscreen-kill)
-          (if (buffer-live-p mu4e~view-buffer)
-              (switch-to-buffer mu4e~view-buffer)
-            (if (buffer-live-p mu4e~headers-buffer)
-                (switch-to-buffer mu4e~headers-buffer)
-              ;; if all else fails, back to the main view
-              (when (fboundp 'mu4e) (mu4e)))))
-  (mu4e-message "Message sent"))
+;(defun mu4e-sent-handler (docid path)
+;  "Handler function, called with DOCID and PATH for the just-sent
+;message. For Forwarded ('Passed') and Replied messages, try to set
+;the appropriate flag at the message forwarded or replied-to."
+;  (mu4e~compose-set-parent-flag path)
+;  (when (file-exists-p path) ;; maybe the draft was not saved at all
+;    (mu4e~proc-remove docid))
+;  ;; kill any remaining buffers for the draft file, or they will hang around...
+;  ;; this seems a bit hamfisted...
+;  (dolist (buf (buffer-list))
+;    (when (and (buffer-file-name buf)
+;	    (string= (buffer-file-name buf) path))
+;      (if message-kill-buffer-on-exit
+;	(kill-buffer buf))))
+;  (if mu4e-compose-in-new-frame
+;          (elscreen-kill)
+;          (if (buffer-live-p mu4e~view-buffer)
+;              (switch-to-buffer mu4e~view-buffer)
+;            (if (buffer-live-p mu4e~headers-buffer)
+;                (switch-to-buffer mu4e~headers-buffer)
+;              ;; if all else fails, back to the main view
+;              (when (fboundp 'mu4e) (mu4e)))))
+;  (mu4e-message "Message sent"))
 
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq sendmail-program "/usr/bin/msmtp")
@@ -948,12 +928,12 @@ the appropriate flag at the message forwarded or replied-to."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(powerline-gui-use-vcs-glyph t)
  '(org-level-1 ((t (:inherit outline-1 :height 1.5))))
  '(org-level-2 ((t (:inherit outline-2 :height 1.4))))
  '(org-level-3 ((t (:inherit outline-3 :height 1.3))))
  '(org-level-4 ((t (:inherit outline-4 :height 1.2))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
+ '(org-level-5 ((t (:inherit outline-5 :height 1.1))))
+ '(powerline-gui-use-vcs-glyph t))
 
 (add-hook 'org-mode-hook 'org-indent-mode)
 (require 'org-pretty-table)
@@ -1087,6 +1067,3 @@ the appropriate flag at the message forwarded or replied-to."
               "emacs"))
 (or (server-running-p)
     (server-start))
-
-
-
