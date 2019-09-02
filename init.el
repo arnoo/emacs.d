@@ -1,49 +1,32 @@
+(setq user-full-name "Arnaud Bétrémieux")
+(setq user-mail-address "arnaud@btmx.fr")
 
 (add-to-list 'load-path "~/.emacs.d/plugins/")
 
-(setq frame-title-format '("%b - Emacs"))
-
-(setq inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default default default italic underline success warning error])
+ '(git-gutter:ask-p nil)
+ '(git-gutter:modified-sign "*")
+ '(git-gutter:update-interval 2)
+ '(package-selected-packages
+   (quote
+    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
+ '(safe-local-variable-values
+   (quote
+    ((Base . 10)
+     (Package . CL-USER)
+     (Syntax . COMMON-LISP)))))
 
 (setq kill-buffer-query-functions
       (remq 'process-kill-buffer-query-function
                      kill-buffer-query-functions))
 
-; Make background semi-transparent
-;(set-frame-parameter (selected-frame) 'alpha '(85 85))
-
-(defun set-maximized ()
-  (interactive)
-  (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
-(add-hook 'window-setup-hook 'set-maximized t)
-
-;(defvar min-timer)
-;(defun schedule-minimize ()
-;  (when (eq (frame-parameter (selected-frame) 'fullscreen)
-;            'maximized)
-;    (setq min-timer (run-at-time "1 sec" nil 'minimize-other-windows))))
-;
-;(defun minimize-other-windows ()
-;  (shell-command (concat "bash -c 'xdotool search --desktop `xdotool get_desktop` --name \".*\" | grep -v " (frame-parameter (selected-frame) 'outer-window-id) " | xargs -r -n 1 xdotool windowminimize'")))
-;
-;; xfwm sends a focus-in event just prior to switching to another workspace, which ruins everything...
-;(defun prevent-minimize ()
-;  (when (and (boundp 'min-timer) min-timer)
-;     (cancel-timer min-timer)
-;     (setq min-timer nil)))
-;
-;(add-hook 'focus-in-hook 'schedule-minimize)
-;(add-hook 'focus-out-hook 'prevent-minimize)
-
-; Don't warn when loading files smaller than 200M
 (setq large-file-warning-threshold 200000000)
-
-;;; Make underscore a word character
-(add-hook 'after-change-major-mode-hook
-          '(lambda () (modify-syntax-entry ?_ "w")))
-
-(require 'uniquify)
 
 ; *** MELPA ***
 (require 'package)
@@ -51,13 +34,12 @@
              '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
-;;;; my-Packages
-(setq my-packages
+(setq arnaud/packages
       '(package
         ag
+        all-the-icons
+        centaur-tabs
         cl-lib
-        color
-        color-theme
         company
         company-tern
         dumb-jump
@@ -66,73 +48,52 @@
         elpy
         emojify
         evil
-        ;evil-mu4e
         evil-numbers
         evil-search-highlight-persist
-        evil-tabs
+        ;evil-tabs
         fiplr
         flycheck-mypy
+        git-gutter
         importmagic
         js2-mode
+        magit ; dependency of eyeliner
         markdown-mode
         org-download
-	      powerline
+        projectile ; dependency of eyeliner
         pydoc
         scala-mode2
+        spaceline
         wdired
         web-mode
-	yaml-mode))
+        wgrep-ag
+        yaml-mode))
 
-; Install my-packages as necessary
+; Install arnaud/packages as necessary
 (defun filter (condp lst)
   "Filter a list of elements with a given predicate"
   (delq nil
         (mapcar (lambda (x) (and (funcall condp x) x)) lst)))
 
-(let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
+(let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) arnaud/packages)))
   (when (and (not (equal uninstalled-packages '()))
              (y-or-n-p (format "Install packages %s?" uninstalled-packages)))
     (package-refresh-contents)
     (mapc 'package-install uninstalled-packages)))
 
-(add-hook 'after-init-hook 'global-company-mode)
+;(add-hook 'after-init-hook 'global-company-mode)
+
+;;; Icons
 
 (require 'emojify)
 (add-hook 'after-init-hook #'global-emojify-mode)
 
-(define-key global-map (kbd "<C-next>")  'elscreen-next)
-(define-key global-map (kbd "<C-prior>") 'elscreen-previous)
-(define-key global-map (kbd "<C-0>")     'elscreen-jump-0)
-(define-key global-map (kbd "<C-1>")     'elscreen-jump-1)
-(define-key global-map (kbd "<C-2>")     'elscreen-jump-2)
-(define-key global-map (kbd "<C-3>")     'elscreen-jump-3)
-(define-key global-map (kbd "<C-4>")     'elscreen-jump-4)
-(define-key global-map (kbd "<C-5>")     'elscreen-jump-5)
-(define-key global-map (kbd "<C-6>")     'elscreen-jump-6)
-(define-key global-map (kbd "<C-7>")     'elscreen-jump-7)
-(define-key global-map (kbd "<C-8>")     'elscreen-jump-8)
-(define-key global-map (kbd "<C-9>")     'elscreen-jump-9)
-(define-key global-map (kbd "<C-tab>")   'elscreen-toggle)
+(require 'all-the-icons)
 
-;;; Indentation ...
+;;; Indentation
+
 (define-key global-map (kbd "RET") 'newline-and-indent)
 (dtrt-indent-mode 1)
 (setf indent-tabs-mode nil) 
-(setq make-backup-files nil)
-(setq initial-scratch-message nil)
-(show-paren-mode 1)
-(setq show-paren-delay 0)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-(display-time-mode -1)
-(savehist-mode 1)
-(setq require-final-newline nil)
-(setq column-number-mode t)
-(global-unset-key (kbd "<f11>"))
-(set-face-attribute 'default nil :height 120)
-(defalias 'yes-or-no-p 'y-or-n-p)
-
 (electric-indent-local-mode -1)
 (add-hook 'after-change-major-mode-hook
           (lambda () (electric-indent-mode -1)))
@@ -142,37 +103,118 @@
 (defvaralias 'c-basic-offset 'tab-width)
 (defvaralias 'cperl-indent-level 'tab-width)
 
-(defun set-tab-width (x)
+(defun arnaud/set-tab-width (x)
   (setq tab-width x)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
-(set-tab-width 2)
+(arnaud/set-tab-width 2)
+
+;; UI
+(load-theme 'dichromacy)
+(require 'evil)
+(setq column-number-mode t)
+(display-time-mode -1)
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(set-face-attribute 'default nil :height 120)
+(setq frame-title-format '("%b - Emacs"))
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
+(defun arnaud/set-maximized ()
+  (interactive)
+  (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
+(add-hook 'window-setup-hook 'arnaud/set-maximized t)
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+
+
+(setq make-backup-files nil)
+(setq initial-scratch-message nil)
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+(savehist-mode 1)
+(setq require-final-newline nil)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 (setq default-indicate-empty-lines t)
 
-
-;;;; Colors
-(require 'color-theme)
-(setq color-theme-is-global t)
-(color-theme-initialize)
-(color-theme-standard)
-
 (undo-tree-mode 1)
 
-(global-evil-tabs-mode t)
+;;; MODE LINE
 
+(add-to-list 'load-path "~/.emacs.d/plugins/eyeliner")
+(require 'projectile)
+(require 'eyeliner)
+(eyeliner/install)
 
-;;;; AG
-(require 'ag)
-(setq ag-highlight-search t)
-(defun ag-search-at-point ()
+;;; TABS
+
+(require 'centaur-tabs)
+(setq centaur-tabs-style "wave")
+(setq centaur-tabs-height 32)
+(setq centaur-tabs-set-icons t)
+(setq centaur-tabs-set-modified-marker t)
+(centaur-tabs-mode t)
+(global-set-key (kbd "C-<prior>")  'centaur-tabs-backward)
+(global-set-key (kbd "C-<next>") 'centaur-tabs-forward)
+(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g t") 'centaur-tabs-forward))
+(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g T") 'centaur-tabs-backward))
+
+(defun centaur-tabs-buffer-groups ()
+  (list "single-group-for-now"))
+
+(defun centaur-tabs-hide-tab (x)
+  (let ((name (format "%s" x)))
+ 	  (or
+	    (string= "*ag search*" name)
+	    (string-prefix-p "*epc con " name)
+	    (string= "*Completions*" name)
+	    (string= "*Compile-Log*" name)
+	    (string= "*Shell Command Output*" name))))
+
+(defun arnaud/switch-to-previous-buffer ()
+  "Switch to previously open buffer."
   (interactive)
-  (ag-project (thing-at-point 'symbol)))
-(define-key evil-normal-state-map (kbd "C-*") 'ag-search-at-point)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+
+(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "<C-tab>") 'arnaud/switch-to-previous-buffer))
+
+;;; JUMPING
 
 (require 'dumb-jump)
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'dumb-jump-go))
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" (lambda () (interactive) (elscreen-clone) (dumb-jump-go))))
+
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" 'dumb-jump-go))
+
+(defun arnaud/dumb-jump-go-in-same-tab ()
+  (interactive)
+  (let ((arnaud/dumb-jump-same-tab t))
+    (dumb-jump-go)))
+
+(setq arnaud/dumb-jump-same-tab nil)
+
+(defun dumb-jump-goto-file-line (thefile theline pos)
+	  "Open THEFILE and go to line THELINE"
+    (evil-set-jump)
+	  (if (fboundp 'xref-push-marker-stack)
+	      (xref-push-marker-stack)
+	   (ring-insert find-tag-marker-ring (point-marker)))
+	  (let* ((visible-buffer (find-buffer-visiting thefile))
+	         (visible-window (when visible-buffer (get-buffer-window visible-buffer))))
+	    (cond
+	     ((and visible-window dumb-jump-use-visible-window)
+	      (select-window visible-window))
+       (arnaud/dumb-jump-same-tab
+        (let ((new-buffer (find-file-noselect thefile)))
+          (kill-current-buffer)
+          (switch-to-buffer new-buffer)
+          (goto-line theline)))
+	     (t
+        (find-file thefile)))
+        (goto-line theline)))
+
+(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-tab))
+
 (setq dumb-jump-fallback-regex "\\bJJJ\\j")
 
 (push '(:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
@@ -199,7 +241,18 @@
 	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
       dumb-jump-find-rules)
 
-;;;; WEB-MODE
+;;;; Git-Gutter mode
+(require 'git-gutter)
+(global-git-gutter-mode +1)
+
+(set-face-foreground 'git-gutter:added "black")
+(set-face-background 'git-gutter:added "green")
+(set-face-foreground 'git-gutter:deleted "white")
+(set-face-background 'git-gutter:deleted "red")
+(set-face-foreground 'git-gutter:modified "white")
+(set-face-background 'git-gutter:modified "purple")
+
+;;;; Web-mode
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.ejs\\'" . web-mode))
@@ -211,48 +264,33 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
-;;;; Make Evil more Vim Like
-
-;;; No limit to number of tabs
-(require 'elscreen-outof-limit-mode)
-(elscreen-outof-limit-mode t)
-
 ;;; Filename expansion
 (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
 
 ;;; :q
-(defun vimlike-quit ()
+(defun arnaud/vimlike-quit ()
   "Vimlike ':q' behavior: close current window if there are split windows;
-otherwise, close current tab (elscreen)."
+otherwise, close current tab."
   (interactive)
-  (let ((one-elscreen (elscreen-one-screen-p))
-	      (one-window (one-window-p)))
+  (let ((one-window (one-window-p)))
     (cond
 					; if current tab has split windows in it, close the current live window
      ((not one-window)
       (delete-window) ; delete the current window
       (balance-windows) ; balance remaining windows
       nil)
-					; if there are multiple elscreens (tabs), close the current elscreen
-     ((not one-elscreen)
-      ;(kill-buffer)
-      (elscreen-kill)
-      nil)
-					; if there is only one elscreen, just try to quit (calling elscreen-kill
-					; will not work, because elscreen-kill fails if there is only one
-					; elscreen)
-     (one-elscreen
-      (evil-quit)
+     (t
+      (kill-current-buffer)
       nil))))
 
-(defun vimlike-write-quit ()
+(defun arnaud/vimlike-write-quit ()
   "Vimlike ':wq' behavior: write then close..."
   (interactive)
   (save-buffer)
-  (vimlike-quit))
+  (arnaud/vimlike-quit))
 
-(evil-ex-define-cmd "q" 'vimlike-quit)
-(evil-ex-define-cmd "wq" 'vimlike-write-quit)
+(evil-ex-define-cmd "q" 'arnaud/vimlike-quit)
+(evil-ex-define-cmd "wq" 'arnaud/vimlike-write-quit)
 
 ;;; numbers
 (require 'evil-numbers)
@@ -260,19 +298,22 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
 
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
-(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file-newtab)
 
 ;;; by default, repeat should include the count of the original command !
 
-(evil-define-command my-repeat (&optional count)
+(evil-define-command arnaud/repeat (&optional count)
     :repeat ignore
         (interactive)
       (message "count :  %S" count)
       (evil-repeat count nil))
-(define-key evil-normal-state-map "." 'my-repeat)
+(define-key evil-normal-state-map "." 'arnaud/repeat)
+
+(define-key evil-normal-state-map (kbd "C-;") 'eval-expression)
+
+(evil-set-initial-state 'ag-mode 'normal)
 
 ;;; esc quits
-(defun minibuffer-keyboard-quit ()
+(defun arnaud/minibuffer-keyboard-quit ()
   "Abort recursive edit.
     In Delete Selection mode, if the mark is active, just deactivate it;
     then it takes a second \\[keyboard-quit] to abort the minibuffer."
@@ -284,13 +325,11 @@ otherwise, close current tab (elscreen)."
 
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
 (define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-
-;(display-time-mode t)
+(define-key minibuffer-local-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'arnaud/minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'arnaud/minibuffer-keyboard-quit)
 
 ;;;; Set autosave directory so that all the autosaves are in one place, and not all over the filesystem.
 
@@ -308,9 +347,9 @@ otherwise, close current tab (elscreen)."
 
 (add-hook 'php-mode-hook
    (lambda ()
-      (evil-define-key 'normal php-mode-map (kbd "K") 'my-php-symbol-lookup)))
+      (evil-define-key 'normal php-mode-map (kbd "K") 'arnaud/php-symbol-lookup)))
 
-(defun my-php-symbol-lookup ()
+(defun arnaud/php-symbol-lookup ()
   (interactive)
   (let ((symbol (symbol-at-point)))
     (if (not symbol)
@@ -322,7 +361,7 @@ otherwise, close current tab (elscreen)."
 
 (add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
 
-(defun my-put-file-name-on-clipboard ()
+(defun arnaud/put-file-name-on-clipboard ()
   "Put the current file name on the clipboard"
   (interactive)
   (let ((filename (if (equal major-mode 'dired-mode)
@@ -334,7 +373,7 @@ otherwise, close current tab (elscreen)."
         (clipboard-kill-region (point-min) (point-max)))
       (message filename))))
 
-(define-key evil-normal-state-map [C-f] 'my-put-file-name-on-clipboard)
+(define-key evil-normal-state-map [C-f] 'arnaud/put-file-name-on-clipboard)
 
 ; *** SPELL CHECKING ***
 
@@ -343,7 +382,7 @@ otherwise, close current tab (elscreen)."
   (setq ispell-dictionary "francais") 
   (setq ispell-really-hunspell t))
 
-(defun flyspell-buffer-unless-large ()
+(defun arnaud/flyspell-buffer-unless-large ()
    (unless (> (buffer-size) (* 70 1024))
      (flyspell-buffer)))
 
@@ -354,15 +393,15 @@ otherwise, close current tab (elscreen)."
                    (turn-on-flyspell)
                    (add-to-list 'ispell-skip-region-alist '("^#+BEGIN_SRC" . "^#+END_SRC"))
                    (setq flyspell-issue-message-flag nil)
-                   (flyspell-buffer-unless-large))))
+                   (arnaud/flyspell-buffer-unless-large))))
 
-(defun fd-switch-dictionary()
+(defun arnaud/fd-switch-dictionary()
    (interactive)
    (let* ((dic ispell-current-dictionary)
      (change (if (string= dic "francais") "english" "francais")))
      (ispell-change-dictionary change)
      (message "Dictionary switched from %s to %s" dic change)
-     (flyspell-buffer-unless-large)))
+     (arnaud/flyspell-buffer-unless-large)))
 
 (define-key evil-normal-state-map "]q"  'next-error)
 (define-key evil-normal-state-map "[q"  'previous-error)
@@ -371,7 +410,7 @@ otherwise, close current tab (elscreen)."
 (define-key evil-normal-state-map "]s"  'flyspell-goto-next-error)
 (define-key evil-normal-state-map "z="  'ispell-word)
 (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
-(global-set-key (kbd "<f8>") 'fd-switch-dictionary)
+(global-set-key (kbd "<f8>") 'arnaud/fd-switch-dictionary)
 
 (define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
 
@@ -401,33 +440,27 @@ otherwise, close current tab (elscreen)."
     (let ((bfn buffer-file-name))
       (when (and bfn (string-match "/node_modules/" bfn))
         (unless (y-or-n-p "WARNING: are you sure you want to edit a file from node_modules (n will set read-only mode) ?")
-          (read-only-mode)))
-      (when (and bfn (string-match "/france-entreprises/" bfn))
-        (unless (y-or-n-p "WARNING: are you sure you want to edit a file from france-entreprises (n will set read-only mode) ?")
-          (read-only-mode)))
-      (when (and bfn (string-match "public/images/logos-04V.svg" bfn))
-          (fiplr-find-file-newtab))
-      )))
+          (read-only-mode))))))
 
 ; *** LATEX ***
 
-(defun arno-latex-mode ()
+(defun arnaud/latex-mode ()
   (global-set-key (kbd "<f12>")
           (lambda () (interactive)
             (flyspell-mode 1)
             (shell-command (concat "pdflatex " buffer-file-name)))))
 
-(add-hook 'latex-mode-hook 'arno-latex-mode)
+(add-hook 'latex-mode-hook 'arnaud/latex-mode)
 
 ; *** LISP MODE ***
 
-(defun arno-lisp-mode ()
-  (arno-all-lisps-mode)
+(defun arnaud/lisp-mode ()
+  (arnaud/all-lisps-mode)
   (require 'slime)
-  (global-set-key (kbd "<f12>") 'switch-slime-buffer)
+  (global-set-key (kbd "<f12>") 'arnaud/switch-slime-buffer)
   (evil-define-key 'normal lisp-mode-map "\C-]"
                                          (lambda () (interactive)
-                                           (if (equal (get-slime-buffer (buffer-list)) nil)
+                                           (if (equal (arnaud/get-slime-buffer (buffer-list)) nil)
                                                (call-interactively 'dumb-jump-go)
                                                (call-interactively 'slime-edit-definition))))
   (evil-define-key 'normal lisp-mode-map (kbd "K") 'slime-documentation-lookup)
@@ -454,10 +487,9 @@ otherwise, close current tab (elscreen)."
   (setq inferior-lisp-program "/usr/bin/sbcl")
   (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/"))
 
-(defun arno-all-lisps-mode ()
+(defun arnaud/all-lisps-mode ()
   (require 'rainbow-delimiters)
   (require 'cl-lib)
-  (require 'color)
   
   (rainbow-delimiters-mode)
   ;(cl-loop
@@ -469,24 +501,24 @@ otherwise, close current tab (elscreen)."
   ;(add-to-list 'pretty-symbol-categories 'relational)
   (mapcar (lambda (x) (modify-syntax-entry x "w"))
           (list ?- ?/ ?* ?+))
-  (set-tab-width 2)
+  (arnaud/set-tab-width 2)
   (setq evil-shift-width tab-width)
   (setq tab-stop-list (number-sequence tab-width (* tab-width 20) tab-width)))
 
-(add-hook 'lisp-mode-hook 'arno-lisp-mode)
-(add-hook 'emacs-lisp-mode-hook 'arno-lisp-mode)
+(add-hook 'lisp-mode-hook 'arnaud/lisp-mode)
+(add-hook 'emacs-lisp-mode-hook 'arnaud/lisp-mode)
   
 ;; Syntax highlighting in Slime REPL
-(defvar slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
-(defun slime-repl-font-lock-setup ()
+(defvar arnaud/slime-repl-font-lock-keywords lisp-font-lock-keywords-2)
+(defun arnaud/slime-repl-font-lock-setup ()
   (setq font-lock-defaults
-        '(slime-repl-font-lock-keywords
+        '(arnaud/slime-repl-font-lock-keywords
          ;; From lisp-mode.el
          nil nil (("+-*/.<>=!?$%_&~^:@" . "w")) nil
          (font-lock-syntactic-face-function
          . lisp-font-lock-syntactic-face-function))))
 
-(add-hook 'slime-repl-mode-hook 'slime-repl-font-lock-setup)
+(add-hook 'slime-repl-mode-hook 'arnaud/slime-repl-font-lock-setup)
 
 (defadvice slime-repl-insert-prompt (after font-lock-face activate)
   (let ((inhibit-read-only t))
@@ -499,64 +531,55 @@ otherwise, close current tab (elscreen)."
 
 
 ;;----- BEGIN slime switcher code 
-(defun get-slime-buffer (&optional buflist)
+(defun arnaud/get-slime-buffer (&optional buflist)
   (if (equal 0 (length buflist))
     nil
     (if (and (> (length (buffer-name (car buflist))) 10)
              (string= "*slime-repl" (substring (buffer-name (car buflist)) 0 11 )))
       (car buflist)
-      (get-slime-buffer (cdr buflist)))))
+      (arnaud/get-slime-buffer (cdr buflist)))))
 
 (defvar *buffer-bookmark* nil)
 
-(defun switch-buffers ()
+(defun arnaud/switch-buffers ()
   (progn
     (setf *temp-bookmark* (current-buffer))
-    ;TODO: (elscreen-toggle-display-tab) + disable gT/gt ?
-    (switch-to-buffer (or *buffer-bookmark* (get-slime-buffer (buffer-list))))
+    (switch-to-buffer (or *buffer-bookmark* (arnaud/get-slime-buffer (buffer-list))))
     (setf *buffer-bookmark* *temp-bookmark*)
     (message (format "switching from %s to %s"
                      (buffer-name *temp-bookmark*) 
                      (buffer-name (current-buffer))))))
 
-(defun my-slime () (interactive)
+(defun arnaud/slime () (interactive)
   (let ((wnd (current-window-configuration)))
     (call-interactively 'slime)
     (sit-for 1)
     (set-window-configuration wnd)))
 
-(defun switch-slime-buffer () (interactive)
+(defun arnaud/switch-slime-buffer () (interactive)
  (let ((cur-buf (current-buffer))
-       (slime-buf (get-slime-buffer (buffer-list))))
+       (slime-buf (arnaud/get-slime-buffer (buffer-list))))
     (if (equal cur-buf slime-buf)
         (if (equal *buffer-bookmark* nil)
           (message "Don't know which buffer to switch to!")
-          (switch-buffers))
+          (arnaud/switch-buffers))
         (if (equal slime-buf nil)
           (progn
             (message "Can't find REPL buffer, starting slime !")
-            (my-slime))
-          (switch-buffers)))))
+            (arnaud/slime))
+          (arnaud/switch-buffers)))))
 
 
 ;;----- END slime switcher code
 
 ; *** MARKDOWN ***
-(autoload 'markdown-mode "markdown-mode"
-   "Major mode for editing Markdown files" t)
+(autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
-(global-set-key (kbd "C-+") 'text-scale-increase)
-(global-set-key (kbd "C--") 'text-scale-decrease)
-(global-unset-key (kbd "ESC :"))
-(global-unset-key (kbd "<M-:>"))
 
 
 ; *** PYTHON ***
 (elpy-enable)
-
-
 
 (when (require 'flycheck nil t)
   (require 'flycheck-mypy)
@@ -570,13 +593,11 @@ otherwise, close current tab (elscreen)."
          (push '("lambda" . ?λ) prettify-symbols-alist)
          (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
          (importmagic-mode)
+         (evil-define-key 'normal importmagic-mode-map (kbd "C-i") 'importmagic-fix-symbol-at-point)
          (highlight-indentation-mode -1)))
 
 ;----- FIPLR
 (require 'fiplr)
-(defun fiplr-find-file-newtab ()
-  (interactive)
-  (fiplr-find-file-in-directory (fiplr-root) fiplr-ignored-globs #'evil-tabs-tabedit))
 
 (setq *grizzl-read-max-results* 20)
 
@@ -584,9 +605,9 @@ otherwise, close current tab (elscreen)."
       '((directories
          (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node" "ftp_mirrors"))
         (files
-         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc"))))
+         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc" "*~" "#*#"))))
 
-(defun my-fiplr-root (orig-fiplr-root)
+(defun arnaud/fiplr-root (orig-fiplr-root)
   (let ((orig-root (funcall orig-fiplr-root)))
     (cond ((< (length (split-string orig-root "/")) 4)
            "/home/arno/dev/kravpass/")
@@ -596,47 +617,26 @@ otherwise, close current tab (elscreen)."
           ;  "/home/arno/workspace/fc/")
           (t orig-root))))
 
-(advice-add #'fiplr-root :around 'my-fiplr-root)
+(advice-add #'fiplr-root :around 'arnaud/fiplr-root)
 
-;Redefine tabedit to be in the right dir
-(evil-define-command evil-tabs-tabedit (file)
-  (interactive "<f>")
-  (let ((dir default-directory))
-    (elscreen-create)
-    (cd dir))
-  (find-file file))
-
-;----- POWERLINE
-(add-to-list 'load-path "~/.emacs.d/emacs-powerline")
-(require 'powerline)
-
-(defun powerline-buffer-name ()
-  (replace-regexp-in-string (fiplr-root) "" buffer-file-name))
-
-(defpowerline buffer-id   (propertize (car (propertized-buffer-identification (powerline-buffer-name)))
-                                      'face (powerline-make-face color1)))
-
+(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)
 
 
 ;------ MU4E
 
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 (require 'mu4e)
-;(require 'evil-mu4e)
 
-; Required for mbsync as UIDs are in the filenames
-(setq mu4e-change-filenames-when-moving t)
+(define-key mu4e-headers-mode-map (kbd "<C-return>") 'arnaud/mu4e-view-msg-in-tab)
 
-(define-key mu4e-headers-mode-map (kbd "<C-return>") 'my-mu4e-view-msg-in-tab)
+(define-key mu4e-headers-mode-map (kbd "r") 'arnaud/mu4e-archive-thread)
+(define-key mu4e-view-mode-map    (kbd "r") 'arnaud/mu4e-archive-thread)
 
-(define-key mu4e-headers-mode-map (kbd "r") 'my-mu4e-archive-thread)
-(define-key mu4e-view-mode-map    (kbd "r") 'my-mu4e-archive-thread)
+(define-key mu4e-headers-mode-map (kbd "m") 'arnaud/mu4e-mute-thread)
+(define-key mu4e-view-mode-map    (kbd "m") 'arnaud/mu4e-mute-thread)
 
-(define-key mu4e-headers-mode-map (kbd "m") 'my-mu4e-mute-thread)
-(define-key mu4e-view-mode-map    (kbd "m") 'my-mu4e-mute-thread)
-
-(define-key mu4e-headers-mode-map (kbd "t") 'my-mu4e-msg-to-task)
-(define-key mu4e-view-mode-map    (kbd "t") 'my-mu4e-msg-to-task)
+(define-key mu4e-headers-mode-map (kbd "t") 'arnaud/mu4e-msg-to-task)
+(define-key mu4e-view-mode-map    (kbd "t") 'arnaud/mu4e-msg-to-task)
 
 (define-key mu4e-view-mode-map    [escape]  'mu4e~view-quit-buffer)
 
@@ -650,7 +650,7 @@ otherwise, close current tab (elscreen)."
 (define-key mu4e-view-mode-map (kbd "k") 'previous-line)
 (define-key mu4e-view-mode-map "\C-k" 'mu4e-view-headers-prev)
 
-(define-key mu4e-headers-mode-map (kbd "i") 'mu4e-inbox)
+(define-key mu4e-headers-mode-map (kbd "i") 'arnaud/mu4e-inbox)
 
 (define-key mu4e-headers-mode-map (kbd "G")
                                   (lambda () (interactive)
@@ -659,17 +659,20 @@ otherwise, close current tab (elscreen)."
 
 (define-key mu4e-headers-mode-map (kbd "<f5>") 'mu4e-headers-rerun-search)
 (define-key mu4e-headers-mode-map (kbd "\C-r") 'mu4e-headers-rerun-search)
-(define-key mu4e-headers-mode-map (kbd "x") 'my-mu4e-headers-execute)
+(define-key mu4e-headers-mode-map (kbd "x") 'arnaud/mu4e-headers-execute)
 
-(define-prefix-command 'my-mu4e-g-map)
-(define-key mu4e-headers-mode-map "g" 'my-mu4e-g-map)
-(define-key my-mu4e-g-map (kbd "g") 'beginning-of-buffer)
-(define-key my-mu4e-g-map (kbd "t") 'elscreen-next)
-(define-key my-mu4e-g-map (kbd "T") 'elscreen-previous)
+(define-prefix-command 'arnaud/mu4e-g-map)
+(define-key mu4e-headers-mode-map "g" 'arnaud/mu4e-g-map)
+(define-key arnaud/mu4e-g-map (kbd "g") 'beginning-of-buffer)
+(define-key arnaud/mu4e-g-map (kbd "t") 'centaur-tabs-forward)
+(define-key arnaud/mu4e-g-map (kbd "T") 'centaur-tabs-backward)
+
+(add-hook 'mu4e-view-mode-hook 'centaur-tabs-local-mode)
+(add-hook 'ag-mode-hook 'centaur-tabs-local-mode)
 
 (setq mail-user-agent 'mu4e-user-agent)
 
-(defun mu4e-inbox ()
+(defun arnaud/mu4e-inbox ()
   (interactive)
   (let* ((time (decode-time (current-time)))
          (hour (elt time 2))
@@ -681,17 +684,13 @@ otherwise, close current tab (elscreen)."
                   " OR maildir:/Octo_INBOX OR maildir:/PC_INBOX"
                   "")))))
 
-(setq mu4e-headers-include-related t)
-
-(setq mu4e-headers-skip-duplicates t)
-
-(defun my-mu4e-headers-execute ()
+(defun arnaud/mu4e-headers-execute ()
   (interactive)
   (mu4e-mark-execute-all t)
   (mu4e-update-index)
   (mu4e-headers-rerun-search))
 
-(defun my-mu4e-view-msg-in-tab ()
+(defun arnaud/mu4e-view-msg-in-tab ()
   (interactive)
   (let* ((msg (mu4e-message-at-point))
          (docid (or (mu4e-message-field msg :docid)
@@ -704,13 +703,13 @@ otherwise, close current tab (elscreen)."
     (elscreen-create)
     (mu4e~proc-view docid mu4e-view-show-images decrypt)))
 
-(defun my-mu4e-archive-thread ()
+(defun arnaud/mu4e-archive-thread ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-(defun my-mu4e-mute-thread ()
+(defun arnaud/mu4e-mute-thread ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
@@ -728,15 +727,16 @@ otherwise, close current tab (elscreen)."
                 nil
                 "~/.sieve/mutes"
                 'append)
-  (my-mu4e-archive-thread))
+  (arnaud/mu4e-archive-thread))
 
-(defun my-mu4e-msg-to-task ()
+(defun arnaud/mu4e-msg-to-task ()
   (interactive)
   (when (eq major-mode 'mu4e-view-mode)
     (mu4e~view-quit-buffer))
   (let ((msg (mu4e-message-at-point)))
     (when msg
-      (let* ((context-name (mu4e-context-name (mu4e-context-determine msg)))
+      (let* ((context (mu4e-context-determine msg))
+             (context-name (if context (mu4e-context-name context) "Perso"))
              (base-command (concat "task add '"
                                    (replace-regexp-in-string "'" " " (plist-get msg :subject))
                                    " m#" (plist-get msg :message-id) "'"
@@ -749,44 +749,35 @@ otherwise, close current tab (elscreen)."
                                    " "))
              (actual-command (read-string "" base-command))
              (result (if actual-command (shell-command-to-string actual-command) "")))
-        (my-mu4e-archive-thread)
+        (arnaud/mu4e-archive-thread)
         (message result)))))
 
-(setq mu4e-headers-visible-lines 20)
-
+(setq mu4e-attachment-dir "~/Downloads")
+(setq mu4e-change-filenames-when-moving t) ; Required for mbsync as UIDs are in the filenames
+(setq mu4e-headers-auto-update t)
+(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
 (setq mu4e-headers-fields
      '((:human-date    .   17)
       ;(:flags         .    6)
       ;(:mailing-list  .   10)
        (:from          .   22)
        (:subject       .   nil)))
-
-(setq mu4e-headers-date-format "%Y-%m-%d %H:%M")
+(setq mu4e-headers-include-related t)
+(setq mu4e-headers-skip-duplicates t)
 (setq mu4e-headers-time-format "%H:%M")
-(setq mu4e-headers-auto-update t)
-
-(setq mu4e-use-fancy-chars t)
-
-(setq mu4e-attachment-dir "~/Downloads")
-
+(setq mu4e-headers-visible-lines 20)
 (setq mu4e-update-interval 60)
-
-(setq mu4e-view-show-images t)
-;; use imagemagick, if available
-;(when (fboundp 'imagemagick-register-types)
-;  (imagemagick-register-types))
-
-;; show full addresses in view message (instead of just names)
-;; toggle per name with M-RET
-(setq mu4e-view-show-addresses 't)
-
-(setq user-full-name "Arnaud Bétrémieux")
-(setq user-mail-address "arnaud@btmx.fr")
-
+(setq mu4e-use-fancy-chars t)
 (setq mu4e-user-mail-address-list '("arnaud@btmx.fr"
                                     "arnaud@rootcycle.com"
                                     "abetremieux@octo.com"
                                     "arnaud.betremieux@passculture.app"))
+(setq mu4e-view-show-addresses 't) ;; show full addresses in view message (instead of just names)
+(setq mu4e-view-show-images t)
+
+;; use imagemagick, if available
+;(when (fboundp 'imagemagick-register-types)
+;  (imagemagick-register-types))
 
 ;; don't keep message buffers around
 (setq message-kill-buffer-on-exit t)
@@ -794,59 +785,50 @@ otherwise, close current tab (elscreen)."
 (add-hook 'message-mode-hook 'turn-on-orgtbl)
 (add-hook 'message-mode-hook 'turn-on-orgstruct++)
 
-(setq mu4e-compose-in-new-frame t)
-
-;; Create an elscreen screen instead of a frame on opening.
-(defun mu4e~draft-open-file (path)
-  "Open the the draft file at PATH."
-  (if mu4e-compose-in-new-frame
-      (elscreen-find-file path)
-    (find-file path)))
+(setq mu4e-compose-in-new-frame nil)
 
 ;; Drop an elscreen screen instead of a frame on sending.
-(defun mu4e-sent-handler (docid path)
-  "Handler function, called with DOCID and PATH for the just-sent
-message. For Forwarded ('Passed') and Replied messages, try to set
-the appropriate flag at the message forwarded or replied-to."
-  (mu4e~compose-set-parent-flag path)
-  (when (file-exists-p path) ;; maybe the draft was not saved at all
-    (mu4e~proc-remove docid))
-  ;; kill any remaining buffers for the draft file, or they will hang around...
-  ;; this seems a bit hamfisted...
-  (dolist (buf (buffer-list))
-    (when (and (buffer-file-name buf)
-	    (string= (buffer-file-name buf) path))
-      (if message-kill-buffer-on-exit
-	(kill-buffer buf))))
-  (if mu4e-compose-in-new-frame
-          (elscreen-kill)
-          (if (buffer-live-p mu4e~view-buffer)
-              (switch-to-buffer mu4e~view-buffer)
-            (if (buffer-live-p mu4e~headers-buffer)
-                (switch-to-buffer mu4e~headers-buffer)
-              ;; if all else fails, back to the main view
-              (when (fboundp 'mu4e) (mu4e)))))
-  (mu4e-message "Message sent"))
+;(defun mu4e-sent-handler (docid path)
+;  "Handler function, called with DOCID and PATH for the just-sent
+;message. For Forwarded ('Passed') and Replied messages, try to set
+;the appropriate flag at the message forwarded or replied-to."
+;  (mu4e~compose-set-parent-flag path)
+;  (when (file-exists-p path) ;; maybe the draft was not saved at all
+;    (mu4e~proc-remove docid))
+;  ;; kill any remaining buffers for the draft file, or they will hang around...
+;  ;; this seems a bit hamfisted...
+;  (dolist (buf (buffer-list))
+;    (when (and (buffer-file-name buf)
+;	    (string= (buffer-file-name buf) path))
+;      (if message-kill-buffer-on-exit
+;	(kill-buffer buf))))
+;  (if mu4e-compose-in-new-frame
+;          (elscreen-kill)
+;          (if (buffer-live-p mu4e~view-buffer)
+;              (switch-to-buffer mu4e~view-buffer)
+;            (if (buffer-live-p mu4e~headers-buffer)
+;                (switch-to-buffer mu4e~headers-buffer)
+;              ;; if all else fails, back to the main view
+;              (when (fboundp 'mu4e) (mu4e)))))
+;  (mu4e-message "Message sent"))
 
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq sendmail-program "/usr/bin/msmtp")
 (setq message-sendmail-f-is-evil 't)
 (setq message-sendmail-extra-arguments '("--read-envelope-from"))
 
-(defun no-auto-fill ()
+(defun arnaud/no-auto-fill ()
   "Turn off auto-fill-mode"
   (auto-fill-mode -1))
 
-(add-hook 'mu4e-compose-mode-hook 'no-auto-fill)
+(add-hook 'mu4e-compose-mode-hook 'arnaud/no-auto-fill)
 
 (setq mu4e-contexts
-    `( ,(make-mu4e-context
+    `(
+       ,(make-mu4e-context
           :name "Perso"
           :enter-func (lambda () (mu4e-message "Entering context 'Perso'"))
           :leave-func (lambda () (mu4e-message "Leaving context 'Perso'"))
-          :match-func (lambda (msg)
-                        (when msg 
-                            (not (string-match "^/Octo_" (mu4e-message-field msg :maildir)))))
           :vars '( ( user-mail-address      . "arnaud@btmx.fr")
                    ( mu4e-sent-folder       . "/Sent")
                    ( mu4e-drafts-folder     . "/Drafts")
@@ -898,7 +880,6 @@ the appropriate flag at the message forwarded or replied-to."
                        "75002 Paris\n"
                        "+33 (0)6 89 85 88 41\n"
                        "du lundi au jeudi\n"
-                       "http://www.octo.com/\n"
                        "http://blog.octo.com/\n"))))
         ,(make-mu4e-context
           :name "Rootcycle"
@@ -928,7 +909,7 @@ the appropriate flag at the message forwarded or replied-to."
 (setq mu4e-context-policy 'pick-first)
 
 
-;----- ORG-MODE STUFF
+;----- ORG-MODE
 (require 'org-install)
 (setq org-log-done t)
 (setq org-return-follows-link t)
@@ -950,18 +931,12 @@ the appropriate flag at the message forwarded or replied-to."
  '(org-level-2 ((t (:inherit outline-2 :height 1.4))))
  '(org-level-3 ((t (:inherit outline-3 :height 1.3))))
  '(org-level-4 ((t (:inherit outline-4 :height 1.2))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.1)))))
+ '(org-level-5 ((t (:inherit outline-5 :height 1.1))))
+ '(powerline-gui-use-vcs-glyph t))
 
 (add-hook 'org-mode-hook 'org-indent-mode)
 (require 'org-pretty-table)
 (add-hook 'org-mode-hook 'org-pretty-table-mode)
-;(add-hook 'org-mode-hook
-;   (lambda ()
-;     (push '("|" . ?│) prettify-symbols-alist)
-;     (push '("-" . ?─) prettify-symbols-alist)
-;     (push '("+" . ?┼) prettify-symbols-alist)
-;     (prettify-symbols-mode)
-;     (org-indent-mode)))
 
 (setq org-confirm-babel-evaluate nil)
 
@@ -977,118 +952,7 @@ the appropriate flag at the message forwarded or replied-to."
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
-;(defun org-display-inline-images (&optional include-linked refresh beg end)
-;   "Display inline images.
-; 
-; An inline image is a link which follows either of these
-; conventions:
-; 
-;   1. Its path is a file with an extension matching return value
-;      from `image-file-name-regexp' and it has no contents.
-; 
-;   2. Its description consists in a single link of the previous
-;      type.
-; 
-; When optional argument INCLUDE-LINKED is non-nil, also links with
-; a text description part will be inlined.  This can be nice for
-; a quick look at those images, but it does not reflect what
-; exported files will look like.
-; 
-; When optional argument REFRESH is non-nil, refresh existing
-; images between BEG and END.  This will create new image displays
-; only if necessary.  BEG and END default to the buffer
-; boundaries."
-;   (interactive "P")
-;   (when (display-graphic-p)
-;     (unless refresh
-;       (org-remove-inline-images)
-;       (when (fboundp 'clear-image-cache) (clear-image-cache)))
-;     (org-with-wide-buffer
-;      (goto-char (or beg (point-min)))
-;      (let ((case-fold-search t)
-;            (file-extension-re (org-image-file-name-regexp)))
-;        (while (re-search-forward "[][]\\[\\(?:file\\|[./~]\\)" end t)
-;          (let ((link (save-match-data (org-element-context))))
-;            ;; Check if we're at an inline image.
-;            (when (and (equal (org-element-property :type link) "file")
-;                       (or include-linked
-;                           (not (org-element-property :contents-begin link)))
-;                       (let ((parent (org-element-property :parent link)))
-;                         (or (not (eq (org-element-type parent) 'link))
-;                             (not (cdr (org-element-contents parent)))))
-;                       (org-string-match-p file-extension-re
-;                                           (org-element-property :path link)))
-;              (let ((file (expand-file-name
-;                           (org-link-unescape
-;                            (org-element-property :path link)))))
-;                (when (file-exists-p file)
-;                  (let ((width
-;                         ;; Apply `org-image-actual-width' specifications.
-;                         (cond
-;                          ((not (image-type-available-p 'imagemagick)) nil)
-;                          ((eq org-image-actual-width t) nil)
-;                          ((listp org-image-actual-width)
-;                           (or
-;                            ;; First try to find a width among
-;                            ;; attributes associated to the paragraph
-;                            ;; containing link.
-;                            (let ((paragraph
-;                                   (let ((e link))
-;                                     (while (and (setq e (org-element-property
-;                                                          :parent e))
-;                                                 (not (eq (org-element-type e)
-;                                                          'paragraph))))
-;                                     e)))
-;                              (when paragraph
-;                                (save-excursion
-;                                  (goto-char (org-element-property :begin paragraph))
-;                                  (when
-;                                      (re-search-forward
-;                                       "^[ \t]*#\\+attr_.*?: +.*?:width +\\(\\S-+\\)"
-;                                       (org-element-property
-;                                        :post-affiliated paragraph)
-;                                       t)
-;                                    (string-to-number (match-string 1))))))
-;                            ;; Otherwise, fall-back to provided number.
-;                            (car org-image-actual-width)))
-;                          ((numberp org-image-actual-width)
-;                           org-image-actual-width)))
-;                        (old (get-char-property-and-overlay
-;                              (org-element-property :begin link)
-;                              'org-image-overlay)))
-;                    (if (and (car-safe old) refresh)
-;                        (image-refresh (overlay-get (cdr old) 'display))
-;                      (let ((image (create-image file
-;                                                 (and width 'imagemagick)
-;                                                 nil
-;                                                 :width width)))
-;                        (when image
-;                          (let* ((link
-;                                  ;; If inline image is the description
-;                                  ;; of another link, be sure to
-;                                  ;; consider the latter as the one to
-;                                  ;; apply the overlay on.
-;                                  (let ((parent
-;                                         (org-element-property :parent link)))
-;                                    (if (eq (org-element-type parent) 'link)
-;                                        parent
-;                                      link)))
-;                                 (ov (make-overlay
-;                                      (org-element-property :begin link)
-;                                      (progn
-;                                        (goto-char
-;                                         (org-element-property :end link))
-;                                        (skip-chars-backward " \t")
-;                                        (point)))))
-;                            (overlay-put ov 'display image)
-;                            (overlay-put ov 'face 'default)
-;                            (overlay-put ov 'org-image-overlay t)
-;                            (overlay-put
-;                             ov 'modification-hooks
-;                             (list 'org-display-inline-remove-overlay))
-;                            (push ov org-inline-image-overlays)))))))))))))))
-
-(defun htmlorg-clipboard ()
+(defun arnaud/htmlorg-clipboard ()
   "Convert clipboard contents from HTML to Org and then paste (yank)."
   (interactive)
   (kill-new (shell-command-to-string "xclip -selection clipboard -o | pandoc -f html -t json | pandoc -f json -t org"))
@@ -1122,6 +986,50 @@ the appropriate flag at the message forwarded or replied-to."
 (add-hook 'image-minor-mode-hook
   (setq blink-cursor-mode nil))
 
+;;;; AG
+(require 'ag)
+(setq ag-highlight-search t)
+(setq ag-reuse-buffers t)
+(setq ag-reuse-window t)
+(setq ag-group-matches nil)
+
+;;; Make underscore a word character
+(add-hook 'after-change-major-mode-hook
+          '(lambda () (modify-syntax-entry ?_ "w")))
+
+(defun arnaud/ag-search-at-point ()
+  (interactive)
+  (ag-project (thing-at-point 'symbol))
+  (other-window 1))
+
+(defun arnaud/wgrep-save-and-quit ()
+  (interactive)
+  (when (buffer-modified-p)
+    (when (y-or-n-p "Save wgrep changes ?")
+      (wgrep-finish-edit)
+      (wgrep-save-all-buffers))
+    (wgrep-abort-changes)
+    (wgrep-exit))
+  (kill-current-buffer)
+  (evil-quit))
+
+(require 'wgrep-ag)
+(autoload 'wgrep-ag-setup "wgrep-ag")
+(add-hook 'ag-mode-hook 'wgrep-ag-setup)
+(add-hook 'ag-search-finished-hook 'wgrep-change-to-wgrep-mode)
+(evil-define-key 'normal wgrep-mode-map [escape] 'arnaud/wgrep-save-and-quit)
+(define-key evil-normal-state-map (kbd "C-*") 'arnaud/ag-search-at-point)
+
+;; Press `dd' to delete lines in `wgrep-mode' in evil directly
+(defadvice evil-delete (around evil-delete-hack activate)
+  ;; make buffer writable
+  (if (and (boundp 'wgrep-prepared) wgrep-prepared)
+      (wgrep-toggle-readonly-area))
+  ad-do-it
+  ;; make buffer read-only
+  (if (and (boundp 'wgrep-prepared) wgrep-prepared)
+      (wgrep-toggle-readonly-area)))
+
 ; set up Emacs for transparent encryption and decryption
 (require 'epa-file)
 (epa-file-enable)
@@ -1132,9 +1040,11 @@ the appropriate flag at the message forwarded or replied-to."
 (require 'ein-subpackages)
 
 ;---- EVIL MODE, should remain at the end
-(require 'evil)
 (evil-mode 1)
-(require 'evil-tabs)
+
+(global-unset-key (kbd "ESC :"))
+(global-unset-key (kbd "<M-:>"))
+(global-unset-key (kbd "<f11>"))
 
 ;;;; Highlight Searches
 (require 'evil-search-highlight-persist)
@@ -1156,17 +1066,3 @@ the appropriate flag at the message forwarded or replied-to."
               "emacs"))
 (or (server-running-p)
     (server-start))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-tabs evil-search-highlight-persist evil-quickscope evil-numbers company-tern color-theme ag)))
- '(safe-local-variable-values
-   (quote
-    ((Base . 10)
-     (Package . CL-USER)
-     (Syntax . COMMON-LISP)))))
