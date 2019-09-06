@@ -1,3 +1,6 @@
 [submodule "plugins/yaml-mode"]
 	path = plugins/yaml-mode
 	url = https://github.com/yoshiki/yaml-mode.git
+[submodule "plugins/eyeliner"]
+	path = plugins/eyeliner
+	url = https://github.com/dustinlacewell/eyeliner
