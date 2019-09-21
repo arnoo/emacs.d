@@ -54,6 +54,7 @@
         fiplr
         flycheck-mypy
         git-gutter
+        hy-mode
         importmagic
         js2-mode
         magit ; dependency of eyeliner
@@ -374,6 +375,10 @@ otherwise, close current tab."
       (message filename))))
 
 (define-key evil-normal-state-map [C-f] 'arnaud/put-file-name-on-clipboard)
+
+; *** HY MODE ***
+(require 'hy-mode)
+;(add-to-list 'auto-mode-alist '("\\.hy\\'" . lisp-mode))
 
 ; *** SPELL CHECKING ***
 
