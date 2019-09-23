@@ -15,7 +15,7 @@
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (bbdb neotree scala-mode2 markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
+    (bbdb neotree markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
  '(safe-local-variable-values
    (quote
     ((Base . 10)
@@ -62,7 +62,6 @@
         org-download
         projectile ; dependency of eyeliner
         pydoc
-        scala-mode2
         spaceline
         wdired
         web-mode
@@ -357,8 +356,6 @@ otherwise, close current tab."
         (message "No symbol at point.")
         (browse-url (concat "http://php.net/manual-lookup.php?pattern="
                             (symbol-name symbol))))))
-
-(require 'scala-mode2)
 
 (add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
 
