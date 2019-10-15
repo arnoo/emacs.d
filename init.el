@@ -683,8 +683,25 @@ otherwise, close current tab."
     (mu4e-headers-search 
       (concat "maildir:/Inbox"
               (if (and (>= hour 6) (<= hour 19) (>= dow 1) (<= dow 4))
-                  " OR maildir:/Octo_INBOX OR maildir:/PC_INBOX"
+                  " OR maildir:/my-INBOX"
                   "")))))
+
+
+(defun arnaud/mu4e-view-in-browser (msg)
+  "View the body of the message in a web browser."
+  (interactive)
+  (let ((html (mu4e-msg-field (mu4e-message-at-point t) :body-html))
+        (tmpfile (format "%s/%d.html" temporary-file-directory (random))))
+    (unless html (error "No html part for this message"))
+    (with-temp-file tmpfile
+      (insert
+        ""
+        ""
+        html))
+    (browse-url (concat "file://" tmpfile))))
+
+(add-to-list 'mu4e-view-actions
+             '("View in browser" . arnaud/mu4e-view-in-browser) t)
 
 (defun arnaud/mu4e-headers-execute ()
   (interactive)
@@ -711,25 +728,24 @@ otherwise, close current tab."
     (mu4e~view-quit-buffer))
   (mu4e-headers-mark-thread-using-markpair '(refile . (mu4e-get-refile-folder (mu4e-message-at-point)))))
 
-(defun arnaud/mu4e-mute-thread ()
-  (interactive)
-  (when (eq major-mode 'mu4e-view-mode)
-    (mu4e~view-quit-buffer))
-  (write-region (concat "if allof (anyof (header :contains \"References\" \"<" (plist-get (mu4e-message-at-point) :message-id) ">\",\n"
-                        "                 header :is \"Message-Id\" \"<" (plist-get (mu4e-message-at-point) :message-id) ">\"),\n"
-                        "          not anyof (address :is \"to\" \"arb@octo.com\",\n"
-                        "                     address :is \"to\" \"abetremieux@octo.com\",\n"
-                        "                     address :is \"to\" \"arnaud.betremieux@passculture.app\",\n"
-                        "                     address :is \"to\" \"arnaud.betremieux@beta.gouv.fr\"))\n"
-                        "{\n"
-                        "  fileinto \"Octo_AllMail\";\n"
-                        "  stop;\n"
-                        "}\n"
-                        "\n")
-                nil
-                "~/.sieve/mutes"
-                'append)
-  (arnaud/mu4e-archive-thread))
+;(defun arnaud/mu4e-mute-thread ()
+;  (interactive)
+;  (when (eq major-mode 'mu4e-view-mode)
+;    (mu4e~view-quit-buffer))
+;  (write-region (concat "if allof (anyof (header :contains \"References\" \"<" (plist-get (mu4e-message-at-point) :message-id) ">\",\n"
+;                        "                 header :is \"Message-Id\" \"<" (plist-get (mu4e-message-at-point) :message-id) ">\"),\n"
+;                        "          not anyof (address :is \"to\" \"arnaud@btmx.fr\",\n"
+;                        "                     address :is \"to\" \"arnaud.betremieux@mayane.eu\",\n"
+;                        "                     address :is \"to\" \"arnaud.betremieux@beta.gouv.fr\"))\n"
+;                        "{\n"
+;                        "  fileinto \"Octo_AllMail\";\n"
+;                        "  stop;\n"
+;                        "}\n"
+;                        "\n")
+;                nil
+;                "~/.sieve/mutes"
+;                'append)
+;  (arnaud/mu4e-archive-thread))
 
 (defun arnaud/mu4e-msg-to-task ()
   (interactive)
@@ -742,11 +758,8 @@ otherwise, close current tab."
              (base-command (concat "task add '"
                                    (replace-regexp-in-string "'" " " (plist-get msg :subject))
                                    " m#" (plist-get msg :message-id) "'"
-                                   (if (string= context-name "Octo")
-                                       " +octo"
-                                       "")
-                                   (if (string= context-name "pc")
-                                       " +octo +pc"
+                                   (if (string= context-name "Mayane")
+                                       " +my"
                                        "")
                                    " "))
              (actual-command (read-string "" base-command))
@@ -772,8 +785,7 @@ otherwise, close current tab."
 (setq mu4e-use-fancy-chars t)
 (setq mu4e-user-mail-address-list '("arnaud@btmx.fr"
                                     "arnaud@rootcycle.com"
-                                    "abetremieux@octo.com"
-                                    "arnaud.betremieux@passculture.app"))
+                                    "arnaud.betremieux@mayane.eu"))
 (setq mu4e-view-show-addresses 't) ;; show full addresses in view message (instead of just names)
 (setq mu4e-view-show-images t)
 
@@ -789,31 +801,6 @@ otherwise, close current tab."
 
 (setq mu4e-compose-in-new-frame nil)
 
-;; Drop an elscreen screen instead of a frame on sending.
-;(defun mu4e-sent-handler (docid path)
-;  "Handler function, called with DOCID and PATH for the just-sent
-;message. For Forwarded ('Passed') and Replied messages, try to set
-;the appropriate flag at the message forwarded or replied-to."
-;  (mu4e~compose-set-parent-flag path)
-;  (when (file-exists-p path) ;; maybe the draft was not saved at all
-;    (mu4e~proc-remove docid))
-;  ;; kill any remaining buffers for the draft file, or they will hang around...
-;  ;; this seems a bit hamfisted...
-;  (dolist (buf (buffer-list))
-;    (when (and (buffer-file-name buf)
-;	    (string= (buffer-file-name buf) path))
-;      (if message-kill-buffer-on-exit
-;	(kill-buffer buf))))
-;  (if mu4e-compose-in-new-frame
-;          (elscreen-kill)
-;          (if (buffer-live-p mu4e~view-buffer)
-;              (switch-to-buffer mu4e~view-buffer)
-;            (if (buffer-live-p mu4e~headers-buffer)
-;                (switch-to-buffer mu4e~headers-buffer)
-;              ;; if all else fails, back to the main view
-;              (when (fboundp 'mu4e) (mu4e)))))
-;  (mu4e-message "Message sent"))
-
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq sendmail-program "/usr/bin/msmtp")
 (setq message-sendmail-f-is-evil 't)
@@ -824,6 +811,41 @@ otherwise, close current tab."
   (auto-fill-mode -1))
 
 (add-hook 'mu4e-compose-mode-hook 'arnaud/no-auto-fill)
+;(add-hook 'mu4e-compose-mode-hook 'org-mu4e-compose-org-mode)
+(require 'org-mu4e)
+
+;(defun arnaud/htmlize-email ()
+;  (goto-char (point-min))
+;  (while (search-forward "##SIGNATURE_MAYANE##" nil t)
+;    (replace-match (with-temp-buffer
+;                     (insert-file-contents "~/.emacs.d/signature_mayane.html")
+;                     (buffer-string))))
+;  (let ((org-export-with-toc nil))
+;    (org~mu4e-mime-convert-to-html)))
+;
+;(add-hook 'message-send-hook 'arnaud/htmlize-email)
+
+(defun arnaud/email-says-attach-p ()
+  "Return t if email suggests there could be an attachment."
+  (save-excursion
+    (goto-char (point-min))
+    (or (re-search-forward "attach" nil t)
+        (re-search-forward "joint" nil t))))
+
+(defun arnaud/email-has-attachment-p ()
+  "Return t if the currently open email has an attachment"
+  (save-excursion
+    (goto-char (point-min))
+    (re-search-forward "<#part" nil t)))
+
+(defun arnaud/email-pre-send-check-attachment ()
+  (when (and (arnaud/email-says-attach-p)
+             (not (arnaud/email-has-attachment-p)))
+    (unless
+        (y-or-n-p "Your email suggests you need an attachment, but no attachment was found. Send anyway?")
+      (error "It seems an attachment is needed, but none was found. Aborting send."))))
+
+(add-hook 'message-send-hook 'arnaud/email-pre-send-check-attachment)
 
 (setq mu4e-contexts
     `(
@@ -837,59 +859,46 @@ otherwise, close current tab."
                    ( mu4e-refile-folder     . "/Archive") 
                    ( mu4e-compose-signature . "")
                    ))
-        ,(make-mu4e-context
-          :name "pc"
-          :enter-func (lambda () (mu4e-message "Entering context 'pc'"))
-          :leave-func (lambda () (mu4e-message "Leaving context 'pc'"))
-          :match-func (lambda (msg)
-                        (when msg 
-                          (and (string-match "^/PC_" (mu4e-message-field msg :maildir))
-                               (or (mu4e-message-contact-field-matches msg 
-                                     :to "arnaud.betremieux@passculture.app")
-                                   (mu4e-message-contact-field-matches msg 
-                                     :cc "arnaud.betremieux@passculture.app")))))
-           :vars '(( user-mail-address      . "arnaud.betremieux@passculture.app" )
-                   ( mu4e-sent-folder       . "/PC_Sent")
-                   ( mu4e-drafts-folder     . "/PC_Drafts")
-                   ( mu4e-refile-folder     . "/PC_AllMail") 
-                   ( mu4e-compose-signature .
-                     (concat
-                       "Arnaud Bétrémieux\n"
-                       "Tech Lead Pass Culture\n"
-                       "....................\n"
-                       "+33 (0)6 89 85 88 41\n"
-                       "du lundi au jeudi\n"
-                       ))))
        ,(make-mu4e-context
-          :name "Octo"
-          :enter-func (lambda () (mu4e-message "Entering context 'Octo'"))
-          :leave-func (lambda () (mu4e-message "Leaving context 'Octo'"))
+          :name "Mayane"
+          :enter-func (lambda () (mu4e-message "Entering context 'Mayane'"))
+          :leave-func (lambda () (mu4e-message "Leaving context 'Mayane'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (string-match "^/Octo_" (mu4e-message-field msg :maildir))))
-          :vars '( ( user-mail-address      . "abetremieux@octo.com" )
+                          (string-match "^/my-" (mu4e-message-field msg :maildir))))
+          :vars '( ( user-mail-address      . "arnaud.betremieux@mayane.eu" )
                    ( mu4e-sent-messages-behavior . delete)
-                   ( mu4e-sent-folder       . "/Octo_Sent")
-                   ( mu4e-drafts-folder     . "/Octo_Drafts")
-                   ( mu4e-refile-folder     . "/Octo_AllMail") 
-                   ( mu4e-compose-signature .
-                     (concat
-                       "Arnaud Bétrémieux\n"
-                       "Consultant\n"
-                       "OCTO Technology\n"
-                       ".....................\n"
-                       "34, Avenue de l'Opéra\n"
-                       "75002 Paris\n"
-                       "+33 (0)6 89 85 88 41\n"
-                       "du lundi au jeudi\n"
-                       "http://blog.octo.com/\n"))))
+                   ( mu4e-sent-folder       . "/my-Sent")
+                   ( mu4e-drafts-folder     . "/my-Drafts")
+                   ( mu4e-refile-folder     . "/my-Archive") 
+                   ( mu4e-compose-signature . "##SIGNATURE_MAYANE##")
+;                   ( mu4e-compose-signature .
+;                        "#+OPTIONS: toc:nil num:nil"
+;                        "#+BEGIN_EXPORT html"
+;                          (with-temp-buffer
+;                            (insert-file-contents "~/.emacs.d/signature_mayane.html")
+;                            (buffer-string))
+;                        "#+END_EXPORT"
+;                        ))
+;                   ( mu4e-compose-signature .
+;                     (concat
+;                       "Arnaud BÉTRÉMIEUX\n"
+;                       "MAYANE\n"
+;                       ".....................\n"
+;                       "Deskopolitan Paris Voltaire\n"
+;                       "226 boulevard Voltaire\n"
+;                       "75011 Paris\n"
+;                       "+33 (0)6 44 26 59 89\n"
+;                       "du lundi au jeudi\n"
+;                       "http://www.mayane.eu/\n"))
+                   ))
         ,(make-mu4e-context
           :name "Rootcycle"
           :enter-func (lambda () (mu4e-message "Entering context 'Rootcycle'"))
           :leave-func (lambda () (mu4e-message "Leaving context 'Rootcycle'"))
           :match-func (lambda (msg)
                         (when msg 
-                          (and (not (string-match "^/Octo_" (mu4e-message-field msg :maildir)))
+                          (and (not (string-match "^/my-" (mu4e-message-field msg :maildir)))
                                (or (mu4e-message-contact-field-matches msg 
                                      :to "arnaud@rootcycle.com")
                                    (mu4e-message-contact-field-matches msg 
@@ -909,7 +918,6 @@ otherwise, close current tab."
 
 ; Use first context by default when entering the main view
 (setq mu4e-context-policy 'pick-first)
-
 
 ;----- ORG-MODE
 (require 'org-install)
