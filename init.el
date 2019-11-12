@@ -43,7 +43,6 @@
         company
         company-tern
         dtrt-indent
-        elpy
         evil
         flycheck-mypy
         importmagic
@@ -53,9 +52,7 @@
         pydoc
         use-package
         wdired
-        web-mode
-        wgrep-ag
-        yaml-mode))
+        wgrep-ag))
 
 ; Install arnaud/packages as necessary
 (defun filter (condp lst)
@@ -103,10 +100,6 @@
 (setq frame-title-format '("%b - Emacs"))
 (setq inhibit-startup-message t
       inhibit-startup-echo-area-message t)
-(defun arnaud/set-maximized ()
-  (interactive)
-  (shell-command "wmctrl -r :ACTIVE: -badd,maximized_vert,maximized_horz"))
-(add-hook 'window-setup-hook 'arnaud/set-maximized t)
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 
@@ -125,10 +118,11 @@
 
 ;;; MODE LINE
 
-(add-to-list 'load-path "~/.emacs.d/plugins/eyeliner")
-(require 'projectile)
-(require 'eyeliner)
-(eyeliner/install)
+(use-package eyeliner
+  :defer 1
+  :load-path "~/.emacs.d/plugins/eyeliner"
+  :init (require 'projectile)
+  :config (eyeliner/install))
 
 ;;; JUMPING
 
@@ -161,39 +155,36 @@
             	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
             	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
                   dumb-jump-find-rules)
-            (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" 'dumb-jump-go))))
+            (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" 'dumb-jump-go))
+            (defun arnaud/dumb-jump-go-in-same-tab ()
+              (interactive)
+              (let ((arnaud/dumb-jump-same-tab t))
+                (dumb-jump-go)))
+            
+            (setq arnaud/dumb-jump-same-tab nil)
+            
+            (defun dumb-jump-goto-file-line (thefile theline pos)
+            	  "Open THEFILE and go to line THELINE"
+                (evil-set-jump)
+            	  (if (fboundp 'xref-push-marker-stack)
+            	      (xref-push-marker-stack)
+            	   (ring-insert find-tag-marker-ring (point-marker)))
+            	  (let* ((visible-buffer (find-buffer-visiting thefile))
+            	         (visible-window (when visible-buffer (get-buffer-window visible-buffer))))
+            	    (cond
+            	     ((and visible-window dumb-jump-use-visible-window)
+            	      (select-window visible-window))
+                   (arnaud/dumb-jump-same-tab
+                    (let ((new-buffer (find-file-noselect thefile)))
+                      (kill-current-buffer)
+                      (switch-to-buffer new-buffer)
+                      (goto-line theline)))
+            	     (t
+                    (find-file thefile)))
+                    (goto-line theline)))
+            
+            (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-tab))))
 
-
-(defun arnaud/dumb-jump-go-in-same-tab ()
-  (interactive)
-  (let ((arnaud/dumb-jump-same-tab t))
-    (dumb-jump-go)))
-
-(setq arnaud/dumb-jump-same-tab nil)
-
-(defun dumb-jump-goto-file-line (thefile theline pos)
-	  "Open THEFILE and go to line THELINE"
-    (evil-set-jump)
-	  (if (fboundp 'xref-push-marker-stack)
-	      (xref-push-marker-stack)
-	   (ring-insert find-tag-marker-ring (point-marker)))
-	  (let* ((visible-buffer (find-buffer-visiting thefile))
-	         (visible-window (when visible-buffer (get-buffer-window visible-buffer))))
-	    (cond
-	     ((and visible-window dumb-jump-use-visible-window)
-	      (select-window visible-window))
-       (arnaud/dumb-jump-same-tab
-        (let ((new-buffer (find-file-noselect thefile)))
-          (kill-current-buffer)
-          (switch-to-buffer new-buffer)
-          (goto-line theline)))
-	     (t
-        (find-file thefile)))
-        (goto-line theline)))
-
-(eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-tab))
-
-;;;; Git-Gutter mode
 (use-package git-gutter
   :defer 2
   :ensure t
@@ -206,18 +197,16 @@
             (set-face-foreground 'git-gutter:modified "white")
             (set-face-background 'git-gutter:modified "purple")))
 
-;;;; Web-mode
-
 (use-package web-mode
-  :config (progn
-            (add-to-list 'auto-mode-alist '("\\.ejs\\'" . web-mode))
-            (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-            (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-            (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-            (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-            (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-            (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-            (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))))
+  :ensure t
+  :mode ("\\.ejs\\'"
+         "\\.phtml\\'"
+         "\\.tpl\\.php\\'"
+         "\\.[agj]sp\\'"
+         "\\.as[cp]x\\'"
+         "\\.erb\\'"
+         "\\.mustache\\'"
+         "\\.djhtml\\'"))
 
 ;;; Filename expansion
 (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
@@ -295,25 +284,22 @@ otherwise, close current tab."
 (setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
 (setq auto-save-file-name-transforms `((".*" , "~/.emacs.d/autosave/" t)))
 
-;;;; YAML mode
+(use-package yaml-mode
+  :load-path "~/.emacs.d/plugins/yaml-mode")
 
-(add-to-list 'load-path "~/.emacs.d/plugins/yaml-mode")
-(require 'yaml-mode)
-
-;;;; PHP mode
-(require 'php-mode)
-
-(add-hook 'php-mode-hook
-   (lambda ()
-      (evil-define-key 'normal php-mode-map (kbd "K") 'arnaud/php-symbol-lookup)))
-
-(defun arnaud/php-symbol-lookup ()
-  (interactive)
-  (let ((symbol (symbol-at-point)))
-    (if (not symbol)
-        (message "No symbol at point.")
-        (browse-url (concat "http://php.net/manual-lookup.php?pattern="
-                            (symbol-name symbol))))))
+(use-package php-mode
+  :load-path "~/.emacs.d/plugins/yaml-mode"
+  :config (progn
+            (defun arnaud/php-symbol-lookup ()
+              (interactive)
+              (let ((symbol (symbol-at-point)))
+                (if (not symbol)
+                    (message "No symbol at point.")
+                    (browse-url (concat "http://php.net/manual-lookup.php?pattern="
+                                        (symbol-name symbol))))))
+            (add-hook 'php-mode-hook
+            (lambda ()
+              (evil-define-key 'normal php-mode-map (kbd "K") 'arnaud/php-symbol-lookup)))))
 
 (add-to-list 'auto-mode-alist '("\\.ds\\'" . lisp-mode))
 
@@ -331,13 +317,10 @@ otherwise, close current tab."
 
 (define-key evil-normal-state-map [C-f] 'arnaud/put-file-name-on-clipboard)
 
-; *** HY MODE ***
 (use-package hy-mode
   :ensure t
   :defer 1
   :mode ("\\.hy\\'" . lisp-mode))
-
-; *** SPELL CHECKING ***
 
 (when (executable-find "hunspell")
   (setq-default ispell-program-name "hunspell")
@@ -534,41 +517,31 @@ otherwise, close current tab."
 
 ;;----- END slime switcher code
 
-; *** MARKDOWN ***
 (use-package markdown-mode
   :defer 1
   :ensure t
-  :mode "\\.md\\'")
+  :mode "\\.md\\'" "\\.markdown\\'")
 
-; *** PYTHON ***
-(elpy-enable)
+(use-package elpy
+  :defer 1
+  :ensure t
+  :config (progn
+            (elpy-enable)
 
-(when (require 'flycheck nil t)
-  (require 'flycheck-mypy)
-  (add-to-list 'flycheck-disabled-checkers 'python-flake8)
-  (add-to-list 'flycheck-disabled-checkers 'python-pylint)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
-
-(add-hook 'elpy-mode-hook
-   (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
-         (push '("lambda" . ?λ) prettify-symbols-alist)
-         (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
-         (importmagic-mode)
-         (evil-define-key 'normal importmagic-mode-map (kbd "C-i") 'importmagic-fix-symbol-at-point)
-         (highlight-indentation-mode -1)))
-
-;----- FIPLR
-
-(defun arnaud/fiplr-root (orig-fiplr-root)
-  (let ((orig-root (funcall orig-fiplr-root)))
-    (cond ((< (length (split-string orig-root "/")) 4)
-           "/home/arno/dev/kravpass/")
-          ;((or (and (>= (length orig-root) 24)
-          ;          (string= (substring orig-root 0 24) "/home/arno/workspace/fc/"))
-          ;     (string= orig-root "/home/arno/workspace/fc/"))
-          ;  "/home/arno/workspace/fc/")
-          (t orig-root))))
+            (when (require 'flycheck nil t)
+              (require 'flycheck-mypy)
+              (add-to-list 'flycheck-disabled-checkers 'python-flake8)
+              (add-to-list 'flycheck-disabled-checkers 'python-pylint)
+              (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+              (add-hook 'elpy-mode-hook 'flycheck-mode))
+            
+            (add-hook 'elpy-mode-hook
+               (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
+                     (push '("lambda" . ?λ) prettify-symbols-alist)
+                     (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
+                     (importmagic-mode)
+                     (evil-define-key 'normal importmagic-mode-map (kbd "C-i") 'importmagic-fix-symbol-at-point)
+                     (highlight-indentation-mode -1)))))
 
 (use-package fiplr
   :defer 2
@@ -581,6 +554,16 @@ otherwise, close current tab."
                      (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node" "ftp_mirrors"))
                     (files
                      ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc" "*~" "#*#"))))
+
+            (defun arnaud/fiplr-root (orig-fiplr-root)
+              (let ((orig-root (funcall orig-fiplr-root)))
+                (cond ((< (length (split-string orig-root "/")) 4)
+                      "/home/arno/dev/kravpass/")
+                      ;((or (and (>= (length orig-root) 24)
+                      ;          (string= (substring orig-root 0 24) "/home/arno/workspace/fc/"))
+                      ;     (string= orig-root "/home/arno/workspace/fc/"))
+                      ;  "/home/arno/workspace/fc/")
+                      (t orig-root))))
 
             (advice-add #'fiplr-root :around 'arnaud/fiplr-root)
 
@@ -736,13 +719,5 @@ otherwise, close current tab."
             (define-key company-active-map (kbd "C-n") 'company-select-next)
             (define-key company-active-map (kbd "C-p") #'company-select-previous)))
 
-; To only display string whose length is greater than or equal to 3
-;(setq evil-search-highlight-string-min-len 3)
-
-(require 'server)
-(set-variable 'server-name
-              (if (string= (frame-parameter (selected-frame) 'name ) "emacs-mu4e")
-              "mu4e"
-              "emacs"))
-(or (server-running-p)
-    (server-start))
+; To only display string whose length is greater than or equal to 2
+(setq evil-search-highlight-string-min-len 2)
