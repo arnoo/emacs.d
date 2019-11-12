@@ -1,3 +1,5 @@
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 (setq user-full-name "Arnaud Bétrémieux")
 (setq user-mail-address "arnaud@btmx.fr")
 
@@ -37,32 +39,21 @@
 (setq arnaud/packages
       '(package
         ag
-        all-the-icons
-        centaur-tabs
         cl-lib
         company
         company-tern
-        dumb-jump
         dtrt-indent
-        ein
         elpy
-        emojify
         evil
-        evil-numbers
-        evil-search-highlight-persist
-        ;evil-tabs
-        fiplr
         flycheck-mypy
-        git-gutter
         hy-mode
         importmagic
         js2-mode
         magit ; dependency of eyeliner
-        markdown-mode
-        org-download
         projectile ; dependency of eyeliner
         pydoc
         spaceline
+        use-package
         wdired
         web-mode
         wgrep-ag
@@ -81,13 +72,6 @@
     (mapc 'package-install uninstalled-packages)))
 
 ;(add-hook 'after-init-hook 'global-company-mode)
-
-;;; Icons
-
-(require 'emojify)
-(add-hook 'after-init-hook #'global-emojify-mode)
-
-(require 'all-the-icons)
 
 ;;; Indentation
 
@@ -148,41 +132,37 @@
 (require 'eyeliner)
 (eyeliner/install)
 
-;;; TABS
-
-(require 'centaur-tabs)
-(setq centaur-tabs-style "wave")
-(setq centaur-tabs-height 32)
-(setq centaur-tabs-set-icons t)
-(setq centaur-tabs-set-modified-marker t)
-(centaur-tabs-mode t)
-(global-set-key (kbd "C-<prior>")  'centaur-tabs-backward)
-(global-set-key (kbd "C-<next>") 'centaur-tabs-forward)
-(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g t") 'centaur-tabs-forward))
-(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "g T") 'centaur-tabs-backward))
-
-(defun centaur-tabs-buffer-groups ()
-  (list "single-group-for-now"))
-
-(defun centaur-tabs-hide-tab (x)
-  (let ((name (format "%s" x)))
- 	  (or
-	    (string= "*ag search*" name)
-	    (string-prefix-p "*epc con " name)
-	    (string= "*Completions*" name)
-	    (string= "*Compile-Log*" name)
-	    (string= "*Shell Command Output*" name))))
-
-(defun arnaud/switch-to-previous-buffer ()
-  "Switch to previously open buffer."
-  (interactive)
-  (switch-to-buffer (other-buffer (current-buffer) 1)))
-
-(eval-after-load "evil-maps" '(define-key evil-normal-state-map (kbd "<C-tab>") 'arnaud/switch-to-previous-buffer))
-
 ;;; JUMPING
 
-(require 'dumb-jump)
+(use-package dumb-jump
+  :defer 1
+  :ensure t
+  :config (progn
+            (setq dumb-jump-fallback-regex "\\bJJJ\\j")
+            
+            (push '(:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
+            	           :regex "\\\((defun|defmacro)\\s+JJJ\\j"
+            	           ;; \\j usage see `dumb-jump-ag-word-boundary`
+            	           :tests ("(defun test (blah)" "(defun test\n" "(defmacro test (blah)" "(defmacro test\n")
+            	           :not ("(defun test-asdf (blah)" "(defun test-blah\n" "(defmacro test-asdf (blah)"
+            	                 "(defmacro test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
+                  dumb-jump-find-rules)
+            	
+            (push '(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
+            	           :regex "\\\(defvar\\b\\s*JJJ\\j"
+            	           :tests ("(defvar test " "(defvar test\n")
+            	           :not ("(defvar tester" "(defvar test?" "(defvar test-"))
+                  dumb-jump-find-rules)
+            	
+            (push '(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
+            	           :regex "\\\(JJJ\\s+" :tests ("(let ((test 123)))") :not ("(let ((test-2 123)))"))
+                  dumb-jump-find-rules)
+            	
+            (push '(:type "variable" :supports ("ag" "rg" "git-grep") :language "lisp"
+            	           :regex "\\((defun|defmacro)\\s*.+\\\(?\\s*JJJ\\j\\s*\\\)?"
+            	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
+            	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
+                  dumb-jump-find-rules)))
 
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\M-\C-]" 'dumb-jump-go))
 
@@ -215,54 +195,31 @@
 
 (eval-after-load "evil-maps" '(define-key evil-motion-state-map "\C-]" 'arnaud/dumb-jump-go-in-same-tab))
 
-(setq dumb-jump-fallback-regex "\\bJJJ\\j")
-
-(push '(:type "function" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
-	           :regex "\\\((defun|defmacro)\\s+JJJ\\j"
-	           ;; \\j usage see `dumb-jump-ag-word-boundary`
-	           :tests ("(defun test (blah)" "(defun test\n" "(defmacro test (blah)" "(defmacro test\n")
-	           :not ("(defun test-asdf (blah)" "(defun test-blah\n" "(defmacro test-asdf (blah)"
-	                 "(defmacro test-blah\n"  "(defun tester (blah)" "(defun test? (blah)" "(defun test- (blah)"))
-      dumb-jump-find-rules)
-	
-(push '(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
-	           :regex "\\\(defvar\\b\\s*JJJ\\j"
-	           :tests ("(defvar test " "(defvar test\n")
-	           :not ("(defvar tester" "(defvar test?" "(defvar test-"))
-      dumb-jump-find-rules)
-	
-(push '(:type "variable" :supports ("ag" "grep" "rg" "git-grep") :language "lisp"
-	           :regex "\\\(JJJ\\s+" :tests ("(let ((test 123)))") :not ("(let ((test-2 123)))"))
-      dumb-jump-find-rules)
-	
-(push '(:type "variable" :supports ("ag" "rg" "git-grep") :language "lisp"
-	           :regex "\\((defun|defmacro)\\s*.+\\\(?\\s*JJJ\\j\\s*\\\)?"
-	           :tests ("(defun blah (test)" "(defun blah (test blah)" "(defun (blah test)")
-	           :not ("(defun blah (test-1)" "(defun blah (test-2 blah)" "(defun (blah test-3)"))
-      dumb-jump-find-rules)
-
 ;;;; Git-Gutter mode
-(require 'git-gutter)
-(global-git-gutter-mode +1)
-
-(set-face-foreground 'git-gutter:added "black")
-(set-face-background 'git-gutter:added "green")
-(set-face-foreground 'git-gutter:deleted "white")
-(set-face-background 'git-gutter:deleted "red")
-(set-face-foreground 'git-gutter:modified "white")
-(set-face-background 'git-gutter:modified "purple")
+(use-package git-gutter
+  :defer 2
+  :ensure t
+  :config (progn
+            (global-git-gutter-mode +1)
+            (set-face-foreground 'git-gutter:added "black")
+            (set-face-background 'git-gutter:added "green")
+            (set-face-foreground 'git-gutter:deleted "white")
+            (set-face-background 'git-gutter:deleted "red")
+            (set-face-foreground 'git-gutter:modified "white")
+            (set-face-background 'git-gutter:modified "purple")))
 
 ;;;; Web-mode
 
-(require 'web-mode)
-(add-to-list 'auto-mode-alist '("\\.ejs\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(use-package web-mode
+  :config (progn
+            (add-to-list 'auto-mode-alist '("\\.ejs\\'" . web-mode))
+            (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+            (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+            (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+            (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+            (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+            (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+            (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))))
 
 ;;; Filename expansion
 (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
@@ -280,7 +237,7 @@ otherwise, close current tab."
       (balance-windows) ; balance remaining windows
       nil)
      (t
-      (kill-current-buffer)
+      (delete-frame)
       nil))))
 
 (defun arnaud/vimlike-write-quit ()
@@ -293,9 +250,12 @@ otherwise, close current tab."
 (evil-ex-define-cmd "wq" 'arnaud/vimlike-write-quit)
 
 ;;; numbers
-(require 'evil-numbers)
-(define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
-(define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)
+(use-package evil-numbers
+  :defer 1
+  :ensure t
+  :config (progn
+            (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
+            (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)))
 
 (define-key evil-normal-state-map [(insert)] 'evil-insert)
 
@@ -575,10 +535,10 @@ otherwise, close current tab."
 ;;----- END slime switcher code
 
 ; *** MARKDOWN ***
-(autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
+(use-package markdown-mode
+  :defer 1
+  :ensure t
+  :mode "\\.md\\'")
 
 ; *** PYTHON ***
 (elpy-enable)
@@ -599,15 +559,6 @@ otherwise, close current tab."
          (highlight-indentation-mode -1)))
 
 ;----- FIPLR
-(require 'fiplr)
-
-(setq *grizzl-read-max-results* 20)
-
-(setq fiplr-ignored-globs
-      '((directories
-         (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node" "ftp_mirrors"))
-        (files
-         ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc" "*~" "#*#"))))
 
 (defun arnaud/fiplr-root (orig-fiplr-root)
   (let ((orig-root (funcall orig-fiplr-root)))
@@ -619,10 +570,21 @@ otherwise, close current tab."
           ;  "/home/arno/workspace/fc/")
           (t orig-root))))
 
-(advice-add #'fiplr-root :around 'arnaud/fiplr-root)
+(use-package fiplr
+  :defer 2
+  :ensure t
+  :config (progn
+            (setq *grizzl-read-max-results* 20)
+            
+            (setq fiplr-ignored-globs
+                  '((directories
+                     (".git" "doc" ".svn" ".tmp" "dist" "node_modules" "france-entreprises" "bower_components" "eidas-node" "ftp_mirrors"))
+                    (files
+                     ("*.jpg" "*.png" "*.xlsx" "*.fasl" "*.fas" "*.o" "*.jks" "*.pyc" "*~" "#*#"))))
 
-(define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)
+            (advice-add #'fiplr-root :around 'arnaud/fiplr-root)
 
+            (define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)))
 
 ;------ MU4E
 
@@ -666,11 +628,11 @@ otherwise, close current tab."
 (define-prefix-command 'arnaud/mu4e-g-map)
 (define-key mu4e-headers-mode-map "g" 'arnaud/mu4e-g-map)
 (define-key arnaud/mu4e-g-map (kbd "g") 'beginning-of-buffer)
-(define-key arnaud/mu4e-g-map (kbd "t") 'centaur-tabs-forward)
-(define-key arnaud/mu4e-g-map (kbd "T") 'centaur-tabs-backward)
+;(define-key arnaud/mu4e-g-map (kbd "t") 'centaur-tabs-forward)
+;(define-key arnaud/mu4e-g-map (kbd "T") 'centaur-tabs-backward)
 
-(add-hook 'mu4e-view-mode-hook 'centaur-tabs-local-mode)
-(add-hook 'ag-mode-hook 'centaur-tabs-local-mode)
+;(add-hook 'mu4e-view-mode-hook 'centaur-tabs-local-mode)
+;(add-hook 'ag-mode-hook 'centaur-tabs-local-mode)
 
 (setq mail-user-agent 'mu4e-user-agent)
 
@@ -871,7 +833,7 @@ otherwise, close current tab."
                    ( mu4e-sent-folder       . "/my-Sent")
                    ( mu4e-drafts-folder     . "/my-Drafts")
                    ( mu4e-refile-folder     . "/my-Archive") 
-                   ( mu4e-compose-signature . "##SIGNATURE_MAYANE##")
+;                   ( mu4e-compose-signature . "##SIGNATURE_MAYANE##")
 ;                   ( mu4e-compose-signature .
 ;                        "#+OPTIONS: toc:nil num:nil"
 ;                        "#+BEGIN_EXPORT html"
@@ -880,17 +842,17 @@ otherwise, close current tab."
 ;                            (buffer-string))
 ;                        "#+END_EXPORT"
 ;                        ))
-;                   ( mu4e-compose-signature .
-;                     (concat
-;                       "Arnaud BÉTRÉMIEUX\n"
-;                       "MAYANE\n"
-;                       ".....................\n"
-;                       "Deskopolitan Paris Voltaire\n"
-;                       "226 boulevard Voltaire\n"
-;                       "75011 Paris\n"
-;                       "+33 (0)6 44 26 59 89\n"
-;                       "du lundi au jeudi\n"
-;                       "http://www.mayane.eu/\n"))
+                   ( mu4e-compose-signature .
+                     (concat
+                       "Arnaud BÉTRÉMIEUX\n"
+                       "MAYANE\n"
+                       ".....................\n"
+                       "Deskopolitan Paris Voltaire\n"
+                       "226 boulevard Voltaire\n"
+                       "75011 Paris\n"
+                       "+33 (0)6 44 26 59 89\n"
+                       "du lundi au jeudi\n"
+                       "http://www.mayane.eu/\n"))
                    ))
         ,(make-mu4e-context
           :name "Rootcycle"
@@ -997,11 +959,14 @@ otherwise, close current tab."
   (setq blink-cursor-mode nil))
 
 ;;;; AG
-(require 'ag)
-(setq ag-highlight-search t)
-(setq ag-reuse-buffers t)
-(setq ag-reuse-window t)
-(setq ag-group-matches nil)
+(use-package ag
+  :defer 1
+  :ensure t
+  :config (progn
+            (setq ag-highlight-search t)
+            (setq ag-reuse-buffers t)
+            (setq ag-reuse-window t)
+            (setq ag-group-matches nil)))
 
 ;;; Make underscore a word character
 (add-hook 'after-change-major-mode-hook
@@ -1023,31 +988,29 @@ otherwise, close current tab."
   (kill-current-buffer)
   (evil-quit))
 
-(require 'wgrep-ag)
-(autoload 'wgrep-ag-setup "wgrep-ag")
-(add-hook 'ag-mode-hook 'wgrep-ag-setup)
-(add-hook 'ag-search-finished-hook 'wgrep-change-to-wgrep-mode)
-(evil-define-key 'normal wgrep-mode-map [escape] 'arnaud/wgrep-save-and-quit)
-(define-key evil-normal-state-map (kbd "C-*") 'arnaud/ag-search-at-point)
-
-;; Press `dd' to delete lines in `wgrep-mode' in evil directly
-(defadvice evil-delete (around evil-delete-hack activate)
-  ;; make buffer writable
-  (if (and (boundp 'wgrep-prepared) wgrep-prepared)
-      (wgrep-toggle-readonly-area))
-  ad-do-it
-  ;; make buffer read-only
-  (if (and (boundp 'wgrep-prepared) wgrep-prepared)
-      (wgrep-toggle-readonly-area)))
+(use-package wgrep-ag
+  :defer t
+  :ensure t
+  :config (progn
+            (autoload 'wgrep-ag-setup "wgrep-ag")
+            (add-hook 'ag-mode-hook 'wgrep-ag-setup)
+            (add-hook 'ag-search-finished-hook 'wgrep-change-to-wgrep-mode)
+            (evil-define-key 'normal wgrep-mode-map [escape] 'arnaud/wgrep-save-and-quit)
+            (define-key evil-normal-state-map (kbd "C-*") 'arnaud/ag-search-at-point)
+            
+            ;; Press `dd' to delete lines in `wgrep-mode' in evil directly
+            (defadvice evil-delete (around evil-delete-hack activate)
+              ;; make buffer writable
+              (if (and (boundp 'wgrep-prepared) wgrep-prepared)
+                  (wgrep-toggle-readonly-area))
+              ad-do-it
+              ;; make buffer read-only
+              (if (and (boundp 'wgrep-prepared) wgrep-prepared)
+                  (wgrep-toggle-readonly-area)))))
 
 ; set up Emacs for transparent encryption and decryption
 (require 'epa-file)
 (epa-file-enable)
-
-; EIN (Emacs iPython Notebook)
-(require 'ein)
-(require 'ein-notebook)
-(require 'ein-subpackages)
 
 ;---- EVIL MODE, should remain at the end
 (evil-mode 1)
@@ -1057,8 +1020,10 @@ otherwise, close current tab."
 (global-unset-key (kbd "<f11>"))
 
 ;;;; Highlight Searches
-(require 'evil-search-highlight-persist)
-(global-evil-search-highlight-persist t)
+(use-package evil-search-highlight-persist
+  :defer 1
+  :ensure t
+  :config (global-evil-search-highlight-persist t))
 
 (add-hook 'company-mode-hook
           (lambda ()
