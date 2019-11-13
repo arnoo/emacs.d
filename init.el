@@ -3,8 +3,6 @@
 (setq user-full-name "Arnaud Bétrémieux")
 (setq user-mail-address "arnaud@btmx.fr")
 
-(add-to-list 'load-path "~/.emacs.d/plugins/")
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -47,12 +45,9 @@
         flycheck-mypy
         importmagic
         js2-mode
-        magit ; dependency of eyeliner
-        projectile ; dependency of eyeliner
         pydoc
         use-package
-        wdired
-        wgrep-ag))
+        wdired))
 
 ; Install arnaud/packages as necessary
 (defun filter (condp lst)
@@ -103,6 +98,8 @@
 (global-set-key (kbd "C-+") 'text-scale-increase)
 (global-set-key (kbd "C--") 'text-scale-decrease)
 
+; Don't blink cursor in image mode
+(add-hook 'image-minor-mode-hook (setq blink-cursor-mode nil))
 
 (setq make-backup-files nil)
 (setq initial-scratch-message nil)
@@ -115,14 +112,6 @@
 (setq default-indicate-empty-lines t)
 
 (undo-tree-mode 1)
-
-;;; MODE LINE
-
-(use-package eyeliner
-  :defer 1
-  :load-path "~/.emacs.d/plugins/eyeliner"
-  :init (require 'projectile)
-  :config (eyeliner/install))
 
 ;;; JUMPING
 
@@ -288,7 +277,7 @@ otherwise, close current tab."
   :load-path "~/.emacs.d/plugins/yaml-mode")
 
 (use-package php-mode
-  :load-path "~/.emacs.d/plugins/yaml-mode"
+  :load-path "~/.emacs.d/plugins"
   :config (progn
             (defun arnaud/php-symbol-lookup ()
               (interactive)
@@ -527,7 +516,6 @@ otherwise, close current tab."
   :ensure t
   :config (progn
             (elpy-enable)
-
             (when (require 'flycheck nil t)
               (require 'flycheck-mypy)
               (add-to-list 'flycheck-disabled-checkers 'python-flake8)
@@ -595,8 +583,10 @@ otherwise, close current tab."
  '(powerline-gui-use-vcs-glyph t))
 
 (add-hook 'org-mode-hook 'org-indent-mode)
-(require 'org-pretty-table)
-(add-hook 'org-mode-hook 'org-pretty-table-mode)
+
+(use-package org-pretty-table
+  :load-path "~/.emacs.d/plugins/"
+  :hook org-mode)
 
 (setq org-confirm-babel-evaluate nil)
 
@@ -612,6 +602,8 @@ otherwise, close current tab."
 
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
+(setq org-export-htmlize-output-type 'css)
+
 (defun arnaud/htmlorg-clipboard ()
   "Convert clipboard contents from HTML to Org and then paste (yank)."
   (interactive)
@@ -619,32 +611,27 @@ otherwise, close current tab."
   ; | perl -ne 'print chr foreach unpack(\"C*\",pack(\"H*\",substr($_,11,-3)))' 
   (yank))
 
-(require 'ox-publish)
-(setq org-publish-project-alist
-  '(
-     ("org-notes"
-        :base-directory "~/wiki/"
-        :base-extension "org"
-        :publishing-directory "~/wiki/html/"
-        :recursive t
-        :publishing-function org-html-publish-to-html
-        :headline-levels 6
-        :auto-preamble t
-      )
-     ("org-static"
-        :base-directory "~/wiki/media/"
-        :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-        :publishing-directory "~/wiki/html/"
-        :recursive t
-        :publishing-function org-publish-attachment
-      )))
-(setq org-export-htmlize-output-type 'css)
+(use-package ox-publish
+  :defer 1
+  :init (setq org-publish-project-alist
+          '(
+            ("org-notes"
+                :base-directory "~/wiki/"
+                :base-extension "org"
+                :publishing-directory "~/wiki/html/"
+                :recursive t
+                :publishing-function org-html-publish-to-html
+                :headline-levels 6
+                :auto-preamble t
+              )
+            ("org-static"
+                :base-directory "~/wiki/media/"
+                :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+                :publishing-directory "~/wiki/html/"
+                :recursive t
+                :publishing-function org-publish-attachment
+              ))))
 
-
-; Don't blink cursor in image mode
-
-(add-hook 'image-minor-mode-hook
-  (setq blink-cursor-mode nil))
 
 ;;;; AG
 (use-package ag
@@ -654,37 +641,38 @@ otherwise, close current tab."
             (setq ag-highlight-search t)
             (setq ag-reuse-buffers t)
             (setq ag-reuse-window t)
-            (setq ag-group-matches nil)))
+            (setq ag-group-matches nil)
+
+            (defun arnaud/ag-search-at-point ()
+              (interactive)
+              (ag-project (thing-at-point 'symbol))
+              (other-window 1))
+
+            (define-key evil-normal-state-map (kbd "C-*") 'arnaud/ag-search-at-point)))
 
 ;;; Make underscore a word character
-(add-hook 'after-change-major-mode-hook
-          '(lambda () (modify-syntax-entry ?_ "w")))
-
-(defun arnaud/ag-search-at-point ()
-  (interactive)
-  (ag-project (thing-at-point 'symbol))
-  (other-window 1))
-
-(defun arnaud/wgrep-save-and-quit ()
-  (interactive)
-  (when (buffer-modified-p)
-    (when (y-or-n-p "Save wgrep changes ?")
-      (wgrep-finish-edit)
-      (wgrep-save-all-buffers))
-    (wgrep-abort-changes)
-    (wgrep-exit))
-  (kill-current-buffer)
-  (evil-quit))
+(add-hook 'after-change-major-mode-hook '(lambda () (modify-syntax-entry ?_ "w")))
 
 (use-package wgrep-ag
-  :defer t
+  :defer 1
+  :after ag
   :ensure t
   :config (progn
+            (defun arnaud/wgrep-save-and-quit ()
+              (interactive)
+              (when (buffer-modified-p)
+                (when (y-or-n-p "Save wgrep changes ?")
+                  (wgrep-finish-edit)
+                  (wgrep-save-all-buffers))
+                (wgrep-abort-changes)
+                (wgrep-exit))
+              (kill-current-buffer)
+              (evil-quit))
+
             (autoload 'wgrep-ag-setup "wgrep-ag")
             (add-hook 'ag-mode-hook 'wgrep-ag-setup)
             (add-hook 'ag-search-finished-hook 'wgrep-change-to-wgrep-mode)
             (evil-define-key 'normal wgrep-mode-map [escape] 'arnaud/wgrep-save-and-quit)
-            (define-key evil-normal-state-map (kbd "C-*") 'arnaud/ag-search-at-point)
             
             ;; Press `dd' to delete lines in `wgrep-mode' in evil directly
             (defadvice evil-delete (around evil-delete-hack activate)
@@ -696,9 +684,9 @@ otherwise, close current tab."
               (if (and (boundp 'wgrep-prepared) wgrep-prepared)
                   (wgrep-toggle-readonly-area)))))
 
-; set up Emacs for transparent encryption and decryption
-(require 'epa-file)
-(epa-file-enable)
+(use-package epa-file ;transparent encryption and decryption
+  :defer 1
+  :init (epa-file-enable))
 
 ;---- EVIL MODE, should remain at the end
 (evil-mode 1)
