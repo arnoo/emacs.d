@@ -41,7 +41,6 @@
         company
         company-tern
         dtrt-indent
-        evil
         flycheck-mypy
         importmagic
         js2-mode
@@ -85,7 +84,7 @@
 
 ;; UI
 (load-theme 'dichromacy)
-(require 'evil)
+
 (setq column-number-mode t)
 (display-time-mode -1)
 (menu-bar-mode -1)
@@ -196,57 +195,6 @@
          "\\.erb\\'"
          "\\.mustache\\'"
          "\\.djhtml\\'"))
-
-;;; Filename expansion
-(define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
-
-;;; :q
-(defun arnaud/vimlike-quit ()
-  "Vimlike ':q' behavior: close current window if there are split windows;
-otherwise, close current tab."
-  (interactive)
-  (let ((one-window (one-window-p)))
-    (cond
-					; if current tab has split windows in it, close the current live window
-     ((not one-window)
-      (delete-window) ; delete the current window
-      (balance-windows) ; balance remaining windows
-      nil)
-     (t
-      (delete-frame)
-      nil))))
-
-(defun arnaud/vimlike-write-quit ()
-  "Vimlike ':wq' behavior: write then close..."
-  (interactive)
-  (save-buffer)
-  (arnaud/vimlike-quit))
-
-(evil-ex-define-cmd "q" 'arnaud/vimlike-quit)
-(evil-ex-define-cmd "wq" 'arnaud/vimlike-write-quit)
-
-;;; numbers
-(use-package evil-numbers
-  :defer 1
-  :ensure t
-  :config (progn
-            (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
-            (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)))
-
-(define-key evil-normal-state-map [(insert)] 'evil-insert)
-
-;;; by default, repeat should include the count of the original command !
-
-(evil-define-command arnaud/repeat (&optional count)
-    :repeat ignore
-        (interactive)
-      (message "count :  %S" count)
-      (evil-repeat count nil))
-(define-key evil-normal-state-map "." 'arnaud/repeat)
-
-(define-key evil-normal-state-map (kbd "C-;") 'eval-expression)
-
-(evil-set-initial-state 'ag-mode 'normal)
 
 ;;; esc quits
 (defun arnaud/minibuffer-keyboard-quit ()
@@ -558,17 +506,44 @@ otherwise, close current tab."
             (define-key evil-normal-state-map (kbd "C-p") 'fiplr-find-file)))
 
 ;----- ORG-MODE
-(require 'org-install)
-(setq org-log-done t)
-(setq org-return-follows-link t)
-(setq org-startup-with-inline-images t)
-(setq org-startup-folded 'show-everything)
-(setq org-image-actual-width nil)
-(setq org-startup-truncated nil) ; wrap lines
-(setq org-hide-leading-stars t)
-(setq org-src-fontify-natively t)
-(setq org-babel-sh-command "bash")
-(global-set-key (kbd "<f7>") 'toggle-truncate-lines)
+(use-package org-install
+  :defer 1
+  :init (progn
+          (setq org-log-done t)
+          (setq org-return-follows-link t)
+          (setq org-startup-with-inline-images t)
+          (setq org-startup-folded 'show-everything)
+          (setq org-image-actual-width nil)
+          (setq org-startup-truncated nil) ; wrap lines
+          (setq org-hide-leading-stars t)
+          (setq org-src-fontify-natively t)
+          (setq org-babel-sh-command "bash")
+          (global-set-key (kbd "<f7>") 'toggle-truncate-lines)
+
+          (add-hook 'org-mode-hook 'org-indent-mode)
+
+          (setq org-confirm-babel-evaluate nil)
+          
+          (org-babel-do-load-languages
+           'org-babel-load-languages
+           '((emacs-lisp . t)
+             (js         . t)
+             (lisp       . t)
+             (perl       . t)
+             (python     . t)
+             (shell      . t)
+             ))
+          
+          (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+          
+          (setq org-export-htmlize-output-type 'css)
+          
+          (defun arnaud/htmlorg-clipboard ()
+            "Convert clipboard contents from HTML to Org and then paste (yank)."
+            (interactive)
+            (kill-new (shell-command-to-string "xclip -selection clipboard -o | pandoc -f html -t json | pandoc -f json -t org"))
+            ; | perl -ne 'print chr foreach unpack(\"C*\",pack(\"H*\",substr($_,11,-3)))' 
+            (yank))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -582,37 +557,14 @@ otherwise, close current tab."
  '(org-level-5 ((t (:inherit outline-5 :height 1.1))))
  '(powerline-gui-use-vcs-glyph t))
 
-(add-hook 'org-mode-hook 'org-indent-mode)
-
 (use-package org-pretty-table
   :load-path "~/.emacs.d/plugins/"
+  :after org-install
   :hook org-mode)
-
-(setq org-confirm-babel-evaluate nil)
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (js         . t)
-   (lisp       . t)
-   (perl       . t)
-   (python     . t)
-   (shell      . t)
-   ))
-
-(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-
-(setq org-export-htmlize-output-type 'css)
-
-(defun arnaud/htmlorg-clipboard ()
-  "Convert clipboard contents from HTML to Org and then paste (yank)."
-  (interactive)
-  (kill-new (shell-command-to-string "xclip -selection clipboard -o | pandoc -f html -t json | pandoc -f json -t org"))
-  ; | perl -ne 'print chr foreach unpack(\"C*\",pack(\"H*\",substr($_,11,-3)))' 
-  (yank))
 
 (use-package ox-publish
   :defer 1
+  :after org-install
   :init (setq org-publish-project-alist
           '(
             ("org-notes"
@@ -688,24 +640,76 @@ otherwise, close current tab."
   :defer 1
   :init (epa-file-enable))
 
-;---- EVIL MODE, should remain at the end
-(evil-mode 1)
+(use-package evil
+  :ensure t
+  :init (progn
+          (evil-mode 1)
+          (global-unset-key (kbd "ESC :"))
+          (global-unset-key (kbd "<M-:>"))
+          (global-unset-key (kbd "<f11>"))
+          
+          ;;; Filename expansion
+          (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
+          
+          ;;; :q
+          (defun arnaud/vimlike-quit ()
+            "Vimlike ':q' behavior: close current window if there are split windows;
+          otherwise, close current tab."
+            (interactive)
+            (let ((one-window (one-window-p)))
+              (cond
+          					; if current tab has split windows in it, close the current live window
+               ((not one-window)
+                (delete-window) ; delete the current window
+                (balance-windows) ; balance remaining windows
+                nil)
+               (t
+                (delete-frame)
+                nil))))
+          
+          (defun arnaud/vimlike-write-quit ()
+            "Vimlike ':wq' behavior: write then close..."
+            (interactive)
+            (save-buffer)
+            (arnaud/vimlike-quit))
+          
+          (evil-ex-define-cmd "q" 'arnaud/vimlike-quit)
+          (evil-ex-define-cmd "wq" 'arnaud/vimlike-write-quit)
 
-(global-unset-key (kbd "ESC :"))
-(global-unset-key (kbd "<M-:>"))
-(global-unset-key (kbd "<f11>"))
+          (add-hook 'company-mode-hook
+                    (lambda ()
+                      (evil-define-key 'insert global-map (kbd "C-n") 'company-complete-common)
+                      (define-key company-active-map (kbd "C-n") 'company-select-next)
+                      (define-key company-active-map (kbd "C-p") #'company-select-previous)))
 
-;;;; Highlight Searches
+          (define-key evil-normal-state-map [(insert)] 'evil-insert)
+          
+          ;;; by default, repeat should include the count of the original command !
+          
+          (evil-define-command arnaud/repeat (&optional count)
+              :repeat ignore
+                  (interactive)
+                (message "count :  %S" count)
+                (evil-repeat count nil))
+          (define-key evil-normal-state-map "." 'arnaud/repeat)
+          
+          (define-key evil-normal-state-map (kbd "C-;") 'eval-expression)
+          
+          (evil-set-initial-state 'ag-mode 'normal)
+
+          ; To only display string whose length is greater than or equal to 2
+          (setq evil-search-highlight-string-min-len 2)))
+
 (use-package evil-search-highlight-persist
   :defer 1
+  :after evil
   :ensure t
-  :config (global-evil-search-highlight-persist t))
+  :init (global-evil-search-highlight-persist t))
 
-(add-hook 'company-mode-hook
-          (lambda ()
-            (evil-define-key 'insert global-map (kbd "C-n") 'company-complete-common)
-            (define-key company-active-map (kbd "C-n") 'company-select-next)
-            (define-key company-active-map (kbd "C-p") #'company-select-previous)))
-
-; To only display string whose length is greater than or equal to 2
-(setq evil-search-highlight-string-min-len 2)
+(use-package evil-numbers
+  :defer 1
+  :ensure t
+  :after evil
+  :config (progn
+            (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
+            (define-key evil-normal-state-map (kbd "C-x") 'evil-numbers/dec-at-pt)))
