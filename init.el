@@ -643,7 +643,7 @@
                   (balance-windows) ; balance remaining windows
                   nil)
                  (t
-                  (delete-frame)
+                  (kill-emacs)
                   nil))))
             
             (defun arnaud/vimlike-write-quit ()
