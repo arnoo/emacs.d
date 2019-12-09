@@ -15,7 +15,7 @@
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (bbdb neotree markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
+    (lsp-mode bbdb neotree markdown-mode js2-mode helm flycheck fiplr evil-search-highlight-persist evil-quickscope evil-numbers company-tern ag)))
  '(safe-local-variable-values
    (quote
     ((Base . 10)
@@ -110,8 +110,6 @@
 
 (setq default-indicate-empty-lines t)
 
-(undo-tree-mode 1)
-
 ;;; JUMPING
 
 (use-package dumb-jump
@@ -196,25 +194,6 @@
          "\\.mustache\\'"
          "\\.djhtml\\'"))
 
-;;; esc quits
-(defun arnaud/minibuffer-keyboard-quit ()
-  "Abort recursive edit.
-    In Delete Selection mode, if the mark is active, just deactivate it;
-    then it takes a second \\[keyboard-quit] to abort the minibuffer."
-  (interactive)
-  (if (and delete-selection-mode transient-mark-mode mark-active)
-      (setq deactivate-mark t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'arnaud/minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'arnaud/minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'arnaud/minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'arnaud/minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'arnaud/minibuffer-keyboard-quit)
-
 ;;;; Set autosave directory so that all the autosaves are in one place, and not all over the filesystem.
 
 (setq backup-directory-alist `((".*" . "~/.emacs.d/backup")))
@@ -252,8 +231,6 @@
         (clipboard-kill-region (point-min) (point-max)))
       (message filename))))
 
-(define-key evil-normal-state-map [C-f] 'arnaud/put-file-name-on-clipboard)
-
 (use-package hy-mode
   :ensure t
   :defer 1
@@ -284,17 +261,6 @@
      (ispell-change-dictionary change)
      (message "Dictionary switched from %s to %s" dic change)
      (arnaud/flyspell-buffer-unless-large)))
-
-(define-key evil-normal-state-map "]q"  'next-error)
-(define-key evil-normal-state-map "[q"  'previous-error)
-(define-key evil-normal-state-map "]l"  'flycheck-next-error)
-(define-key evil-normal-state-map "[l"  'flycheck-previous-error)
-(define-key evil-normal-state-map "]s"  'flyspell-goto-next-error)
-(define-key evil-normal-state-map "z="  'ispell-word)
-(define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
-(global-set-key (kbd "<f8>") 'arnaud/fd-switch-dictionary)
-
-(define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
 
 (setq flyspell-issue-message-flag nil) ;printing messages for every word (when checking the entire buffer) causes an enormous slowdown
 (add-to-list 'ispell-skip-region-alist '("^#+BEGIN_SRC" . "^#+END_SRC"))
@@ -459,25 +425,36 @@
   :ensure t
   :mode "\\.md\\'" "\\.markdown\\'")
 
-(use-package elpy
+(use-package lsp-mode
   :defer 1
   :ensure t
+  :hook ((python-mode . lsp)
+         (php-mode . lsp))
   :config (progn
-            (elpy-enable)
-            (when (require 'flycheck nil t)
-              (require 'flycheck-mypy)
-              (add-to-list 'flycheck-disabled-checkers 'python-flake8)
-              (add-to-list 'flycheck-disabled-checkers 'python-pylint)
-              (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-              (add-hook 'elpy-mode-hook 'flycheck-mode))
-            
-            (add-hook 'elpy-mode-hook
-               (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
-                     (push '("lambda" . ?λ) prettify-symbols-alist)
-                     (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
-                     (importmagic-mode)
-                     (evil-define-key 'normal importmagic-mode-map (kbd "C-i") 'importmagic-fix-symbol-at-point)
-                     (highlight-indentation-mode -1)))))
+            (evil-define-key 'normal lisp-mode-map "\C-]" 'lsp-goto-implementation)
+            (evil-define-key 'insert global-map (kbd "C-n") 'completion-at-point)
+            (lsp-signature-activate))
+  :commands lsp)
+
+;(use-package elpy
+;  :defer 1
+;  :ensure t
+;  :config (progn
+;            (elpy-enable)
+;            (when (require 'flycheck nil t)
+;              (require 'flycheck-mypy)
+;              (add-to-list 'flycheck-disabled-checkers 'python-flake8)
+;              (add-to-list 'flycheck-disabled-checkers 'python-pylint)
+;              (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+;              (add-hook 'elpy-mode-hook 'flycheck-mode))
+;            
+;            (add-hook 'elpy-mode-hook
+;               (lambda () (push '("function" . ?ƒ) prettify-symbols-alist)
+;                     (push '("lambda" . ?λ) prettify-symbols-alist)
+;                     (evil-define-key 'normal elpy-mode-map (kbd "K") 'pydoc-at-point)
+;                     (importmagic-mode)
+;                     (evil-define-key 'normal importmagic-mode-map (kbd "C-i") 'importmagic-fix-symbol-at-point)
+;                     (highlight-indentation-mode -1)))))
 
 (use-package fiplr
   :defer 2
@@ -508,42 +485,42 @@
 ;----- ORG-MODE
 (use-package org-install
   :defer 1
-  :init (progn
-          (setq org-log-done t)
-          (setq org-return-follows-link t)
-          (setq org-startup-with-inline-images t)
-          (setq org-startup-folded 'show-everything)
-          (setq org-image-actual-width nil)
-          (setq org-startup-truncated nil) ; wrap lines
-          (setq org-hide-leading-stars t)
-          (setq org-src-fontify-natively t)
-          (setq org-babel-sh-command "bash")
-          (global-set-key (kbd "<f7>") 'toggle-truncate-lines)
+  :config (progn
+            (setq org-log-done t)
+            (setq org-return-follows-link t)
+            (setq org-startup-with-inline-images t)
+            (setq org-startup-folded 'show-everything)
+            (setq org-image-actual-width nil)
+            (setq org-startup-truncated nil) ; wrap lines
+            (setq org-hide-leading-stars t)
+            (setq org-src-fontify-natively t)
+            (setq org-babel-sh-command "bash")
+            (global-set-key (kbd "<f7>") 'toggle-truncate-lines)
 
-          (add-hook 'org-mode-hook 'org-indent-mode)
+            (add-hook 'org-mode-hook 'org-indent-mode)
 
-          (setq org-confirm-babel-evaluate nil)
-          
-          (org-babel-do-load-languages
-           'org-babel-load-languages
-           '((emacs-lisp . t)
-             (js         . t)
-             (lisp       . t)
-             (perl       . t)
-             (python     . t)
-             (shell      . t)
-             ))
-          
-          (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
-          
-          (setq org-export-htmlize-output-type 'css)
-          
-          (defun arnaud/htmlorg-clipboard ()
-            "Convert clipboard contents from HTML to Org and then paste (yank)."
-            (interactive)
-            (kill-new (shell-command-to-string "xclip -selection clipboard -o | pandoc -f html -t json | pandoc -f json -t org"))
-            ; | perl -ne 'print chr foreach unpack(\"C*\",pack(\"H*\",substr($_,11,-3)))' 
-            (yank))))
+            (setq org-confirm-babel-evaluate nil)
+            
+            (org-babel-do-load-languages
+             'org-babel-load-languages
+             '((emacs-lisp . t)
+               (js         . t)
+               (lisp       . t)
+               (perl       . t)
+               (python     . t)
+               (shell      . t)
+               ))
+            
+            (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+            
+            (setq org-export-htmlize-output-type 'css)
+            
+            (defun arnaud/htmlorg-clipboard ()
+              "Convert clipboard contents from HTML to Org and then paste (yank)."
+              (interactive)
+              (kill-new (shell-command-to-string "xclip -selection clipboard -o | pandoc -f html -t json | pandoc -f json -t org"))
+              ; | perl -ne 'print chr foreach unpack(\"C*\",pack(\"H*\",substr($_,11,-3)))' 
+              (yank))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -565,24 +542,24 @@
 (use-package ox-publish
   :defer 1
   :after org-install
-  :init (setq org-publish-project-alist
-          '(
-            ("org-notes"
-                :base-directory "~/wiki/"
-                :base-extension "org"
-                :publishing-directory "~/wiki/html/"
-                :recursive t
-                :publishing-function org-html-publish-to-html
-                :headline-levels 6
-                :auto-preamble t
-              )
-            ("org-static"
-                :base-directory "~/wiki/media/"
-                :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-                :publishing-directory "~/wiki/html/"
-                :recursive t
-                :publishing-function org-publish-attachment
-              ))))
+  :config (setq org-publish-project-alist
+            '(
+              ("org-notes"
+                  :base-directory "~/wiki/"
+                  :base-extension "org"
+                  :publishing-directory "~/wiki/html/"
+                  :recursive t
+                  :publishing-function org-html-publish-to-html
+                  :headline-levels 6
+                  :auto-preamble t
+                )
+              ("org-static"
+                  :base-directory "~/wiki/media/"
+                  :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+                  :publishing-directory "~/wiki/html/"
+                  :recursive t
+                  :publishing-function org-publish-attachment
+                ))))
 
 
 ;;;; AG
@@ -638,73 +615,106 @@
 
 (use-package epa-file ;transparent encryption and decryption
   :defer 1
-  :init (epa-file-enable))
+  :config (epa-file-enable))
 
 (use-package evil
   :ensure t
-  :init (progn
-          (evil-mode 1)
-          (global-unset-key (kbd "ESC :"))
-          (global-unset-key (kbd "<M-:>"))
-          (global-unset-key (kbd "<f11>"))
-          
-          ;;; Filename expansion
-          (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
-          
-          ;;; :q
-          (defun arnaud/vimlike-quit ()
-            "Vimlike ':q' behavior: close current window if there are split windows;
-          otherwise, close current tab."
-            (interactive)
-            (let ((one-window (one-window-p)))
-              (cond
-          					; if current tab has split windows in it, close the current live window
-               ((not one-window)
-                (delete-window) ; delete the current window
-                (balance-windows) ; balance remaining windows
-                nil)
-               (t
-                (delete-frame)
-                nil))))
-          
-          (defun arnaud/vimlike-write-quit ()
-            "Vimlike ':wq' behavior: write then close..."
-            (interactive)
-            (save-buffer)
-            (arnaud/vimlike-quit))
-          
-          (evil-ex-define-cmd "q" 'arnaud/vimlike-quit)
-          (evil-ex-define-cmd "wq" 'arnaud/vimlike-write-quit)
+  :config (progn
+            (evil-mode 1)
+            (global-unset-key (kbd "ESC :"))
+            (global-unset-key (kbd "<M-:>"))
+            (global-unset-key (kbd "<f11>"))
 
-          (add-hook 'company-mode-hook
-                    (lambda ()
-                      (evil-define-key 'insert global-map (kbd "C-n") 'company-complete-common)
-                      (define-key company-active-map (kbd "C-n") 'company-select-next)
-                      (define-key company-active-map (kbd "C-p") #'company-select-previous)))
+            (undo-tree-mode 1)
+            
+            ;;; Filename expansion
+            (define-key evil-insert-state-map (kbd "C-x C-f") 'comint-dynamic-complete-filename)
+            
+            ;;; :q
+            (defun arnaud/vimlike-quit ()
+              "Vimlike ':q' behavior: close current window if there are split windows;
+            otherwise, close current tab."
+              (interactive)
+              (let ((one-window (one-window-p)))
+                (cond
+            					; if current tab has split windows in it, close the current live window
+                 ((not one-window)
+                  (delete-window) ; delete the current window
+                  (balance-windows) ; balance remaining windows
+                  nil)
+                 (t
+                  (delete-frame)
+                  nil))))
+            
+            (defun arnaud/vimlike-write-quit ()
+              "Vimlike ':wq' behavior: write then close..."
+              (interactive)
+              (save-buffer)
+              (arnaud/vimlike-quit))
+            
+            (evil-ex-define-cmd "q" 'arnaud/vimlike-quit)
+            (evil-ex-define-cmd "wq" 'arnaud/vimlike-write-quit)
 
-          (define-key evil-normal-state-map [(insert)] 'evil-insert)
-          
-          ;;; by default, repeat should include the count of the original command !
-          
-          (evil-define-command arnaud/repeat (&optional count)
-              :repeat ignore
-                  (interactive)
-                (message "count :  %S" count)
-                (evil-repeat count nil))
-          (define-key evil-normal-state-map "." 'arnaud/repeat)
-          
-          (define-key evil-normal-state-map (kbd "C-;") 'eval-expression)
-          
-          (evil-set-initial-state 'ag-mode 'normal)
+            (add-hook 'company-mode-hook
+                      (lambda ()
+                        (evil-define-key 'insert global-map (kbd "C-n") 'company-complete-common)
+                        (define-key company-active-map (kbd "C-n") 'company-select-next)
+                        (define-key company-active-map (kbd "C-p") #'company-select-previous)))
 
-          ; To only display string whose length is greater than or equal to 2
-          (setq evil-search-highlight-string-min-len 2)))
+            (define-key evil-normal-state-map [(insert)] 'evil-insert)
+            
+            ;;; by default, repeat should include the count of the original command !
+            
+            (evil-define-command arnaud/repeat (&optional count)
+                :repeat ignore
+                    (interactive)
+                  (message "count :  %S" count)
+                  (evil-repeat count nil))
+            (define-key evil-normal-state-map "." 'arnaud/repeat)
+            
+            (define-key evil-normal-state-map (kbd "C-;") 'eval-expression)
+            
+            (evil-set-initial-state 'ag-mode 'normal)
+
+            ; To only display string whose length is greater than or equal to 2
+            (setq evil-search-highlight-string-min-len 2)
+
+            (define-key evil-normal-state-map "]q"  'next-error)
+            (define-key evil-normal-state-map "[q"  'previous-error)
+            (define-key evil-normal-state-map "]l"  'flycheck-next-error)
+            (define-key evil-normal-state-map "[l"  'flycheck-previous-error)
+            (define-key evil-normal-state-map "]s"  'flyspell-goto-next-error)
+            (define-key evil-normal-state-map "z="  'ispell-word)
+            (define-key evil-insert-state-map (kbd "C-x s") 'ispell-word)
+            (global-set-key (kbd "<f8>") 'arnaud/fd-switch-dictionary)
+            
+            (define-key evil-insert-state-map (kbd "C-x C-L") 'evil-complete-next-line)
+            
+            ;;; esc quits
+            (defun arnaud/minibuffer-keyboard-quit ()
+              "Abort recursive edit.
+                In Delete Selection mode, if the mark is active, just deactivate it;
+                then it takes a second \\[keyboard-quit] to abort the minibuffer."
+              (interactive)
+              (if (and delete-selection-mode transient-mark-mode mark-active)
+                  (setq deactivate-mark t)
+                (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+                (abort-recursive-edit)))
+            
+            (define-key evil-normal-state-map [escape] 'keyboard-quit)
+            (define-key evil-visual-state-map [escape] 'keyboard-quit)
+            (define-key minibuffer-local-map [escape] 'arnaud/minibuffer-keyboard-quit)
+            (define-key minibuffer-local-ns-map [escape] 'arnaud/minibuffer-keyboard-quit)
+            (define-key minibuffer-local-completion-map [escape] 'arnaud/minibuffer-keyboard-quit)
+            (define-key minibuffer-local-must-match-map [escape] 'arnaud/minibuffer-keyboard-quit)
+            (define-key minibuffer-local-isearch-map [escape] 'arnaud/minibuffer-keyboard-quit)
+            (define-key evil-normal-state-map [C-f] 'arnaud/put-file-name-on-clipboard)))
 
 (use-package evil-search-highlight-persist
   :defer 1
   :after evil
   :ensure t
-  :init (global-evil-search-highlight-persist t))
+  :config (global-evil-search-highlight-persist t))
 
 (use-package evil-numbers
   :defer 1

@@ -131,11 +131,15 @@
              (context-name (if context (mu4e-context-name context) "Perso"))
              (base-command (concat "task add '"
                                    (replace-regexp-in-string "'" " " (plist-get msg :subject))
-                                   " m#" (plist-get msg :message-id) "'"
+                                   " references:"
+                                   (if (string= context-name "Mayane")
+                                       "mayane_emails|"
+                                       "emails|")
+                                   (plist-get msg :message-id)
                                    (if (string= context-name "Mayane")
                                        " +my"
                                        "")
-                                   " "))
+                                   "'"))
              (actual-command (read-string "" base-command))
              (result (if actual-command (shell-command-to-string actual-command) "")))
         (arnaud/mu4e-archive-thread)
